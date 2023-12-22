@@ -5,3 +5,4 @@
   - 1x blocking 32-bit ram interface
   - lower 16-bit address space
 - MIPS integer subset
+  - see 437_OoO/asm_i.txt
