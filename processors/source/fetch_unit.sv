@@ -10,6 +10,7 @@
 */
 
 `include "instr_types.vh"
+import instr_types_pkg::*;
 
 module fetch_unit #(
     parameter PC_RESET_VAL = 16'h0,
@@ -49,11 +50,11 @@ module fetch_unit #(
 
     // I$
     output logic icache_REN,
-    output logic icache_addr,
+    output word_t icache_addr,
     output logic icache_halt,
 
     // to pipeline
-    output wort_t pipeline_instr,
+    output word_t pipeline_instr,
     output logic pipeline_ivalid,
     output pc_t pipeline_PC,    // only need 14-bit addr
     output pc_t pipeline_nPC    // only need 14-bit addr
@@ -364,7 +365,7 @@ module fetch_unit #(
 
         // default: do fetch
         next_icache_REN = 1'b1;
-        icache_addr = PC;
+        icache_addr = {16'h0, PC, 2'h0};
 
         // halt fetch unit
         if (pipeline_halt) begin
@@ -375,7 +376,7 @@ module fetch_unit #(
         // pause fetch unit
         else if (pipeline_stall_fetch_unit) begin
             next_icache_REN = 1'b0;
-            // PC iwll automatically be paused since will not get ihit's
+            // PC will automatically be paused since will not get ihit's
         end
     end
 
