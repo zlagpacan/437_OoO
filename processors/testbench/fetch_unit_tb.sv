@@ -18,22 +18,28 @@ module fetch_unit_tb ();
     // parameters
     parameter PERIOD = 10;
 
+    parameter PC_RESET_VAL = 16'h0;
+    parameter BTB_FRAMES = 256;
+    parameter RAS_DEPTH = 8;
+    parameter LOG_BTB_FRAMES = $clog2(BTB_FRAMES);
+    parameter LOG_RAS_DEPTH = $clog2(RAS_DEPTH);
+
     // TB signals:
     logic CLK = 1'b1, nRST;
     string test_case;
     int test_num = 0;
     int num_errors = 0;
-    logic error;
+    logic error = 1'b0;
 
     // clock gen
-    always begin CLK = ~CLK; #(PERIOD/2); end
+    always begin #(PERIOD/2); CLK = ~CLK; end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT input signals:
 
     // BTB/DIRP inputs from pipeline
     logic tb_pipeline_BTB_DIRP_update;
-    logic [LOG_BTB_SETS-1:0] tb_pipeline_BTB_DIRP_index;
+    logic [LOG_BTB_FRAMES-1:0] tb_pipeline_BTB_DIRP_index;
     pc_t tb_pipeline_BTB_target;
     logic tb_pipeline_DIRP_taken;
 
@@ -106,45 +112,45 @@ module fetch_unit_tb ();
 
     task check_outputs();
     begin
-        int init_num_errors = num_errors;
+        static int init_num_errors = num_errors;
 
-        if (expected_icache_REN != fu_icache_REN) begin
+        if (expected_icache_REN !== fu_icache_REN) begin
             $display("ERROR: expected_icache_REN (%d) != fu_icache_REN (%d)", expected_icache_REN, fu_icache_REN);
             num_errors++;
             error = 1'b1;
         end
 
-        if (expected_icache_addr != fu_icache_addr) begin
+        if (expected_icache_addr !== fu_icache_addr) begin
             $display("ERROR: expected_icache_addr (%d) != fu_icache_addr (%d)", expected_icache_addr, fu_icache_addr);
             num_errors++;
             error = 1'b1;
         end
 
-        if (expected_icache_halt != fu_icache_halt) begin
+        if (expected_icache_halt !== fu_icache_halt) begin
             $display("ERROR: expected_icache_halt (%d) != fu_icache_halt (%d)", expected_icache_halt, fu_icache_halt);
             num_errors++;
             error = 1'b1;
         end
         
-        if (expected_pipeline_instr != fu_pipeline_instr) begin
+        if (expected_pipeline_instr !== fu_pipeline_instr) begin
             $display("ERROR: expected_pipeline_instr (%d) != fu_pipeline_instr (%d)", expected_pipeline_instr, fu_pipeline_instr);
             num_errors++;
             error = 1'b1;
         end
 
-        if (expected_pipeline_ivalid != fu_pipeline_ivalid) begin
+        if (expected_pipeline_ivalid !== fu_pipeline_ivalid) begin
             $display("ERROR: expected_pipeline_ivalid (%d) != fu_pipeline_ivalid (%d)", expected_pipeline_ivalid, fu_pipeline_ivalid);
             num_errors++;
             error = 1'b1;
         end
 
-        if (expected_pipeline_PC != fu_pipeline_PC) begin
+        if (expected_pipeline_PC !== fu_pipeline_PC) begin
             $display("ERROR: expected_pipeline_PC (%d) != fu_pipeline_PC (%d)", expected_pipeline_PC, fu_pipeline_PC);
             num_errors++;
             error = 1'b1;
         end
 
-        if (expected_pipeline_nPC != fu_pipeline_nPC) begin
+        if (expected_pipeline_nPC !== fu_pipeline_nPC) begin
             $display("ERROR: expected_pipeline_nPC (%d) != fu_pipeline_nPC (%d)", expected_pipeline_nPC, fu_pipeline_nPC);
             num_errors++;
             error = 1'b1;
@@ -174,57 +180,76 @@ module fetch_unit_tb ();
         tb_pipeline_BTB_DIRP_update = 1'b0;
         tb_pipeline_BTB_DIRP_index = 8'h0;
         tb_pipeline_BTB_target = 14'h0;
-        tb_pipeline_DIRP_taken = ;
+        tb_pipeline_DIRP_taken = 1'b0;
         // resolved target from pipepline
-        tb_pipeline_take_resolved;
-        tb_pipeline_resolved_PC;
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
         // I$
-        tb_icache_hit;
-        tb_icache_load;
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'h0;
         // core controller
-        tb_pipeline_stall_fetch_unit;
-        tb_pipeline_halt;
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
 
         @(posedge CLK);
 
         // outputs:
 
         // I$
-        expected_icache_REN;
-        expected_icache_addr;
-        expected_icache_halt;
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h0;
+        expected_icache_halt = 1'b0;
         // to pipeline
-        expected_pipeline_instr;
-        expected_pipeline_ivalid;
-        expected_pipeline_PC;
-        expected_pipeline_nPC;
+        expected_pipeline_instr = 32'h0;
+        expected_pipeline_ivalid = 1'b0;
+        expected_pipeline_PC = 14'h0;
+        expected_pipeline_nPC = 14'h0;
 
         check_outputs();
 
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'h0;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
         @(posedge CLK);
 
         // outputs:
 
         // I$
-        expected_icache_REN;
-        expected_icache_addr;
-        expected_icache_halt;
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0;
+        expected_icache_halt = 1'b0;
         // to pipeline
-        expected_pipeline_instr;
-        expected_pipeline_ivalid;
-        expected_pipeline_PC;
-        expected_pipeline_nPC;
+        expected_pipeline_instr = 32'h0;
+        expected_pipeline_ivalid = 1'b0;
+        expected_pipeline_PC = 14'h0;
+        expected_pipeline_nPC = 14'h0;
 
         check_outputs();
         
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // finish:
+        $display();
         if (num_errors) begin
             $display("FAIL: %d tests fail", num_errors);
         end
         else begin
             $display("SUCCESS: all tests pass");
         end
+        $display();
 
         $finish();
     end

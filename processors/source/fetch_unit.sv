@@ -29,7 +29,7 @@ module fetch_unit #(
 
     // BTB/DIRP inputs from pipeline
     input pipeline_BTB_DIRP_update,                     // shared b/w BTB and DIRP
-    input [LOG_BTB_SETS-1:0] pipeline_BTB_DIRP_index,   // shared b/w BTB and DIRP
+    input [LOG_BTB_FRAMES-1:0] pipeline_BTB_DIRP_index,   // shared b/w BTB and DIRP
     input pc_t pipeline_BTB_target,           // only need 14-bit addr
     input pipeline_DIRP_taken,
     
@@ -86,8 +86,8 @@ module fetch_unit #(
     } DIRP_state_t;
 
     typedef struct packed {
-        pc_t target,    // only need 14-bit addr
-        DIRP_state_t state
+        pc_t target;            // only need 14-bit addr
+        DIRP_state_t state;
     } BTB_DIRP_entry_t;
 
     BTB_DIRP_entry_t [BTB_FRAMES-1:0] BTB_DIRP_entry_by_frame_index;
@@ -99,7 +99,7 @@ module fetch_unit #(
         // RAS_DEPTH x entries RAS
         // can write over itself, only need top pointer
     typedef struct packed {
-        pc_t PC     // only need 14-bit addr
+        pc_t PC;                // only need 14-bit addr
     } RAS_entry_t;
 
     RAS_entry_t [RAS_DEPTH-1:0] RAS_entry_by_top_index;
@@ -140,7 +140,7 @@ module fetch_unit #(
     always_comb begin
 
         // get index bits
-        BTB_DIRP_frame_index = PC[LOG_BTB_SETS-1:0];
+        BTB_DIRP_frame_index = PC[LOG_BTB_FRAMES-1:0];
 
         // read BTB/DIRP array
         BTB_target = BTB_DIRP_entry_by_frame_index[BTB_DIRP_frame_index].target;
@@ -251,7 +251,7 @@ module fetch_unit #(
 
         // get instruction opcode
         instr = icache_load;
-        instr_opcode = instr[31:25];
+        instr_opcode = opcode_t'(instr[31:25]);
 
         // check for BEQ/BNE
         is_beq_bne = (instr_opcode == BEQ | instr_opcode == BNE);
@@ -388,5 +388,7 @@ module fetch_unit #(
     assign pipeline_ivalid = icache_hit;
     assign pipeline_PC = PC;
     assign pipeline_nPC = nPC;
+
+    assign icache_halt = pipeline_halt;
 
 endmodule
