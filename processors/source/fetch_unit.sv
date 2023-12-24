@@ -73,9 +73,6 @@ module fetch_unit #(
     pc_t BTB_target;    // only need 14-bit addr
         // resolved PC
 
-    // branch take signals
-    logic DIRP_state;
-
     // BTB/DIRP
         // BTB_FRAMES x entries BTB/DIRP
     typedef enum logic [1:0] {
@@ -95,6 +92,9 @@ module fetch_unit #(
 
     logic [LOG_BTB_FRAMES-1:0] BTB_DIRP_frame_index;
 
+    // branch take signals
+    DIRP_state_t DIRP_state;
+
     // RAS
         // RAS_DEPTH x entries RAS
         // can write over itself, only need top pointer
@@ -105,8 +105,9 @@ module fetch_unit #(
     RAS_entry_t [RAS_DEPTH-1:0] RAS_entry_by_top_index;
     RAS_entry_t [RAS_DEPTH-1:0] next_RAS_entry_by_top_index;
 
-    logic [LOG_RAS_DEPTH-1:0] RAS_top_index;
-    logic [LOG_RAS_DEPTH-1:0] next_RAS_top_index;
+    logic [LOG_RAS_DEPTH-1:0] RAS_top_write_index;
+    logic [LOG_RAS_DEPTH-1:0] next_RAS_top_write_index;
+    logic [LOG_RAS_DEPTH-1:0] RAS_top_read_index;
 
     pc_t RAS_push_val;
 
@@ -129,7 +130,10 @@ module fetch_unit #(
     // seq
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
-            BTB_DIRP_entry_by_frame_index <= '0;
+            for (int i = 0; i < BTB_FRAMES; i++) begin
+                BTB_DIRP_entry_by_frame_index[i].target <= 14'h0;
+                BTB_DIRP_entry_by_frame_index[i].state <= WEAK_NT;
+            end
         end
         else begin
             BTB_DIRP_entry_by_frame_index <= next_BTB_DIRP_entry_by_frame_index;
@@ -204,42 +208,43 @@ module fetch_unit #(
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
             RAS_entry_by_top_index <= '0;
-            RAS_top_index <= '0;
+            RAS_top_write_index <= '0;
         end
         else begin
             RAS_entry_by_top_index <= next_RAS_entry_by_top_index;
-            RAS_top_index <= next_RAS_top_index;
+            RAS_top_write_index <= next_RAS_top_write_index;
         end
     end
 
     // comb
     always_comb begin
 
-        // read RAS entry
-        RAS_pop_val = RAS_entry_by_top_index[RAS_top_index];
+        // read RAS entry (1 below top of stack)
+        RAS_top_read_index = RAS_top_write_index - 1;
+        RAS_pop_val = RAS_entry_by_top_index[RAS_top_read_index];
 
         // write RAS array:
 
         // default: hold states
         next_RAS_entry_by_top_index = RAS_entry_by_top_index;
-        next_RAS_top_index = RAS_top_index;
+        next_RAS_top_write_index = RAS_top_write_index;
 
         // push to RAS on jump and link
         RAS_push_val = PC_plus_4;
         if (is_jal) begin
             
             // RAS write at top index
-            next_RAS_entry_by_top_index[RAS_top_index] = RAS_push_val;
+            next_RAS_entry_by_top_index[RAS_top_write_index] = RAS_push_val;
 
             // increment top index
-            next_RAS_top_index = RAS_top_index + 1;
+            next_RAS_top_write_index = RAS_top_write_index + 1;
         end
 
         // pop from RAS on jump to register
         if (is_jr) begin
 
             // decrement top index
-            next_RAS_top_index = RAS_top_index - 1;
+            next_RAS_top_write_index = RAS_top_read_index;
         end
     end
 
@@ -251,7 +256,7 @@ module fetch_unit #(
 
         // get instruction opcode
         instr = icache_load;
-        instr_opcode = opcode_t'(instr[31:25]);
+        instr_opcode = opcode_t'(instr[31:26]);
 
         // check for BEQ/BNE
         is_beq_bne = (instr_opcode == BEQ | instr_opcode == BNE);
@@ -263,7 +268,7 @@ module fetch_unit #(
         is_jal = (instr_opcode == JAL);
 
         // check for JR
-        is_jr = (instr_opcode == JR);
+        is_jr = (instr_opcode == RTYPE) & (funct_t'(instr[5:0]) == JR);
     end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////

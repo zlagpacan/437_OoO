@@ -27,6 +27,7 @@ module fetch_unit_tb ();
     // TB signals:
     logic CLK = 1'b1, nRST;
     string test_case;
+    string sub_test_case;
     int test_num = 0;
     int num_errors = 0;
     logic error = 1'b0;
@@ -115,43 +116,43 @@ module fetch_unit_tb ();
         static int init_num_errors = num_errors;
 
         if (expected_icache_REN !== fu_icache_REN) begin
-            $display("ERROR: expected_icache_REN (%d) != fu_icache_REN (%d)", expected_icache_REN, fu_icache_REN);
+            $display("\tERROR: expected_icache_REN (%h) != fu_icache_REN (%h)", expected_icache_REN, fu_icache_REN);
             num_errors++;
             error = 1'b1;
         end
 
         if (expected_icache_addr !== fu_icache_addr) begin
-            $display("ERROR: expected_icache_addr (%d) != fu_icache_addr (%d)", expected_icache_addr, fu_icache_addr);
+            $display("\tERROR: expected_icache_addr (%h) != fu_icache_addr (%h)", expected_icache_addr, fu_icache_addr);
             num_errors++;
             error = 1'b1;
         end
 
         if (expected_icache_halt !== fu_icache_halt) begin
-            $display("ERROR: expected_icache_halt (%d) != fu_icache_halt (%d)", expected_icache_halt, fu_icache_halt);
+            $display("\tERROR: expected_icache_halt (%h) != fu_icache_halt (%h)", expected_icache_halt, fu_icache_halt);
             num_errors++;
             error = 1'b1;
         end
         
         if (expected_pipeline_instr !== fu_pipeline_instr) begin
-            $display("ERROR: expected_pipeline_instr (%d) != fu_pipeline_instr (%d)", expected_pipeline_instr, fu_pipeline_instr);
+            $display("\tERROR: expected_pipeline_instr (%h) != fu_pipeline_instr (%h)", expected_pipeline_instr, fu_pipeline_instr);
             num_errors++;
             error = 1'b1;
         end
 
         if (expected_pipeline_ivalid !== fu_pipeline_ivalid) begin
-            $display("ERROR: expected_pipeline_ivalid (%d) != fu_pipeline_ivalid (%d)", expected_pipeline_ivalid, fu_pipeline_ivalid);
+            $display("\tERROR: expected_pipeline_ivalid (%h) != fu_pipeline_ivalid (%h)", expected_pipeline_ivalid, fu_pipeline_ivalid);
             num_errors++;
             error = 1'b1;
         end
 
         if (expected_pipeline_PC !== fu_pipeline_PC) begin
-            $display("ERROR: expected_pipeline_PC (%d) != fu_pipeline_PC (%d)", expected_pipeline_PC, fu_pipeline_PC);
+            $display("\tERROR: expected_pipeline_PC (%h) != fu_pipeline_PC (%h)", expected_pipeline_PC, fu_pipeline_PC);
             num_errors++;
             error = 1'b1;
         end
 
         if (expected_pipeline_nPC !== fu_pipeline_nPC) begin
-            $display("ERROR: expected_pipeline_nPC (%d) != fu_pipeline_nPC (%d)", expected_pipeline_nPC, fu_pipeline_nPC);
+            $display("\tERROR: expected_pipeline_nPC (%h) != fu_pipeline_nPC (%h)", expected_pipeline_nPC, fu_pipeline_nPC);
             num_errors++;
             error = 1'b1;
         end
@@ -162,17 +163,20 @@ module fetch_unit_tb ();
     endtask
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    // initial:
+    // initial block:
 
     initial begin
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // reset:
         test_case = "reset";
-        $display("test %d: %s", test_num, test_case);
+        $display("\ntest %d: %s", test_num, test_case);
         test_num++;
 
         // inputs:
+            // assert reset
+        sub_test_case = "assert reset";
+        $display("\t- sub_test %s", test_num, sub_test_case);
 
         // reset
         nRST = 1'b0;
@@ -207,6 +211,11 @@ module fetch_unit_tb ();
 
         check_outputs();
 
+        // inputs
+            // deassert reset
+        sub_test_case = "deassert reset";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
         // reset
         nRST = 1'b1;
         // BTB/DIRP inputs from pipeline
@@ -239,9 +248,1659 @@ module fetch_unit_tb ();
         expected_pipeline_nPC = 14'h0;
 
         check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // seq PC, all ihit's:
+        test_case = "seq PC, all ihit's";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // hit, hit, hit
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00111111;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00111111;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0;
+        expected_pipeline_nPC = 14'h1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00222222;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h4;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00222222;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h1;
+        expected_pipeline_nPC = 14'h2;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00333333;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h8;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00333333;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h2;
+        expected_pipeline_nPC = 14'h3;
+
+        check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // seq PC, some ihit's, some misses:
+        test_case = "seq PC, some ihit's, some misses";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // miss, miss, hit, miss, hit
+
+        @(posedge CLK);
+
+        // inputs:
+            // miss
+        sub_test_case = "miss";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hc;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'hdeadbeef;
+        expected_pipeline_ivalid = 1'b0;
+        expected_pipeline_PC = 14'h3;
+        expected_pipeline_nPC = 14'h3;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // miss
+        sub_test_case = "miss";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hc;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'hdeadbeef;
+        expected_pipeline_ivalid = 1'b0;
+        expected_pipeline_PC = 14'h3;
+        expected_pipeline_nPC = 14'h3;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00444444;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hc;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00444444;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h3;
+        expected_pipeline_nPC = 14'h4;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // miss
+        sub_test_case = "miss";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h10;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'hdeadbeef;
+        expected_pipeline_ivalid = 1'b0;
+        expected_pipeline_PC = 14'h4;
+        expected_pipeline_nPC = 14'h4;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00555555;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h10;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00555555;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h4;
+        expected_pipeline_nPC = 14'h5;
+
+        check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // seq PC, all ihit's, w/ j/jal/jr:
+        test_case = "seq PC, all ihit's, w/ j/jal/jr";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // hit (j), hit (jal), hit, hit (jr), hit, hit (jal), hit (jal), hit (jr), hit, hit (jr)
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + (14'ha00);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h14;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + (14'ha00);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h5;
+        expected_pipeline_nPC = 14'ha00;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (jal)
+        sub_test_case = "hit (jal)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(JAL) << 26) + (14'hb00);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'ha00 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(JAL) << 26) + (14'hb00);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'ha00;
+        expected_pipeline_nPC = 14'hb00;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00abcdef;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hb00 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00abcdef;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'hb00;
+        expected_pipeline_nPC = 14'hb01;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (jr)
+        sub_test_case = "hit (jr)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hb01 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'hb01;
+        expected_pipeline_nPC = 14'ha01;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00fedcba;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'ha01 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00fedcba;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'ha01;
+        expected_pipeline_nPC = 14'ha02;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (jal)
+        sub_test_case = "hit (jal)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(JAL) << 26) + 14'hc00;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'ha02 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(JAL) << 26) + 14'hc00;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'ha02;
+        expected_pipeline_nPC = 14'hc00;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (jal)
+        sub_test_case = "hit (jal)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(JAL) << 26) + 14'hd00;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hc00 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(JAL) << 26) + 14'hd00;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'hc00;
+        expected_pipeline_nPC = 14'hd00;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (jr)
+        sub_test_case = "hit (jr)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hd00 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'hd00;
+        expected_pipeline_nPC = 14'hc01;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00bababa;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hc01 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00bababa;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'hc01;
+        expected_pipeline_nPC = 14'hc02;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (jr)
+        sub_test_case = "hit (jr)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'hc02 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'hc02;
+        expected_pipeline_nPC = 14'ha03;
+
+        check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // seq PC, all ihit's, w/ beq/bne/j, correct NT:
+        test_case = "seq PC, all ihit's, w/ beq/bne/j, correct NT";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // hit (j), hit (beq, NT (correct)), hit, hit (bne, NT (correct))
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + (14'h0a0);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'ha03 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + (14'h0a0);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'ha03;
+        expected_pipeline_nPC = 14'h0a0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, NT (correct))
+        sub_test_case = "hit (beq, NT (correct))";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BEQ) << 26) + (16'h00f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0a0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BEQ) << 26) + (16'h00f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0a0;
+        expected_pipeline_nPC = 14'h0a1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00a1b2c3;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0a1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00a1b2c3;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0a1;
+        expected_pipeline_nPC = 14'h0a2;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, NT (correct))
+        sub_test_case = "hit (beq, NT (correct))";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BNE) << 26) + (16'h01f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0a2 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BNE) << 26) + (16'h01f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0a2;
+        expected_pipeline_nPC = 14'h0a3;
+
+        check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // exercise beq BTB
+        test_case = "exercise beq BTB";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // hit (j), hit (beq, NT), hit, hit, hit + resolved PC + BTB update (T), hit, 
+        // hit (j), hit (beq, T), hit,
+        // hit (j), hit (beq, T), hit + BTB update (NT),
+        // hit (j), hit (beq, T), hit + BTB update (NT),
+        // hit (j), hit (beq, NT), hit
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + (16'h0b0);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0a3 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + (16'h0b0);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0a3;
+        expected_pipeline_nPC = 14'h0b0;
+
+        check_outputs();
         
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, NT)
+        sub_test_case = "hit (beq, NT)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BEQ) << 26) + (16'h00f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BEQ) << 26) + (16'h00f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b0;
+        expected_pipeline_nPC = 14'h0b1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00121212;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00121212;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b1;
+        expected_pipeline_nPC = 14'h0b2;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00232323;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b2 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00232323;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b2;
+        expected_pipeline_nPC = 14'h0b3;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit + resolved PC + BTB update (T)
+        sub_test_case = "hit + resolved PC + BTB update (T)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b1;
+        tb_pipeline_BTB_DIRP_index = 8'h0b0;
+        tb_pipeline_BTB_target = 14'h0c0;
+        tb_pipeline_DIRP_taken = 1'b1;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b1;
+        tb_pipeline_resolved_PC = 14'h0c0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00343434;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b3 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00343434;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b3;
+        expected_pipeline_nPC = 14'h0c0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00454545;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00454545;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c0;
+        expected_pipeline_nPC = 14'h0c1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + (16'h0b0);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + (16'h0b0);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c1;
+        expected_pipeline_nPC = 14'h0b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, T)
+        sub_test_case = "hit (beq, T)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BEQ) << 26) + (16'h00f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BEQ) << 26) + (16'h00f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b0;
+        expected_pipeline_nPC = 14'h0c0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00676767;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00676767;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c0;
+        expected_pipeline_nPC = 14'h0c1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + 16'h0b0;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + 16'h0b0;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c1;
+        expected_pipeline_nPC = 14'h0b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, T)
+        sub_test_case = "hit (beq, T)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BEQ) << 26) + (16'h00f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BEQ) << 26) + (16'h00f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b0;
+        expected_pipeline_nPC = 14'h0c0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit + BTB update (NT)
+        sub_test_case = "hit + BTB update (NT)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b1;
+        tb_pipeline_BTB_DIRP_index = 8'h0b0;
+        tb_pipeline_BTB_target = 14'h0c0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00676767;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00676767;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c0;
+        expected_pipeline_nPC = 14'h0c1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + 16'h0b0;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + 16'h0b0;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c1;
+        expected_pipeline_nPC = 14'h0b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, T)
+        sub_test_case = "hit (beq, T)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BEQ) << 26) + (16'h00f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BEQ) << 26) + (16'h00f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b0;
+        expected_pipeline_nPC = 14'h0c0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit + BTB update (NT)
+        sub_test_case = "hit + BTB update (NT)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b1;
+        tb_pipeline_BTB_DIRP_index = 8'h0b0;
+        tb_pipeline_BTB_target = 14'h0c0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00676767;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00676767;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c0;
+        expected_pipeline_nPC = 14'h0c1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (j)
+        sub_test_case = "hit (j)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(J) << 26) + 16'h0b0;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0c1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(J) << 26) + 16'h0b0;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0c1;
+        expected_pipeline_nPC = 14'h0b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit (beq, NT)
+        sub_test_case = "hit (beq, NT)";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = (opcode_t'(BEQ) << 26) + (16'h00f);
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b0 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = (opcode_t'(BEQ) << 26) + (16'h00f);
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b0;
+        expected_pipeline_nPC = 14'h0b1;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // hit
+        sub_test_case = "hit";
+        $display("\t- sub_test %s", test_num, sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_pipeline_BTB_DIRP_update = 1'b0;
+        tb_pipeline_BTB_DIRP_index = 8'h0;
+        tb_pipeline_BTB_target = 14'h0;
+        tb_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_pipeline_take_resolved = 1'b0;
+        tb_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00787878;
+        // core controller
+        tb_pipeline_stall_fetch_unit = 1'b0;
+        tb_pipeline_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h0b1 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_pipeline_instr = 32'h00787878;
+        expected_pipeline_ivalid = 1'b1;
+        expected_pipeline_PC = 14'h0b1;
+        expected_pipeline_nPC = 14'h0b2;
+
+        check_outputs();
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // finish:
+        test_case = "finish";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        @(posedge CLK);
+
         $display();
         if (num_errors) begin
             $display("FAIL: %d tests fail", num_errors);
