@@ -5,7 +5,7 @@
     File Name: fetch_unit.sv
     Instantiation Hierarchy: system -> core -> fetch_unit
     Description: 
-        The fetch unit makes PC addr req's to icache, receives the icache instr resp, and determines the 
+        The Fetch Unit makes PC addr req's to icache, receives the icache instr resp, and determines the 
         next PC addr. The fetch unit employs a BTB/DIRP, RAS, and immediately jumps for j and jal. 
 */
 
