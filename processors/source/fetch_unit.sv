@@ -9,55 +9,41 @@
         next PC addr. The fetch unit employs a BTB/DIRP, RAS, and immediately jumps for j and jal. 
 */
 
-`include "instr_types.vh"
-import instr_types_pkg::*;
+`include "core_types.vh"
+import core_types_pkg::*;
 
 module fetch_unit #(
-    parameter PC_RESET_VAL = 16'h0,
-    parameter BTB_FRAMES = 256,
-    parameter RAS_DEPTH = 8,
-
-    // calculated params
-    parameter LOG_BTB_FRAMES = $clog2(BTB_FRAMES),
-    parameter LOG_RAS_DEPTH = $clog2(RAS_DEPTH)
+    parameter PC_RESET_VAL = 16'h0
 ) (
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    // inputs: 
-
     // seq
-    input CLK, nRST,
+    input logic CLK, nRST,
 
     // BTB/DIRP inputs from pipeline
-    input pipeline_BTB_DIRP_update,                     // shared b/w BTB and DIRP
-    input [LOG_BTB_FRAMES-1:0] pipeline_BTB_DIRP_index,   // shared b/w BTB and DIRP
-    input pc_t pipeline_BTB_target,           // only need 14-bit addr
-    input pipeline_DIRP_taken,
+    input logic from_pipeline_BTB_DIRP_update,              // shared b/w BTB and DIRP
+    input BTB_DIRP_index_t from_pipeline_BTB_DIRP_index,    // shared b/w BTB and DIRP
+    input pc_t from_pipeline_BTB_target,                    // only need 14-bit addr
+    input logic from_pipeline_DIRP_taken,
     
     // resolved target from pipeline
-    input pipeline_take_resolved,
-    input pc_t pipeline_resolved_PC,
+    input logic from_pipeline_take_resolved,
+    input pc_t from_pipeline_resolved_PC,
 
     // I$
-    input icache_hit,
+    input logic icache_hit,
     input word_t icache_load,
-
-    // core controller
-    input pipeline_stall_fetch_unit,
-    input pipeline_halt,
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    // outputs:
-
-    // I$
     output logic icache_REN,
     output word_t icache_addr,
     output logic icache_halt,
 
+    // core controller
+    input logic core_control_stall_fetch_unit,
+    input logic core_control_halt,
+
     // to pipeline
-    output word_t pipeline_instr,
-    output logic pipeline_ivalid,
-    output pc_t pipeline_PC,    // only need 14-bit addr
-    output pc_t pipeline_nPC    // only need 14-bit addr
+    output word_t to_pipeline_instr,
+    output logic to_pipeline_ivalid,
+    output pc_t to_pipeline_PC,         // only need 14-bit addr
+    output pc_t to_pipeline_nPC         // only need 14-bit addr
 );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +60,7 @@ module fetch_unit #(
         // resolved PC
 
     // BTB/DIRP
-        // BTB_FRAMES x entries BTB/DIRP
+        // BTB_FRAMES x frames BTB/DIRP
     typedef enum logic [1:0] {
         STRONG_NT   = 2'b00,
         WEAK_NT     = 2'b01,
@@ -91,8 +77,7 @@ module fetch_unit #(
     BTB_DIRP_entry_t [BTB_FRAMES-1:0] next_BTB_DIRP_entry_by_frame_index;
 
     logic [LOG_BTB_FRAMES-1:0] BTB_DIRP_frame_index;
-
-    // branch take signals
+    
     DIRP_state_t DIRP_state;
 
     // RAS
@@ -123,6 +108,7 @@ module fetch_unit #(
 
     // I$
     logic next_icache_REN;
+    logic next_icache_halt;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // BTB/DIRP:
@@ -156,43 +142,43 @@ module fetch_unit #(
         next_BTB_DIRP_entry_by_frame_index = BTB_DIRP_entry_by_frame_index;
 
         // update specific entry
-        if (pipeline_BTB_DIRP_update) begin
+        if (from_pipeline_BTB_DIRP_update) begin
 
             // BTB target update
                 // calculate target every time, might as well update every time
-            next_BTB_DIRP_entry_by_frame_index[pipeline_BTB_DIRP_index].target = pipeline_BTB_target;
+            next_BTB_DIRP_entry_by_frame_index[from_pipeline_BTB_DIRP_index].target = from_pipeline_BTB_target;
 
             // DIRP state update
-            case (BTB_DIRP_entry_by_frame_index[pipeline_BTB_DIRP_index].state)
+            case (BTB_DIRP_entry_by_frame_index[from_pipeline_BTB_DIRP_index].state)
                 
                 STRONG_NT:
                 begin
-                    next_BTB_DIRP_entry_by_frame_index[pipeline_BTB_DIRP_index].state = 
-                        pipeline_DIRP_taken ? 
+                    next_BTB_DIRP_entry_by_frame_index[from_pipeline_BTB_DIRP_index].state = 
+                        from_pipeline_DIRP_taken ? 
                         WEAK_NT : 
                         STRONG_NT;  // saturate
                 end
 
                 WEAK_NT:
                 begin
-                    next_BTB_DIRP_entry_by_frame_index[pipeline_BTB_DIRP_index].state = 
-                        pipeline_DIRP_taken ? 
+                    next_BTB_DIRP_entry_by_frame_index[from_pipeline_BTB_DIRP_index].state = 
+                        from_pipeline_DIRP_taken ? 
                         STRONG_T :  // skip WEAK_T
                         STRONG_NT;
                 end
 
                 WEAK_T:
                 begin
-                    next_BTB_DIRP_entry_by_frame_index[pipeline_BTB_DIRP_index].state = 
-                        pipeline_DIRP_taken ? 
+                    next_BTB_DIRP_entry_by_frame_index[from_pipeline_BTB_DIRP_index].state = 
+                        from_pipeline_DIRP_taken ? 
                         STRONG_T : 
                         STRONG_NT;  // skip WEAK_NT
                 end
 
                 STRONG_T:
                 begin
-                    next_BTB_DIRP_entry_by_frame_index[pipeline_BTB_DIRP_index].state = 
-                        pipeline_DIRP_taken ? 
+                    next_BTB_DIRP_entry_by_frame_index[from_pipeline_BTB_DIRP_index].state = 
+                        from_pipeline_DIRP_taken ? 
                         STRONG_T :  // saturate
                         WEAK_T;
                 end
@@ -294,18 +280,18 @@ module fetch_unit #(
         PC_plus_4 = PC + 1; // PC + 4 equivalent to PC + 1 since chop of 2 lsb
 
         // nPC select mux
-            // priority:    pipeline_take_resolved (pipeline_resolved_PC) > 
-            //              icache_hit {is_beq_bne (DIRP_state -> BTB_target / PC+4), 
+            // priority:    resolved (from_pipeline_resolved_PC) > 
+            //              ihit & ~stall {is_beq_bne (DIRP_state -> BTB_target vs. PC+4), 
             //                  is_j/is_jal (jPC), is_jr (RAS_pop_val), else (PC+4)} > 
-            //              ~icache_hit {PC}
+            //              ~icache_hit | stall {PC}
 
         // resolved PC
-        if (pipeline_take_resolved) begin
-            nPC = pipeline_resolved_PC;
+        if (from_pipeline_take_resolved) begin
+            nPC = from_pipeline_resolved_PC;
         end
 
         // icache hit
-        else if (icache_hit) begin
+        else if (icache_hit & ~core_control_stall_fetch_unit) begin
 
             // branch
             if (is_beq_bne) begin
@@ -359,9 +345,11 @@ module fetch_unit #(
     always_ff @ (posedge CLK, nRST) begin
         if (~nRST) begin
             icache_REN <= 1'b0;
+            icache_halt <= 1'b0;
         end
         else begin
             icache_REN <= next_icache_REN;
+            icache_halt <= next_icache_halt;
         end
     end
 
@@ -370,30 +358,41 @@ module fetch_unit #(
 
         // default: do fetch
         next_icache_REN = 1'b1;
-        icache_addr = {16'h0, PC, 2'h0};
+        next_icache_halt = 1'b0;
 
         // halt fetch unit
-        if (pipeline_halt) begin
+        if (core_control_halt) begin
             next_icache_REN = 1'b0;
+            next_icache_halt = 1'b1;
             // PC will automatically be paused since will not get ihit's
         end
 
-        // pause fetch unit
-        else if (pipeline_stall_fetch_unit) begin
-            next_icache_REN = 1'b0;
-            // PC will automatically be paused since will not get ihit's
-        end
+        // // pause fetch unit
+        //     // don't need REN disable since ivalid already turned off
+        //     // likely will want next instr so good idea to fetch
+        // else if (core_control_stall_fetch_unit) begin
+        //     // next_icache_REN = 1'b0;
+        //     // next_icache_halt = 1'b0;
+        //     // PC will automatically be paused since will not get ihit's
+        // end
     end
+
+    // wires
+    assign icache_addr = {16'h0, PC, 2'h0};
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // pipeline output mapping:
 
-    // wires
-    assign pipeline_instr = instr;
-    assign pipeline_ivalid = icache_hit;
-    assign pipeline_PC = PC;
-    assign pipeline_nPC = nPC;
+    // ivalid logic
+    assign to_pipeline_ivalid = 
+        icache_hit & 
+        ~from_pipeline_take_resolved & 
+        ~core_control_stall_fetch_unit & 
+        ~core_control_halt;
 
-    assign icache_halt = pipeline_halt;
+    // wires
+    assign to_pipeline_instr = instr;
+    assign to_pipeline_PC = PC;
+    assign to_pipeline_nPC = nPC;
 
 endmodule
