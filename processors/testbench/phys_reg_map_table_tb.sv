@@ -186,7 +186,7 @@ module phys_reg_map_table_tb ();
         // inputs:
             // assert reset
         sub_test_case = "assert reset";
-        $display("\t- sub_test %s", test_num, sub_test_case);
+        $display("\t- sub_test %s", sub_test_case);
 
         // reset
         nRST = 1'b0;
@@ -229,7 +229,7 @@ module phys_reg_map_table_tb ();
         // inputs
             // deassert reset
         sub_test_case = "deassert reset";
-        $display("\t- sub_test %s", test_num, sub_test_case);
+        $display("\t- sub_test %s", sub_test_case);
 
         // reset
         nRST = 1'b1;
