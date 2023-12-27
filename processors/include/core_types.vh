@@ -146,7 +146,7 @@ package core_types_pkg;
 
     // ROB:
 
-    parameter ROB_DEPTH = 64;
+    parameter ROB_DEPTH = 32;
     parameter LOG_ROB_DEPTH = $clog2(ROB_DEPTH);
 
     typedef logic [LOG_ROB_DEPTH-1:0] ROB_index_t;

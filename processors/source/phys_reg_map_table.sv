@@ -9,8 +9,8 @@
         registers. The table also checkpoints mappings which can be restored using a FIFO of map tables.
 */
 
-`include "instr_types.vh"
-import instr_types_pkg::*;
+`include "core_types.vh"
+import core_types_pkg::*;
 
 module phys_reg_map_table #(
     
@@ -40,16 +40,14 @@ module phys_reg_map_table #(
     input logic save_checkpoint_valid,
     output logic save_checkpoint_success,
     input ROB_index_t save_checkpoint_ROB_index,    // from ROB, write tag val
-    output map_table_column_index_t save_checkpoint_safe_column,
-    // output map_table_column_index_t save_checkpoint_speculated_column,
+    output checkpoint_column_t save_checkpoint_safe_column,
 
     // reg map checkpoint restore
     input logic restore_checkpoint_valid,
     input logic restore_checkpoint_speculate_failed,
     output logic restore_checkpoint_success,
-    input ROB_index_t restore_checkpoint_ROB_index  // from restore system, check tag val
-    input checkpoint_column_t restore_checkpoint_safe_column,
-    // input checkpoint_column_t restore_checkpoint_speculated_column,
+    input ROB_index_t restore_checkpoint_ROB_index,  // from restore system, check tag val
+    input checkpoint_column_t restore_checkpoint_safe_column
 );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,10 +62,10 @@ module phys_reg_map_table #(
         logic valid;
         ROB_index_t ROB_index;
         phys_reg_tag_t [NUM_ARCH_REGS-1:0] array;
-    } map_table_column_t;
+    } phys_reg_map_table_column_t;
 
-    map_table_column_t [MAP_TABLE_DEPTH-1:0] phys_reg_map_table_columns_by_column_index;
-    map_table_column_t [MAP_TABLE_DEPTH-1:0] next_phys_reg_map_table_columns_by_column_index;
+    phys_reg_map_table_column_t [CHECKPOINT_COLUMNS-1:0] phys_reg_map_table_columns_by_column_index;
+    phys_reg_map_table_column_t [CHECKPOINT_COLUMNS-1:0] next_phys_reg_map_table_columns_by_column_index;
 
     // map table pointers
         // working column
@@ -75,9 +73,9 @@ module phys_reg_map_table #(
         // tail column
             // column where next speculated column will be copied to
             // = working column + 1
-    map_table_column_index_t phys_reg_map_table_working_column;
-    map_table_column_index_t next_phys_reg_map_table_working_column;
-    // map_table_column_index_t phys_reg_map_table_tail_column;
+    checkpoint_column_t phys_reg_map_table_working_column;
+    checkpoint_column_t next_phys_reg_map_table_working_column;
+    // checkpoint_column_t phys_reg_map_table_tail_column;
 
     // logic:
 
@@ -97,14 +95,14 @@ module phys_reg_map_table #(
             end
 
             // column != 0
-            for (int i = 1; i < MAP_TABLE_DEPTH) begin
+            for (int i = 1; i < CHECKPOINT_COLUMNS; i++) begin
                 phys_reg_map_table_columns_by_column_index[i].valid <= 1'b0;
                 phys_reg_map_table_columns_by_column_index[i].ROB_index <= ROB_index_t'(0);
                 phys_reg_map_table_columns_by_column_index[i].array <= '0;
             end
             ///////////////////////////////////////////////////////////////////////////////////////////////
 
-            phys_reg_map_table_working_column <= map_table_column_index_t'(0);
+            phys_reg_map_table_working_column <= checkpoint_column_t'(0);
         end
         else begin
             phys_reg_map_table_columns_by_column_index <= next_phys_reg_map_table_columns_by_column_index;
@@ -116,9 +114,11 @@ module phys_reg_map_table #(
     always_comb begin
 
         // make sure working column valid
-        if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid) begin
+            // early reset seems to fail this
+        assert(~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid & nRST) 
+        else begin
             $display("ERROR: phys_reg_map_table: working column not valid");
-            assert(0);
+            $display("\t\tworking column = %h", phys_reg_map_table_working_column);
         end
 
         // default outputs:
@@ -144,6 +144,7 @@ module phys_reg_map_table #(
         next_phys_reg_map_table_working_column = phys_reg_map_table_working_column;
 
         // revert
+            // dispatch (and therefore rename) should not be allowed during restore
         if (revert_valid) begin
 
             // check currently have speculated mapping
@@ -174,6 +175,7 @@ module phys_reg_map_table #(
         end
 
         // restore
+            // dispatch (and therefore rename) should not be allowed during restore
         else if (restore_checkpoint_valid) begin
 
             // check speculation failed
@@ -212,6 +214,7 @@ module phys_reg_map_table #(
 
                 // invalidate safe column
                 next_phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column]
+                    .valid = 1'b0;
 
                 // give successful
                 restore_checkpoint_success = 1'b1;
@@ -244,8 +247,8 @@ module phys_reg_map_table #(
         else if (rename_valid) begin
 
             // write new mapping
-            next_phys_reg_map_table_columns_by_column_index[new_map_dest_arch_reg_tag] = 
-                new_map_dest_phys_reg_tag;
+            next_phys_reg_map_table_columns_by_column_index[rename_dest_arch_reg_tag] = 
+                rename_dest_phys_reg_tag;
         end
     end
 
@@ -253,6 +256,5 @@ module phys_reg_map_table #(
 
     // provide column pointers to pipeline
     assign save_checkpoint_safe_column = phys_reg_map_table_working_column;
-    // assign save_checkpoint_speculated_column = phys_reg_map_table_working_column + 1;
 
 endmodule
