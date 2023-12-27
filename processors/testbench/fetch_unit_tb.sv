@@ -175,7 +175,7 @@ module fetch_unit_tb ();
         // inputs:
             // assert reset
         sub_test_case = "assert reset";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b0;
@@ -213,7 +213,7 @@ module fetch_unit_tb ();
         // inputs
             // deassert reset
         sub_test_case = "deassert reset";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -261,7 +261,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -301,7 +301,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -341,7 +341,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -389,7 +389,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss
         sub_test_case = "miss";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -429,7 +429,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss
         sub_test_case = "miss";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -469,7 +469,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -509,7 +509,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss
         sub_test_case = "miss";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -549,7 +549,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -597,7 +597,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -637,7 +637,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (jal)
         sub_test_case = "hit (jal)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -677,7 +677,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -717,7 +717,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (jr)
         sub_test_case = "hit (jr)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -757,7 +757,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -797,7 +797,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (jal)
         sub_test_case = "hit (jal)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -837,7 +837,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (jal)
         sub_test_case = "hit (jal)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -877,7 +877,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (jr)
         sub_test_case = "hit (jr)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -917,7 +917,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -957,7 +957,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (jr)
         sub_test_case = "hit (jr)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1005,7 +1005,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1045,7 +1045,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, NT (correct))
         sub_test_case = "hit (beq, NT (correct))";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1085,7 +1085,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1125,7 +1125,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, NT (correct))
         sub_test_case = "hit (beq, NT (correct))";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1177,7 +1177,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1217,7 +1217,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, NT)
         sub_test_case = "hit (beq, NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1257,7 +1257,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1297,7 +1297,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1337,7 +1337,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + resolved PC + BTB update (T)
         sub_test_case = "hit + resolved PC + BTB update (T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1377,7 +1377,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1417,7 +1417,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1457,7 +1457,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, T)
         sub_test_case = "hit (beq, T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1497,7 +1497,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1537,7 +1537,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1577,7 +1577,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, T)
         sub_test_case = "hit (beq, T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1617,7 +1617,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + BTB update (NT)
         sub_test_case = "hit + BTB update (NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1657,7 +1657,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1697,7 +1697,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, T)
         sub_test_case = "hit (beq, T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1737,7 +1737,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + BTB update (NT)
         sub_test_case = "hit + BTB update (NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1777,7 +1777,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1817,7 +1817,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (beq, NT)
         sub_test_case = "hit (beq, NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1857,7 +1857,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1909,7 +1909,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1949,7 +1949,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne, NT)
         sub_test_case = "hit (bne, NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -1989,7 +1989,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2029,7 +2029,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2069,7 +2069,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + resolved PC + BTB update (T)
         sub_test_case = "hit + resolved PC + BTB update (T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2109,7 +2109,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2149,7 +2149,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2189,7 +2189,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne, T)
         sub_test_case = "hit (bne, T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2229,7 +2229,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2269,7 +2269,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2309,7 +2309,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne, T)
         sub_test_case = "hit (bne, T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2349,7 +2349,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + BTB update (NT)
         sub_test_case = "hit + BTB update (NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2389,7 +2389,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2429,7 +2429,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne, T)
         sub_test_case = "hit (bne, T)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2469,7 +2469,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + BTB update (NT)
         sub_test_case = "hit + BTB update (NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2509,7 +2509,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j)
         sub_test_case = "hit (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2549,7 +2549,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne, NT)
         sub_test_case = "hit (bne, NT)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2589,7 +2589,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2643,7 +2643,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss
         sub_test_case = "miss";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2683,7 +2683,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss + core control stall
         sub_test_case = "miss + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2723,7 +2723,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + core control stall
         sub_test_case = "hit + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2763,7 +2763,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + BTB update
         sub_test_case = "hit + BTB update";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2805,7 +2805,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss (j)
         sub_test_case = "miss (j)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2845,7 +2845,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss (j) + core control stall
         sub_test_case = "miss (j) + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2885,7 +2885,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j) + core control stall
         sub_test_case = "hit (j) + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2925,7 +2925,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (j) + BTB update
         sub_test_case = "hit (j) + BTB update";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -2967,7 +2967,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss (bne)
         sub_test_case = "miss (bne)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3007,7 +3007,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss (bne) + core control stall
         sub_test_case = "miss (bne) + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3047,7 +3047,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne) + core control stall
         sub_test_case = "hit (bne) + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3087,7 +3087,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit (bne)
         sub_test_case = "hit (bne)";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3129,7 +3129,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit + core control halt
         sub_test_case = "hit + core control halt";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3169,7 +3169,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss + core control halt
         sub_test_case = "miss + core control halt";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3209,7 +3209,7 @@ module fetch_unit_tb ();
         // inputs:
             // unhalt before
         sub_test_case = "unhalt before";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3249,7 +3249,7 @@ module fetch_unit_tb ();
         // inputs:
             // unhalt after
         sub_test_case = "unhalt after";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3298,7 +3298,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss + resolve
         sub_test_case = "miss + resolve";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3338,7 +3338,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss
         sub_test_case = "miss";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3378,7 +3378,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3420,7 +3420,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss + resolve + core control stall
         sub_test_case = "miss + resolve + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3460,7 +3460,7 @@ module fetch_unit_tb ();
         // inputs:
             // miss + core control stall
         sub_test_case = "miss + core control stall";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;
@@ -3500,7 +3500,7 @@ module fetch_unit_tb ();
         // inputs:
             // hit
         sub_test_case = "hit";
-        $display("\t- sub_test %s", sub_test_case);
+        $display("\t- sub_test:%s", sub_test_case);
 
         // reset
         nRST = 1'b1;

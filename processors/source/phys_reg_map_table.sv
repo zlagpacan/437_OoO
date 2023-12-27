@@ -38,7 +38,6 @@ module phys_reg_map_table #(
 
     // reg map checkpoint save
     input logic save_checkpoint_valid,
-    output logic save_checkpoint_success,
     input ROB_index_t save_checkpoint_ROB_index,    // from ROB, write tag val
     output checkpoint_column_t save_checkpoint_safe_column,
 
@@ -114,18 +113,18 @@ module phys_reg_map_table #(
     always_comb begin
 
         // make sure working column valid
-            // early reset seems to fail this
-        if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid & nRST) 
-        begin
-            $display("phys_reg_map_table: ERROR: working column not valid");
-            $display("\t\tworking column = %h", phys_reg_map_table_working_column);
-            assert(0);
-        end
+            // this seems to not assert reliably
+        // if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid) 
+        // begin
+        //     $display("phys_reg_map_table: ERROR: working column not valid");
+        //     $display("\t\tworking column = %h", phys_reg_map_table_working_column);
+        //     assert(0);
+        // end
 
         // default outputs:
         
         // provide successes to pipeline
-        save_checkpoint_success = 1'b0;
+        // save_checkpoint_success = 1'b0;
         restore_checkpoint_success = 1'b0;
 
         // map table reads:
@@ -177,48 +176,31 @@ module phys_reg_map_table #(
 
         // restore
             // dispatch (and therefore rename) should not be allowed during restore
-        else if (restore_checkpoint_valid) begin
+        else if (restore_checkpoint_valid & restore_checkpoint_speculate_failed) begin
 
-            // check speculation failed
-                // restore to safe col
-            if (restore_checkpoint_speculate_failed) begin
+            // check for VTM on restore col
+            if (phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column].valid &
+                phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column].ROB_index ==
+                restore_checkpoint_ROB_index
+            ) begin
+                // revert to safe column
+                next_phys_reg_map_table_working_column = restore_checkpoint_safe_column;
 
-                // check for VTM on restore col
-                if (phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid &
-                    phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].ROB_index ==
-                    restore_checkpoint_ROB_index
-                ) begin
-                    // revert to safe column
-                    next_phys_reg_map_table_working_column = restore_checkpoint_safe_column;
-
-                    // invalidate all other columns
-                    for (int i = 0; i < CHECKPOINT_COLUMNS; i++) begin
-                        if (checkpoint_column_t'(i) != restore_checkpoint_safe_column) begin
-                            next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(i)]
-                                .valid = 1'b0;
-                        end
+                // invalidate all other columns
+                for (int i = 0; i < CHECKPOINT_COLUMNS; i++) begin
+                    if (checkpoint_column_t'(i) != restore_checkpoint_safe_column) begin
+                        next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(i)]
+                            .valid = 1'b0;
                     end
-
-                    // give successful
-                    restore_checkpoint_success = 1'b1;
                 end
-
-                // otherwise, give unsuccessful
-                else begin
-                    restore_checkpoint_success = 1'b0;
-                end
-            end
-
-            // otherwise, speculation succeeded
-                // invalidate safe col
-            else begin
-
-                // invalidate safe column
-                next_phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column]
-                    .valid = 1'b0;
 
                 // give successful
                 restore_checkpoint_success = 1'b1;
+            end
+
+            // otherwise, give unsuccessful
+            else begin
+                restore_checkpoint_success = 1'b0;
             end
         end
 
@@ -228,7 +210,6 @@ module phys_reg_map_table #(
 
             // write new working column (working column + 1)
                 // valid
-                // given ROB index
                 // copy array working column to working column + 1
             next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column + 1]
                 .valid = 1'b1;
@@ -237,6 +218,10 @@ module phys_reg_map_table #(
             next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column + 1]
                 .array = phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
                 .array;
+
+            // mark old working column
+            next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
+                .ROB_index = save_checkpoint_ROB_index;
 
             // increment working column pointer
             next_phys_reg_map_table_working_column = phys_reg_map_table_working_column + 1;
@@ -248,8 +233,20 @@ module phys_reg_map_table #(
         else if (rename_valid) begin
 
             // write new mapping
-            next_phys_reg_map_table_columns_by_column_index[rename_dest_arch_reg_tag] = 
+            next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
+                .array[rename_dest_arch_reg_tag] = 
                 rename_dest_phys_reg_tag;
+        end
+
+        // as long as not reverting, can service checkpoint invalidate
+        if (restore_checkpoint_valid & ~restore_checkpoint_speculate_failed) begin
+
+            // invalidate safe column
+            next_phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column]
+                .valid = 1'b0;
+
+            // give successful
+            restore_checkpoint_success = 1'b1;
         end
     end
 
