@@ -15,6 +15,9 @@ import core_types_pkg::*;
 
 module fetch_unit_tb ();
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT signals:
+
     // parameters
     parameter PERIOD = 10;
 
@@ -111,8 +114,6 @@ module fetch_unit_tb ();
 
     task check_outputs();
     begin
-        static int init_num_errors = num_errors;
-
         if (expected_icache_REN !== fu_icache_REN) begin
             $display("\tERROR: expected_icache_REN (%h) != fu_icache_REN (%h)", expected_icache_REN, fu_icache_REN);
             num_errors++;
