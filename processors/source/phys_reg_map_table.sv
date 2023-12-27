@@ -117,7 +117,7 @@ module phys_reg_map_table #(
             // early reset seems to fail this
         if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid & nRST) 
         begin
-            $display("ERROR: phys_reg_map_table: working column not valid");
+            $display("phys_reg_map_table: ERROR: working column not valid");
             $display("\t\tworking column = %h", phys_reg_map_table_working_column);
             assert(0);
         end
@@ -153,7 +153,7 @@ module phys_reg_map_table #(
                 .array[revert_dest_arch_reg_tag] ==
                 revert_speculated_dest_phys_reg_tag)
             else begin
-                $display("ERROR: phys_reg_map_table: revert -> speculated phys reg mapping not the current mapping");
+                $display("phys_reg_map_table: ERROR: revert -> speculated phys reg mapping not the current mapping");
                 $display("\t\trevert_speculated_set_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
                 $display("\t\tmap table value = 0x%h",
