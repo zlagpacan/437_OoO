@@ -139,10 +139,10 @@ package core_types_pkg;
 
     // phys reg map table:
 
-    parameter MAP_TABLE_DEPTH = 4;
-    parameter LOG_MAP_TABLE_DEPTH = $clog2(MAP_TABLE_DEPTH);
+    parameter CHECKPOINT_COLUMNS = 4;
+    parameter LOG_CHECKPOINT_COLUMNS = $clog2(CHECKPOINT_COLUMNS);
 
-    typedef logic [LOG_MAP_TABLE_DEPTH-1:0] map_table_column_index_t;
+    typedef logic [LOG_CHECKPOINT_COLUMNS-1:0] checkpoint_column_t;
 
     // ROB:
 
