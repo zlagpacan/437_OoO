@@ -115,10 +115,11 @@ module phys_reg_map_table #(
 
         // make sure working column valid
             // early reset seems to fail this
-        assert(~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid & nRST) 
-        else begin
+        if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid & nRST) 
+        begin
             $display("ERROR: phys_reg_map_table: working column not valid");
             $display("\t\tworking column = %h", phys_reg_map_table_working_column);
+            assert(0);
         end
 
         // default outputs:
