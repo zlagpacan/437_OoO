@@ -144,7 +144,7 @@ module phys_reg_map_table #(
         next_phys_reg_map_table_working_column = phys_reg_map_table_working_column;
 
         // revert
-            // dispatch (and therefore rename) should not be allowed during restore
+            // dispatch (and therefore rename or save) should not be allowed during revert
         if (revert_valid) begin
 
             // check currently have speculated mapping
@@ -175,7 +175,7 @@ module phys_reg_map_table #(
         end
 
         // restore
-            // dispatch (and therefore rename) should not be allowed during restore
+            // dispatch (and therefore rename or save) should not be allowed during restore
         else if (restore_checkpoint_valid & restore_checkpoint_speculate_failed) begin
 
             // check for VTM on restore col
@@ -210,6 +210,8 @@ module phys_reg_map_table #(
 
             // write new working column (working column + 1)
                 // valid
+                // ROB index -> might as well match saving instr ROB index for now (will be overwritten
+                    // on next save)
                 // copy array working column to working column + 1
             next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column + 1]
                 .valid = 1'b1;
@@ -241,12 +243,23 @@ module phys_reg_map_table #(
         // as long as not reverting, can service checkpoint invalidate
         if (restore_checkpoint_valid & ~restore_checkpoint_speculate_failed) begin
 
-            // invalidate safe column
-            next_phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column]
-                .valid = 1'b0;
+            // check for VTM on restore col
+            if (phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column].valid &
+                phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column].ROB_index ==
+                restore_checkpoint_ROB_index
+            ) begin
+                // invalidate safe column
+                next_phys_reg_map_table_columns_by_column_index[restore_checkpoint_safe_column]
+                    .valid = 1'b0;
 
-            // give successful
-            restore_checkpoint_success = 1'b1;
+                // give successful
+                restore_checkpoint_success = 1'b1;
+                end
+
+            // otherwise, give unsuccessful
+            else begin
+                restore_checkpoint_success = 1'b0;
+            end
         end
     end
 
