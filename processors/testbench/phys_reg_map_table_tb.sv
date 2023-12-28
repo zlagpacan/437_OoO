@@ -77,12 +77,12 @@ module phys_reg_map_table_tb ();
     logic tb_restore_checkpoint_valid;
     // input logic restore_checkpoint_speculate_failed,
     logic tb_restore_checkpoint_speculate_failed;
-    // output logic restore_checkpoint_success,
-    logic prmt_restore_checkpoint_success, expected_restore_checkpoint_success;
     // input ROB_index_t restore_checkpoint_ROB_index  // from restore system, check tag val
     ROB_index_t tb_restore_checkpoint_ROB_index;
     // input checkpoint_column_t restore_checkpoint_safe_column,
     checkpoint_column_t tb_restore_checkpoint_safe_column;
+    // output logic restore_checkpoint_success,
+    logic prmt_restore_checkpoint_success, expected_restore_checkpoint_success;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT instantiation:
@@ -119,9 +119,9 @@ module phys_reg_map_table_tb ();
         // reg map checkpoint restore
         .restore_checkpoint_valid(tb_restore_checkpoint_valid),
         .restore_checkpoint_speculate_failed(tb_restore_checkpoint_speculate_failed),
-        .restore_checkpoint_success(prmt_restore_checkpoint_success),
         .restore_checkpoint_ROB_index(tb_restore_checkpoint_ROB_index),     // from restore system, check tag val
-        .restore_checkpoint_safe_column(tb_restore_checkpoint_safe_column)
+        .restore_checkpoint_safe_column(tb_restore_checkpoint_safe_column),
+        .restore_checkpoint_success(prmt_restore_checkpoint_success)
     );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1106,6 +1106,323 @@ module phys_reg_map_table_tb ();
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // save wrap around:
+        test_case = "save wrap around";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // save column 1, save column 2, save column 3, save column 0, save column 1,
+            // fail restore old save @ column 1
+
+         @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "save @ column 1";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b1;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(15);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b0;
+        tb_restore_checkpoint_speculate_failed = 1'b0;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+         @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "save @ column 2";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b1;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(16);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b0;
+        tb_restore_checkpoint_speculate_failed = 1'b0;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+         @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "save @ column 3";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b1;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(17);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b0;
+        tb_restore_checkpoint_speculate_failed = 1'b0;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(3);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "save @ column 0";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b1;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(18);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b0;
+        tb_restore_checkpoint_speculate_failed = 1'b0;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "save @ column 1";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b1;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(19);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b0;
+        tb_restore_checkpoint_speculate_failed = 1'b0;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "fail restore old save @ column 1";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b0;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(0);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b1;
+        tb_restore_checkpoint_speculate_failed = 1'b1;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(15);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(1);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
+        // reg map checkpoint restore
+        expected_restore_checkpoint_success = 1'b0;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs
+            // previous mapping all 1's
+        sub_test_case = "fail invalidate old save @ column 1";
+        $display("\t- sub_test: %s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // reg map reading
+        tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
+        tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        // reg map rename
+        tb_rename_valid = 1'b0;
+        tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_rename_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map revert
+        tb_revert_valid = 1'b0;
+        tb_revert_dest_arch_reg_tag = arch_reg_tag_t'(0);
+        tb_revert_safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        tb_revert_speculated_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        // reg map checkpoint save
+        tb_save_checkpoint_valid = 1'b0;
+        tb_save_checkpoint_ROB_index = ROB_index_t'(0);
+        // reg map checkpoint restore
+        tb_restore_checkpoint_valid = 1'b1;
+        tb_restore_checkpoint_speculate_failed = 1'b0;
+        tb_restore_checkpoint_ROB_index = ROB_index_t'(15);
+        tb_restore_checkpoint_safe_column = checkpoint_column_t'(1);
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // reg map reading
+        expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
+        expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        // reg map checkpoint save
+        expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
         // reg map checkpoint restore
         expected_restore_checkpoint_success = 1'b0;
 

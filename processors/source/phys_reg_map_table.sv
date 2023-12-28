@@ -44,9 +44,9 @@ module phys_reg_map_table #(
     // reg map checkpoint restore
     input logic restore_checkpoint_valid,
     input logic restore_checkpoint_speculate_failed,
-    output logic restore_checkpoint_success,
     input ROB_index_t restore_checkpoint_ROB_index,  // from restore system, check tag val
-    input checkpoint_column_t restore_checkpoint_safe_column
+    input checkpoint_column_t restore_checkpoint_safe_column,
+    output logic restore_checkpoint_success
 );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -213,11 +213,11 @@ module phys_reg_map_table #(
                 // ROB index -> might as well match saving instr ROB index for now (will be overwritten
                     // on next save)
                 // copy array working column to working column + 1
-            next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column + 1]
+            next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(phys_reg_map_table_working_column + 1)]
                 .valid = 1'b1;
-            next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column + 1]
+            next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(phys_reg_map_table_working_column + 1)]
                 .ROB_index = save_checkpoint_ROB_index;
-            next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column + 1]
+            next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(phys_reg_map_table_working_column + 1)]
                 .array = phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
                 .array;
 
@@ -226,7 +226,7 @@ module phys_reg_map_table #(
                 .ROB_index = save_checkpoint_ROB_index;
 
             // increment working column pointer
-            next_phys_reg_map_table_working_column = phys_reg_map_table_working_column + 1;
+            next_phys_reg_map_table_working_column = checkpoint_column_t'(phys_reg_map_table_working_column + 1);
         end
 
         // rename
