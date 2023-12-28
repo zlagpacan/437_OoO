@@ -137,12 +137,26 @@ package core_types_pkg;
 
     typedef logic [LOG_BTB_FRAMES-1:0] BTB_DIRP_index_t;
 
-    // phys reg map table:
+    // checkpoint system:
 
     parameter CHECKPOINT_COLUMNS = 4;
     parameter LOG_CHECKPOINT_COLUMNS = $clog2(CHECKPOINT_COLUMNS);
 
     typedef logic [LOG_CHECKPOINT_COLUMNS-1:0] checkpoint_column_t;
+
+    // phys reg map table:
+
+        // need checkpoint columns
+        // internal array follows NUM_ARCH_REGS
+
+    // phys reg free list:
+
+        // need checkpoint columns
+        // max size of free list is (NUM_PHYS_REGS - NUM_ARCH_REGS)?
+            // maximum number of non-in-flight phys reg's
+
+    parameter FREE_LIST_DEPTH = NUM_PHYS_REGS - NUM_ARCH_REGS;
+    parameter LOG_FREE_LIST_DEPTH = $clog2(FREE_LIST_DEPTH);
 
     // ROB:
 
