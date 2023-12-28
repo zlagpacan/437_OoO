@@ -44,6 +44,10 @@ module phys_reg_map_table_tb ();
     arch_reg_tag_t tb_source_arch_reg_tag_1;
     // output phys_reg_tag_t source_phys_reg_tag_1,
     phys_reg_tag_t prmt_source_phys_reg_tag_1, expected_source_phys_reg_tag_1;
+    // input arch_reg_tag_t old_dest_arch_reg_tag,
+    phys_reg_tag_t tb_old_dest_arch_reg_tag;
+    // output phys_reg_tag_t old_dest_phys_reg_tag,
+    phys_reg_tag_t prmt_old_dest_phys_reg_tag, expected_old_dest_phys_reg_tag;
 
     // // reg map rename
     // input logic rename_valid,
@@ -99,6 +103,8 @@ module phys_reg_map_table_tb ();
         .source_phys_reg_tag_0(prmt_source_phys_reg_tag_0),
         .source_arch_reg_tag_1(tb_source_arch_reg_tag_1),
         .source_phys_reg_tag_1(prmt_source_phys_reg_tag_1),
+        .old_dest_arch_reg_tag(tb_old_dest_arch_reg_tag),
+        .old_dest_phys_reg_tag(prmt_old_dest_phys_reg_tag),
 
         // reg map rename
         .rename_valid(tb_rename_valid),
@@ -143,6 +149,13 @@ module phys_reg_map_table_tb ();
             error = 1'b1;
         end
 
+        if (expected_old_dest_phys_reg_tag !== prmt_old_dest_phys_reg_tag) begin
+            $display("\tERROR: expected_old_dest_phys_reg_tag (%h) != prmt_old_dest_phys_reg_tag (%h)",
+                expected_old_dest_phys_reg_tag, prmt_old_dest_phys_reg_tag);
+            num_errors++;
+            error = 1'b1;
+        end
+
         if (expected_save_checkpoint_safe_column !== prmt_save_checkpoint_safe_column) begin
             $display("\tERROR: expected_save_checkpoint_safe_column (%h) != prmt_save_checkpoint_safe_column (%h)", 
                 expected_save_checkpoint_safe_column, prmt_save_checkpoint_safe_column);
@@ -182,6 +195,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -207,6 +221,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -223,6 +238,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -248,6 +264,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -275,6 +292,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i+1);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i+1);
             // reg map rename
             tb_rename_valid = 1'b0;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -300,6 +318,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i);
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'((i+1) % NUM_ARCH_REGS);
+            expected_old_dest_phys_reg_tag = phys_reg_tag_t'((i+1) % NUM_ARCH_REGS);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
             // reg map checkpoint restore
@@ -325,6 +344,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -350,6 +370,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -377,6 +398,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i-1 >= 0 ? i-1 : 0);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i);
             // reg map rename
             tb_rename_valid = 1'b1;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(i);
@@ -402,6 +424,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i-1 >= 0 ? (i-1) * 2 : 0);
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'(i);
+            expected_old_dest_phys_reg_tag = phys_reg_tag_t'(i);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
             // reg map checkpoint restore
@@ -427,6 +450,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -452,6 +476,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
         // reg map checkpoint restore
@@ -479,6 +504,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i+1);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i);
             // reg map rename
             tb_rename_valid = 1'b0;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -504,6 +530,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i);
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'((i+1) % NUM_ARCH_REGS);
+            expected_old_dest_phys_reg_tag = phys_reg_tag_t'(i);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
             // reg map checkpoint restore
@@ -529,6 +556,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -554,6 +582,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -572,6 +601,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -597,6 +627,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -624,6 +655,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i-1 >= 0 ? i-1 : 0);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i);
             // reg map rename
             tb_rename_valid = 1'b0;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -649,6 +681,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i-1 <= 0 ? 0 : ((i-1) % 10 == 0 ? 'h2b : i-1));
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'(i);
+            expected_old_dest_phys_reg_tag = phys_reg_tag_t'(i);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
             // reg map checkpoint restore
@@ -677,6 +710,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -702,6 +736,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(0);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -724,6 +759,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i-1 >= 0 ? i-1 : 0);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i);
             // reg map rename
             tb_rename_valid = 1'b1;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(i);
@@ -749,6 +785,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i-1 >= 0 ? 1 : 0);
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'(i == 0 ? 0 : i % 10 == 0 ? 'h2b : i);
+            expected_old_dest_phys_reg_tag = phys_reg_tag_t'(i == 0 ? 0 : i % 10 == 0 ? 'h2b : i);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
             // reg map checkpoint restore
@@ -768,6 +805,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -793,6 +831,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
         // reg map checkpoint restore
@@ -815,6 +854,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i-1 >= 0 ? i-1 : 0);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i-1 >= 0 ? i-1 : 0);
             // reg map rename
             tb_rename_valid = 1'b1;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(i);
@@ -840,6 +880,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i-1 >= 0 ? 2 : 1);
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+            expected_old_dest_phys_reg_tag = phys_reg_tag_t'(i-1 >= 0 ? 2 : 1);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
             // reg map checkpoint restore
@@ -859,6 +900,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -884,6 +926,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(2);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(2);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(2);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
         // reg map checkpoint restore
@@ -906,6 +949,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             tb_source_arch_reg_tag_0 = arch_reg_tag_t'(i-1 >= 0 ? i-1 : 0);
             tb_source_arch_reg_tag_1 = arch_reg_tag_t'(i);
+            tb_old_dest_arch_reg_tag = arch_reg_tag_t'(i);
             // reg map rename
             tb_rename_valid = 1'b1;
             tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(i);
@@ -931,6 +975,7 @@ module phys_reg_map_table_tb ();
             // reg map reading
             expected_source_phys_reg_tag_0 = phys_reg_tag_t'(i-1 >= 0 ? 3 : 2);
             expected_source_phys_reg_tag_1 = phys_reg_tag_t'(2);
+            expected_old_dest_phys_reg_tag = arch_reg_tag_t'(2);
             // reg map checkpoint save
             expected_save_checkpoint_safe_column = checkpoint_column_t'(3);
             // reg map checkpoint restore
@@ -950,6 +995,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -975,6 +1021,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(3);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(3);
+        expected_old_dest_phys_reg_tag = arch_reg_tag_t'(3);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(3);
         // reg map checkpoint restore
@@ -993,6 +1040,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1018,6 +1066,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(3);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(3);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(3);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(3);
         // reg map checkpoint restore
@@ -1036,6 +1085,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1061,6 +1111,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = arch_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
         // reg map checkpoint restore
@@ -1079,6 +1130,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1104,6 +1156,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
         // reg map checkpoint restore
@@ -1132,6 +1185,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1157,6 +1211,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
         // reg map checkpoint restore
@@ -1176,6 +1231,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1201,6 +1257,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
         // reg map checkpoint restore
@@ -1220,6 +1277,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1245,6 +1303,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(3);
         // reg map checkpoint restore
@@ -1264,6 +1323,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1289,6 +1349,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(0);
         // reg map checkpoint restore
@@ -1308,6 +1369,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1333,6 +1395,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(1);
         // reg map checkpoint restore
@@ -1352,6 +1415,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1377,6 +1441,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
         // reg map checkpoint restore
@@ -1396,6 +1461,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         tb_source_arch_reg_tag_0 = arch_reg_tag_t'(0);
         tb_source_arch_reg_tag_1 = arch_reg_tag_t'(0);
+        tb_old_dest_arch_reg_tag = arch_reg_tag_t'(0);
         // reg map rename
         tb_rename_valid = 1'b0;
         tb_rename_dest_arch_reg_tag = arch_reg_tag_t'(0);
@@ -1421,6 +1487,7 @@ module phys_reg_map_table_tb ();
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(1);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(1);
+        expected_old_dest_phys_reg_tag = phys_reg_tag_t'(1);
         // reg map checkpoint save
         expected_save_checkpoint_safe_column = checkpoint_column_t'(2);
         // reg map checkpoint restore
