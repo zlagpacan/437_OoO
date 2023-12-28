@@ -23,6 +23,8 @@ module phys_reg_map_table #(
     output phys_reg_tag_t source_phys_reg_tag_0,
     input arch_reg_tag_t source_arch_reg_tag_1,
     output phys_reg_tag_t source_phys_reg_tag_1,
+    input arch_reg_tag_t old_dest_arch_reg_tag,
+    output phys_reg_tag_t old_dest_phys_reg_tag,
 
     // reg map rename
     input logic rename_valid,
@@ -136,6 +138,10 @@ module phys_reg_map_table #(
         // source reg 1
         source_phys_reg_tag_1 = phys_reg_map_table_columns_by_column_index
             [phys_reg_map_table_working_column].array[source_arch_reg_tag_1];
+
+        // old dest reg
+        old_dest_phys_reg_tag = phys_reg_map_table_columns_by_column_index
+            [phys_reg_map_table_working_column].array[old_dest_arch_reg_tag];
 
         // map table writes:
 
