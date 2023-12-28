@@ -13,6 +13,9 @@ add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/exp
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_source_arch_reg_tag_1
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/prmt_source_phys_reg_tag_1
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/expected_source_phys_reg_tag_1
+add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_old_dest_arch_reg_tag
+add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/prmt_old_dest_phys_reg_tag
+add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/expected_old_dest_phys_reg_tag
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_rename_valid
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_rename_dest_arch_reg_tag
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_rename_dest_phys_reg_tag
@@ -21,8 +24,6 @@ add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_revert_safe_dest_phys_reg_tag
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_revert_speculated_dest_phys_reg_tag
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_save_checkpoint_valid
-add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/prmt_save_checkpoint_success
-add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/expected_save_checkpoint_success
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/tb_save_checkpoint_ROB_index
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/prmt_save_checkpoint_safe_column
 add wave -noupdate -expand -group {Top Level Signals} /phys_reg_map_table_tb/expected_save_checkpoint_safe_column
@@ -37,7 +38,7 @@ add wave -noupdate -expand -group {Internal Signals} /phys_reg_map_table_tb/DUT/
 add wave -noupdate -expand -group {Internal Signals} /phys_reg_map_table_tb/DUT/phys_reg_map_table_working_column
 add wave -noupdate -expand -group {Internal Signals} /phys_reg_map_table_tb/DUT/next_phys_reg_map_table_working_column
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {2100 ps} 0}
+WaveRestoreCursors {{Cursor 1} {576700 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 254
 configure wave -valuecolwidth 100
@@ -53,4 +54,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {28100 ps}
+WaveRestoreZoom {0 ps} {2583 ns}
