@@ -69,25 +69,23 @@ module <design_name>_tb ();
         $display("\t- sub_test: %s", sub_test_case);
 
 <assert reset test case>
+fill in ^
 
         // inputs:
         sub_test_case = "deassert reset";
         $display("\t- sub_test: %s", sub_test_case);
 
 <deassert reset test case>
+fill in ^
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // default:
-        test_case = default;
+        test_case = "default";
         $display("\ntest %d: %s", test_num, test_case);
         test_num++;
 
-        // inputs:
-        sub_test_case = default;
-        $display("\t- sub_test: %s", sub_test_case);
-fill in ^
-
 <default test case>
+fill in ^
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // finish:
