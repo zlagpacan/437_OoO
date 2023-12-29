@@ -28,15 +28,15 @@ module phys_reg_free_list #(
     input phys_reg_tag_t enqueue_phys_reg_tag,
 
     // full/empty
-        // should be left unused by may want to account for potential functionality externally
+        // should be left unused but may want to account for potential functionality externally
         // can use for assertions
     output logic full,
     output logic empty,
 
     // reg map revert
     input logic revert_valid,
-    // input arch_reg_tag_t revert_dest_arch_reg_tag,
-    // input phys_reg_tag_t revert_safe_dest_phys_reg_tag,
+        // input arch_reg_tag_t revert_dest_arch_reg_tag,
+        // input phys_reg_tag_t revert_safe_dest_phys_reg_tag,
     input phys_reg_tag_t revert_speculated_dest_phys_reg_tag,
         // can use for assertion but otherwise don't need
 
@@ -321,7 +321,7 @@ module phys_reg_free_list #(
         end
         else begin
             full <= next_full;
-            empty <= next_full;
+            empty <= next_empty;
         end
     end
 
