@@ -77,9 +77,12 @@ def parse_design(design_lines):
                 stripped_line = stripped_line[:stripped_line.index("//")].rstrip().rstrip(",")
 
             # split line at spaces
+                # first split is input vs. output
+                # last split is signal name
+                # middle splits are type 
             tuple_line = tuple(stripped_line.split())
             print(tuple_line) if PRINTS else None
-            design_signals.append(Signal(tuple_line[0], tuple_line[1], tuple_line[2]))
+            design_signals.append(Signal(tuple_line[0], " ".join(tuple_line[1:-1]), tuple_line[-1]))
             continue
 
         # ignore empty lines
@@ -194,8 +197,8 @@ def generate_tb(tb_base_lines, design_name, design_signals):
             if BLOCK_IS_SEQ:
                 DUT_instantiation_lines.extend([
                     f"\t\t// seq\n",
-                    f"\t\t.CLK(CLK)\n",
-                    f"\t\t.nRST(nRST)\n",
+                    f"\t\t.CLK(CLK),\n",
+                    f"\t\t.nRST(nRST),\n",
                 ])
 
             # iterate through signals adding signal connection lines
@@ -274,11 +277,90 @@ def generate_tb(tb_base_lines, design_name, design_signals):
 
             num_found += 1
             continue
+
+        # here on, have same input and output signal lines
+        input_signal_lines = []
+        output_signal_lines = []
+
+        # iterate through input signals setting tb signals
+        for input_comment_signal in [signal for signal in design_signals if signal.io == "input" or signal.type == "comment"]:
+            
+            # input signal
+            if input_comment_signal.io == "input":
+                # if typedef'd, add typecast
+                if not ("logic" in input_comment_signal.type):
+                    input_signal_lines.extend([
+                        f"\t\ttb_{input_comment_signal.name} = {input_comment_signal.type}'(\n",
+                    ])
+                # otherwise leave at = 
+                else:
+                    input_signal_lines.extend([
+                        f"\t\ttb_{input_comment_signal.name} = \n",
+                    ])
+
+            # only top level comments
+            elif input_comment_signal.type == "comment" and input_comment_signal.name.index("//") <= 4:
+                input_signal_lines.extend([
+                    f"\t{input_comment_signal.name}",
+                ])
+
+        # iterate through input signals setting expected signals
+        for output_comment_signal in [signal for signal in design_signals if signal.io == "output" or signal.type == "comment"]:
+            
+            # output signal
+            if output_comment_signal.io == "output":
+                # if typedef'd, add typecast
+                if not ("logic" in output_comment_signal.type):
+                    output_signal_lines.extend([
+                        f"\t\texpected_{output_comment_signal.name} = {output_comment_signal.type}'(\n",
+                    ])
+                # otherwise leave at = 
+                else:
+                    output_signal_lines.extend([
+                        f"\t\texpected_{output_comment_signal.name} = \n",
+                    ])
+            
+            # only top level comments
+            elif output_comment_signal.type == "comment" and output_comment_signal.name.index("//") <= 4:
+                output_signal_lines.extend([
+                    f"\t{output_comment_signal.name}",
+                ])
             
         # check for <assert reset test case>
         if line.lstrip().rstrip() == "<assert reset test case>":
             print(f"found <assert reset test case> at line {line_index}") if PRINTS else None
             
+            assert_reset_test_case_lines = []
+
+            # assert reset
+            assert_reset_test_case_lines.extend([
+                f"\t\t// reset\n",
+                f"\t\tnRST = 1'b0;\n",
+            ])
+                    
+            # extend input lines
+            assert_reset_test_case_lines.extend(input_signal_lines)
+
+            # posedge, then outputs
+            assert_reset_test_case_lines.extend([
+                f"\n",
+                f"\t\t@(posedge CLK);\n",
+                f"\n",
+                f"\t\t// outputs:\n",
+                f"\n",
+            ])
+
+            # extend output lines
+            assert_reset_test_case_lines.extend(output_signal_lines)
+
+            # check outputs
+            assert_reset_test_case_lines.extend([
+                f"\n",
+                f"\t\tcheck_outputs();\n",
+            ])
+
+            output_lines.extend(assert_reset_test_case_lines)
+
             num_found += 1
             continue
 
@@ -286,12 +368,88 @@ def generate_tb(tb_base_lines, design_name, design_signals):
         if line.lstrip().rstrip() == "<deassert reset test case>":
             print(f"found <deassert reset test case> at line {line_index}") if PRINTS else None
 
+            deassert_reset_test_case_lines = []
+
+            # deassert reset
+            deassert_reset_test_case_lines.extend([
+                f"\t\t// reset\n",
+                f"\t\tnRST = 1'b1;\n",
+            ])
+                    
+            # extend input lines
+            deassert_reset_test_case_lines.extend(input_signal_lines)
+
+            # posedge, then outputs
+            deassert_reset_test_case_lines.extend([
+                f"\n",
+                f"\t\t@(posedge CLK);\n",
+                f"\n",
+                f"\t\t// outputs:\n",
+                f"\n",
+            ])
+
+            # extend output lines
+            deassert_reset_test_case_lines.extend(output_signal_lines)
+
+            # check outputs
+            deassert_reset_test_case_lines.extend([
+                f"\n",
+                f"\t\tcheck_outputs();\n",
+            ])
+
+            output_lines.extend(deassert_reset_test_case_lines)
+
             num_found += 1
             continue
             
         # check for <default test case>
         if line.lstrip().rstrip() == "<default test case>":
             print(f"found <default test case> at line {line_index}") if PRINTS else None
+
+            default_test_case_lines = []
+
+            # posedge
+            default_test_case_lines.extend([
+                f"\t\t@(posedge CLK);\n",
+                f"\n",
+            ])
+
+            # sub test case
+            default_test_case_lines.extend([
+                f"\t\t// inputs\n",
+                f"\t\tsub_test_case = \"default\";\n",
+                f"\t\t$display(\"\\t- sub_test: %s\", sub_test_case);\n"
+                f"\n",
+            ])
+
+            # no reset
+            default_test_case_lines.extend([
+                f"\t\t// reset\n",
+                f"\t\tnRST = 1'b1;\n",
+            ])
+                    
+            # extend input lines
+            default_test_case_lines.extend(input_signal_lines)
+
+            # negedge, then outputs
+            default_test_case_lines.extend([
+                f"\n",
+                f"\t\t@(negedge CLK);\n",
+                f"\n",
+                f"\t\t// outputs:\n",
+                f"\n",
+            ])
+
+            # extend output lines
+            default_test_case_lines.extend(output_signal_lines)
+
+            # check outputs
+            default_test_case_lines.extend([
+                f"\n",
+                f"\t\tcheck_outputs();\n",
+            ])
+
+            output_lines.extend(default_test_case_lines)
 
             num_found += 1
             continue
