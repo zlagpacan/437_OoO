@@ -1,0 +1,116 @@
+/*
+    Repo: https://github.com/zlagpacan/437_OoO.git
+    Author: zlagpacan
+
+    File Name: <design_name>_tb.sv
+    Instantiation Hierarchy: 
+    Description: 
+       Testbench for <design_name> module. 
+*/
+fill in ^
+
+`timescale 1ns/100ps
+
+`include "core_types.vh"
+import core_types_pkg::*;
+
+module <design_name>_tb ();
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // TB setup:
+
+    // parameters
+    parameter PERIOD = 10;
+
+    // TB signals:
+    logic CLK = 1'b1, nRST;
+    string test_case;
+    string sub_test_case;
+    int test_num = 0;
+    int num_errors = 0;
+    logic error = 1'b0;
+
+    // clock gen
+    always begin #(PERIOD/2); CLK = ~CLK; end
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT signals:
+
+<DUT signals>
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT instantiation:
+
+<DUT instantiation>
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // tasks:
+
+    task check_outputs();
+    begin
+<task check_outputs>
+        #(PERIOD / 10);
+        error = 1'b0;
+    end
+    endtask
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // initial block:
+
+    initial begin
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // reset:
+        test_case = "reset";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // inputs:
+        sub_test_case = "assert reset";
+        $display("\t- sub_test: %s", sub_test_case);
+
+<assert reset test case>
+
+        // inputs:
+        sub_test_case = "deassert reset";
+        $display("\t- sub_test: %s", sub_test_case);
+
+<deassert reset test case>
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // default:
+        test_case = default;
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // inputs:
+        sub_test_case = default;
+        $display("\t- sub_test: %s", sub_test_case);
+fill in ^
+
+<default test case>
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // finish:
+        @(posedge CLK);
+        
+        test_case = "finish";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        @(posedge CLK);
+
+        $display();
+        if (num_errors) begin
+            $display("FAIL: %d tests fail", num_errors);
+        end
+        else begin
+            $display("SUCCESS: all tests pass");
+        end
+        $display();
+
+        $finish();
+    end
+
+endmodule
+
