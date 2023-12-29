@@ -33,6 +33,13 @@ module phys_reg_free_list #(
     output logic full,
     output logic empty,
 
+    // reg map revert
+    input logic revert_valid,
+    // input arch_reg_tag_t revert_dest_arch_reg_tag,
+    // input phys_reg_tag_t revert_safe_dest_phys_reg_tag,
+    input phys_reg_tag_t revert_speculated_dest_phys_reg_tag,
+        // can use for assertion but otherwise don't need
+
     // free list checkpoint save
     input logic save_checkpoint_valid,
     input ROB_index_t save_checkpoint_ROB_index,    // from ROB, write tag val
@@ -64,12 +71,16 @@ module phys_reg_free_list #(
     // head
     free_list_ptr_t head_index_ptr;
     free_list_ptr_t next_head_index_ptr;
+    
+    // previous head
+    free_list_ptr_t prev_head_index_ptr;
 
     // tail
     free_list_ptr_t tail_index_ptr;
     free_list_ptr_t next_tail_index_ptr;
 
     // FIFO array of checkpoint head pointers
+        // wrap around allowed, only need tail
     typedef struct packed {
         logic valid;
         ROB_index_t ROB_index;
@@ -90,8 +101,8 @@ module phys_reg_free_list #(
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // phys reg free list:
                 // reset free list follows phys reg tags > arch reg tags
-            for (int i = 0; i < FREE_LIST_DEPTH; i++) begin
-                phys_reg_free_list_by_index[free_list_ptr_t'(i)] <= phys_reg_tag_t'(NUM_ARCH_REGS + i);
+            for (free_list_ptr_t i = 0; i < FREE_LIST_DEPTH; i++) begin
+                phys_reg_free_list_by_index[i.index] <= phys_reg_tag_t'(NUM_ARCH_REGS + i.index);
             end
             ///////////////////////////////////////////////////////////////////////////////////////////////
             
@@ -108,7 +119,7 @@ module phys_reg_free_list #(
         else begin
             phys_reg_free_list_by_index <= next_phys_reg_free_list_by_index;
             head_index_ptr <= next_head_index_ptr;
-            tail_index_ptr <= next_head_index_ptr;
+            tail_index_ptr <= next_tail_index_ptr;
             checkpoint_columns_by_column_index <= next_checkpoint_columns_by_column_index;
             checkpoint_tail_column <= next_checkpoint_tail_column;
         end
@@ -122,31 +133,216 @@ module phys_reg_free_list #(
         // dequeue read
         dequeue_phys_reg_tag = phys_reg_free_list_by_index[head_index_ptr.index];
 
+        // previous head
+        prev_head_index_ptr = head_index_ptr - 1;
+
         // defaults:
+            
+        // hold state
+        next_phys_reg_free_list_by_index = phys_reg_free_list_by_index;
+        next_head_index_ptr = head_index_ptr;
+        next_tail_index_ptr = tail_index_ptr;
+        next_checkpoint_columns_by_column_index = checkpoint_columns_by_column_index;
+        next_checkpoint_tail_column = checkpoint_tail_column;
+
+        // restore failed
+        restore_checkpoint_success = 1'b0;
 
         // enqueue logic:
+            // can happen same cycle as save, restore, or dequeue, no problem
+            // this is only operation that directly writes to the array
+        if (enqueue_valid) begin
 
-        // dequeue logic
+            // write @ tail
+            next_phys_reg_free_list_by_index[tail_index_ptr.index] = enqueue_phys_reg_tag;
+
+            // increment tail
+            next_tail_index_ptr = tail_index_ptr + 1;
+        end
+
+        // checkpoint invalidate logic:
+            // keep separate since can do this during a dequeue or save
+        if (restore_checkpoint_valid & ~restore_checkpoint_speculate_failed) begin
+
+            // check for VTM on restore col
+            if (checkpoint_columns_by_column_index[restore_checkpoint_safe_column].valid &
+                checkpoint_columns_by_column_index[restore_checkpoint_safe_column].ROB_index ==
+                restore_checkpoint_ROB_index
+            ) begin
+                // invalidate safe column
+                next_checkpoint_columns_by_column_index[restore_checkpoint_safe_column]
+                    .valid = 1'b0;
+
+                // give successful
+                restore_checkpoint_success = 1'b1;
+            end
+
+            // otherwise, give unsuccessful
+            else begin
+                restore_checkpoint_success = 1'b0;
+            end
+        end
+
+        // revert/restore/save/dequeue logic:
+            // implied that each of these cases are mutually exclusive
+            // these operations only change the values of pointers, don't write to the array
+
+        // revert
+        if (revert_valid) begin
+
+            // check value at head - 1 == expected speculated value to re-free
+            assert(phys_reg_free_list_by_index[prev_head_index_ptr.index] ==
+                revert_speculated_dest_phys_reg_tag)
+            else begin
+                $display("phys_reg_free_list: ERROR: revert -> speculated phys reg mapping not in expected free list slot");
+                $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
+                    revert_speculated_dest_phys_reg_tag);
+                $display("\t\tfree list value = 0x%h",
+                    phys_reg_free_list_by_index[prev_head_index_ptr.index]);
+            end
+
+            // decrement head
+            next_head_index_ptr = prev_head_index_ptr;
+        end
+
+        // restore
+        else if (restore_checkpoint_valid & restore_checkpoint_speculate_failed) begin
+
+            // check for VTM on restore col
+            if (checkpoint_columns_by_column_index[restore_checkpoint_safe_column].valid & 
+                checkpoint_columns_by_column_index[restore_checkpoint_safe_column].ROB_index ==
+                restore_checkpoint_ROB_index
+            ) begin
+                // revert to safe column
+                next_checkpoint_tail_column = restore_checkpoint_safe_column;
+
+                // update head pointer following safe column value
+                next_head_index_ptr = checkpoint_columns_by_column_index[restore_checkpoint_safe_column]
+                    .checkpoint_head_index_ptr;
+
+                // invalidate all other columns
+                for (checkpoint_column_t i = 0; i < CHECKPOINT_COLUMNS; i++) begin
+                    if (i != restore_checkpoint_safe_column) begin
+                        next_checkpoint_columns_by_column_index[i]
+                            .valid = 1'b0;
+                    end
+                end
+
+                // give successful
+                restore_checkpoint_success = 1'b1;
+            end
+
+            // otherwise, give unsuccessful
+            else begin
+                restore_checkpoint_success = 1'b0;
+            end
+        end
+
+        // save
+        else if (save_checkpoint_valid) begin
+
+            // enqueue new checkpoint
+                // valid
+                // ROB index of dispatching instr
+                // copy head pointer value
+            next_checkpoint_columns_by_column_index[checkpoint_tail_column]
+                .valid = 1'b1;
+            next_checkpoint_columns_by_column_index[checkpoint_tail_column]
+                .ROB_index = save_checkpoint_ROB_index;
+            next_checkpoint_columns_by_column_index[checkpoint_tail_column]
+                .checkpoint_head_index_ptr = head_index_ptr;
+
+            // increment checkpoint FIFO tail
+            next_checkpoint_tail_column = checkpoint_tail_column + 1;
+        end
+
+        // dequeue
+        else if (dequeue_valid) begin
+
+            // increment head
+            next_head_index_ptr = head_index_ptr + 1;
+        end
     end
 
-    // free list full/empty
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // free list full/empty:
+        // definitely want empty to signal that can't do new rename, need to stall dispatch
+        // for full, should naturally never overflow since cannot have more mappings which can be in the 
+            // free list than (NUM_PHYS_REGS - NUM_ARCH_REGS) == (FREE_LIST_DEPTH)
+
+    ////////////////////////////
+    // combinational version: //
+    ////////////////////////////
+        // combinational logic on current head and tail pointer values
+
+    // always_comb begin
+
+    //     // default: not full/empty
+    //     full = 1'b0;
+    //     empty = 1'b0;
+
+    //     // check for full/empty
+    //     if (head_index_ptr.index == tail_index_ptr.index) begin
+
+    //         // check for empty
+    //         if (head_index_ptr.msb == tail_index_ptr.msb) begin
+    //             empty = 1'b1;
+    //         end
+
+    //         // check for full
+    //         else if (head_index_ptr.msb != tail_index_ptr.msb) begin
+    //             full = 1'b1;
+    //         end
+
+    //         // otherwise, unexpected
+    //         else begin
+    //             $display("phys_reg_free_list: invalid full/empty case");
+    //             assert(0);
+    //         end
+    //     end
+    // end
+
+    /////////////////////////
+    // registered version: //
+    /////////////////////////
+        // equivalent timing to combinational version but have value at beginning of cycle
+        // determine will be full/emptpy on cycle before
+
+    // next full/empty
+    logic next_full;
+    logic next_empty;
+
+    // seq
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            // start full, not empty
+            full <= 1'b1;
+            empty <= 1'b0;
+        end
+        else begin
+            full <= next_full;
+            empty <= next_full;
+        end
+    end
+
+    // comb
     always_comb begin
 
         // default: not full/empty
-        full = 1'b0;
-        empty = 1'b0;
+        next_full = 1'b0;
+        next_empty = 1'b0;
 
         // check for full/empty
-        if (head_index_ptr.index == tail_index_ptr.index) begin
+        if (next_head_index_ptr.index == next_tail_index_ptr.index) begin
 
             // check for empty
-            if (head_index_ptr.msb == tail_index_ptr.msb) begin
-                empty = 1'b1;
+            if (next_head_index_ptr.msb == next_tail_index_ptr.msb) begin
+                next_empty = 1'b1;
             end
 
             // check for full
-            else if (head_index_ptr.msb != tail_index_ptr.msb) begin
-                full = 1'b1;
+            else if (next_head_index_ptr.msb != next_tail_index_ptr.msb) begin
+                next_full = 1'b1;
             end
 
             // otherwise, unexpected
@@ -156,5 +352,11 @@ module phys_reg_free_list #(
             end
         end
     end
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // wires:
+
+    // outputs
+    assign save_checkpoint_safe_column = checkpoint_tail_column;
 
 endmodule
