@@ -159,7 +159,7 @@ module phys_reg_map_table #(
                 revert_speculated_dest_phys_reg_tag)
             else begin
                 $display("phys_reg_map_table: ERROR: revert -> speculated phys reg mapping not the current mapping");
-                $display("\t\trevert_speculated_set_phys_reg_tag = 0x%h", 
+                $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
                 $display("\t\tmap table value = 0x%h",
                     phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
