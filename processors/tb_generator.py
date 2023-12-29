@@ -278,7 +278,7 @@ def generate_tb(tb_base_lines, design_name, design_signals):
         # check for <assert reset test case>
         if line.lstrip().rstrip() == "<assert reset test case>":
             print(f"found <assert reset test case> at line {line_index}") if PRINTS else None
-
+            
             num_found += 1
             continue
 
