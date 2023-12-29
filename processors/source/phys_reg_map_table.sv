@@ -246,7 +246,8 @@ module phys_reg_map_table #(
                 rename_dest_phys_reg_tag;
         end
 
-        // as long as not reverting, can service checkpoint invalidate
+        // checkpoint invalidate
+            // keep separate since can do this during a rename or save
         if (restore_checkpoint_valid & ~restore_checkpoint_speculate_failed) begin
 
             // check for VTM on restore col
