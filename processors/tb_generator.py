@@ -268,7 +268,7 @@ def generate_tb(tb_base_lines, design_name, design_signals):
                     f"\t\t\t$display(\"\\tERROR: expected_{output_signal.name} (%h) != DUT_{output_signal.name} (%h)\",\n",
                     f"\t\t\t\texpected_{output_signal.name}, DUT_{output_signal.name});\n"
                     f"\t\t\tnum_errors++;\n",
-                    f"\t\t\terror = 1'b1;\n",
+                    f"\t\t\ttb_error = 1'b1;\n",
                     f"\t\tend\n",
                     f"\n",
                 ])
