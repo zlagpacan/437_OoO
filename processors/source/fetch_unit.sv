@@ -18,6 +18,9 @@ module fetch_unit #(
     // seq
     input logic CLK, nRST,
 
+    // DUT error
+    output logic DUT_error,
+
     // BTB/DIRP inputs from pipeline
     input logic from_pipeline_BTB_DIRP_update,              // shared b/w BTB and DIRP
     input BTB_DIRP_index_t from_pipeline_BTB_DIRP_index,    // shared b/w BTB and DIRP
@@ -45,6 +48,21 @@ module fetch_unit #(
     output pc_t to_pipeline_PC,         // only need 14-bit addr
     output pc_t to_pipeline_nPC         // only need 14-bit addr
 );
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT error:
+
+    logic next_DUT_error;
+
+    // seq + logic
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            DUT_error <= 1'b0;
+        end
+        else begin
+            DUT_error <= next_DUT_error;
+        end
+    end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // internal signals:
@@ -273,6 +291,9 @@ module fetch_unit #(
     // comb
     always_comb begin
 
+        // no DUT error
+        next_DUT_error = 1'b0;
+
         // get J bits (lower 14)
         jPC = instr[PC_WIDTH-1:0];
 
@@ -308,7 +329,8 @@ module fetch_unit #(
                 // shouldn't get here
                 else begin
                     $display("fetch_unit: ERROR: DIRP_state invalid");
-                    assert(0);
+                    // assert(0);
+                    next_DUT_error = 1'b1;
                 end
             end
             // j or jal

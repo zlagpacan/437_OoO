@@ -62,6 +62,9 @@ module fetch_unit_tb ();
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT output signals:
 
+    // DUT error
+    logic DUT_DUT_error, expected_DUT_error;
+
     // I$
     logic fu_icache_REN, expected_icache_REN;
     word_t fu_icache_addr, expected_icache_addr;
@@ -82,6 +85,9 @@ module fetch_unit_tb ();
         // seq
         .CLK(CLK),
         .nRST(nRST),
+
+        // DUT error
+        .DUT_error(DUT_DUT_error),
 
         // inputs
         .from_pipeline_BTB_DIRP_update(tb_from_pipeline_BTB_DIRP_update),
@@ -114,6 +120,12 @@ module fetch_unit_tb ();
 
     task check_outputs();
     begin
+        if (expected_DUT_error !== DUT_DUT_error) begin
+            $display("\tERROR: expected_DUT_error (%h) != DUT_DUT_error (%h)", expected_DUT_error, DUT_DUT_error);
+            num_errors++;
+            error = 1'b1;
+        end
+
         if (expected_icache_REN !== fu_icache_REN) begin
             $display("\tERROR: expected_icache_REN (%h) != fu_icache_REN (%h)", expected_icache_REN, fu_icache_REN);
             num_errors++;
@@ -198,6 +210,8 @@ module fetch_unit_tb ();
 
         // outputs:
 
+        // DUT error (SET ONCE HERE)
+        expected_DUT_error = 1'b0;
         // I$
         expected_icache_REN = 1'b0;
         expected_icache_addr = 32'h0;
