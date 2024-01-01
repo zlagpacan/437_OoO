@@ -35,6 +35,9 @@ module phys_reg_map_table_tb ();
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT signals:
 
+    // DUT error
+	logic DUT_DUT_error, expected_DUT_error;
+
     // // reg map reading
     // input arch_reg_tag_t source_arch_reg_tag_0,
     arch_reg_tag_t tb_source_arch_reg_tag_0;
@@ -98,6 +101,9 @@ module phys_reg_map_table_tb ();
         .CLK(CLK),
         .nRST(nRST),
 
+        // DUT error
+        .DUT_error(DUT_DUT_error),
+
         // reg map reading
         .source_arch_reg_tag_0(tb_source_arch_reg_tag_0),
         .source_phys_reg_tag_0(prmt_source_phys_reg_tag_0),
@@ -135,6 +141,13 @@ module phys_reg_map_table_tb ();
 
     task check_outputs();
     begin
+        if (expected_DUT_error !== DUT_DUT_error) begin
+            $display("\tERROR: expected_DUT_error (%h) != DUT_DUT_error (%h)", 
+                expected_DUT_error, DUT_DUT_error);
+            num_errors++;
+            error = 1'b1;
+        end
+
         if (expected_source_phys_reg_tag_0 !== prmt_source_phys_reg_tag_0) begin
             $display("\tERROR: expected_source_phys_reg_tag_0 (%h) != prmt_source_phys_reg_tag_0 (%h)", 
                 expected_source_phys_reg_tag_0, prmt_source_phys_reg_tag_0);
@@ -218,6 +231,8 @@ module phys_reg_map_table_tb ();
 
         // outputs:
 
+        // DUT error (SET ONCE HERE)
+        expected_DUT_error = 1'b0;
         // reg map reading
         expected_source_phys_reg_tag_0 = phys_reg_tag_t'(0);
         expected_source_phys_reg_tag_1 = phys_reg_tag_t'(0);
