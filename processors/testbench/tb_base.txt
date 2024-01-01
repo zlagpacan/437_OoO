@@ -28,7 +28,7 @@ module <design_name>_tb ();
     string sub_test_case;
     int test_num = 0;
     int num_errors = 0;
-    logic error = 1'b0;
+    logic tb_error = 1'b0;
 
     // clock gen
     always begin #(PERIOD/2); CLK = ~CLK; end
@@ -49,7 +49,7 @@ module <design_name>_tb ();
     begin
 <task check_outputs>
         #(PERIOD / 10);
-        error = 1'b0;
+        tb_error = 1'b0;
     end
     endtask
 
