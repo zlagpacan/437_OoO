@@ -18,6 +18,9 @@ module phys_reg_map_table #(
     // seq
     input logic CLK, nRST,
 
+    // DUT error
+    output logic DUT_error,
+
     // reg map reading
     input arch_reg_tag_t source_arch_reg_tag_0,
     output phys_reg_tag_t source_phys_reg_tag_0,
@@ -50,6 +53,21 @@ module phys_reg_map_table #(
     input checkpoint_column_t restore_checkpoint_safe_column,
     output logic restore_checkpoint_success
 );
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT error:
+
+    logic next_DUT_error;
+
+    // seq + logic
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            DUT_error <= 1'b0;
+        end
+        else begin
+            DUT_error <= next_DUT_error;
+        end
+    end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // map table array:
@@ -114,16 +132,18 @@ module phys_reg_map_table #(
     // map table array accesses
     always_comb begin
 
-        // make sure working column valid
-            // this seems to not assert reliably
-        // if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid) 
-        // begin
-        //     $display("phys_reg_map_table: ERROR: working column not valid");
-        //     $display("\t\tworking column = %h", phys_reg_map_table_working_column);
-        //     assert(0);
-        // end
+        // DUT error: make sure working column valid
+        if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid) 
+        begin
+            $display("phys_reg_map_table: ERROR: working column not valid");
+            $display("\t\tworking column = %h", phys_reg_map_table_working_column);
+            next_DUT_error = 1'b1;
+        end
 
         // default outputs:
+
+        // no DUT error
+        next_DUT_error = 1'b0;
         
         // provide successes to pipeline
         // save_checkpoint_success = 1'b0;
@@ -153,17 +173,18 @@ module phys_reg_map_table #(
             // dispatch (and therefore rename or save) should not be allowed during revert
         if (revert_valid) begin
 
-            // check currently have speculated mapping
-            assert(phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
-                .array[revert_dest_arch_reg_tag] ==
+            // DUT error: check currently have speculated mapping
+            if(phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
+                .array[revert_dest_arch_reg_tag] !=
                 revert_speculated_dest_phys_reg_tag)
-            else begin
+            begin
                 $display("phys_reg_map_table: ERROR: revert -> speculated phys reg mapping not the current mapping");
                 $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
                 $display("\t\tmap table value = 0x%h",
                     phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
                     .array[revert_dest_arch_reg_tag]);
+                next_DUT_error = 1'b1;
             end
 
             // write safe mapping (undo rename)
