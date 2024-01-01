@@ -19,6 +19,9 @@ module phys_reg_free_list #(
     // seq
     input logic CLK, nRST,
 
+    // DUT error
+    output logic DUT_error,
+
     // dequeue
     input logic dequeue_valid,
     output phys_reg_tag_t dequeue_phys_reg_tag,
@@ -54,6 +57,21 @@ module phys_reg_free_list #(
 );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT error:
+
+    logic next_DUT_error;
+
+    // seq + logic
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            DUT_error <= 1'b0;
+        end
+        else begin
+            DUT_error <= next_DUT_error;
+        end
+    end
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // free list FIFO array:
 
     phys_reg_tag_t [FREE_LIST_DEPTH-1:0] phys_reg_free_list_by_index;
@@ -64,8 +82,8 @@ module phys_reg_free_list #(
         // msb for detecting empty/full
     // typedef logic [LOG_FREE_LIST_DEPTH:0] free_list_ptr_t;
     typedef struct packed {
-        logic [LOG_FREE_LIST_DEPTH-1:0] index;
         logic msb;
+        logic [LOG_FREE_LIST_DEPTH-1:0] index;
     } free_list_ptr_t;
 
     // head
@@ -96,13 +114,14 @@ module phys_reg_free_list #(
     // logic:
 
     // seq
-    always_ff @ (posedge CLK, nRST) begin
+    always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
             ///////////////////////////////////////////////////////////////////////////////////////////////
             // phys reg free list:
-                // reset free list follows phys reg tags > arch reg tags
-            for (free_list_ptr_t i = 0; i < FREE_LIST_DEPTH; i++) begin
-                phys_reg_free_list_by_index[i.index] <= phys_reg_tag_t'(NUM_ARCH_REGS + i.index);
+                // reset free list follows the phys reg tags > arch reg tags
+                // start from next after highest arch reg tag
+            for (int i = 0; i < FREE_LIST_DEPTH; i++) begin
+                phys_reg_free_list_by_index[i] <= phys_reg_tag_t'(NUM_ARCH_REGS + i);
             end
             ///////////////////////////////////////////////////////////////////////////////////////////////
             
@@ -137,6 +156,9 @@ module phys_reg_free_list #(
         prev_head_index_ptr = head_index_ptr - 1;
 
         // defaults:
+
+        // no DUT error
+        next_DUT_error = 1'b0;
             
         // hold state
         next_phys_reg_free_list_by_index = phys_reg_free_list_by_index;
@@ -152,6 +174,12 @@ module phys_reg_free_list #(
             // can happen same cycle as save, restore, or dequeue, no problem
             // this is only operation that directly writes to the array
         if (enqueue_valid) begin
+
+            // DUT error: FIFO full
+            if (full) begin
+                $display("phys_reg_free_list: ERROR: tried to enqueue when free list full");
+                next_DUT_error = 1'b1;
+            end
 
             // write @ tail
             next_phys_reg_free_list_by_index[tail_index_ptr.index] = enqueue_phys_reg_tag;
@@ -190,15 +218,14 @@ module phys_reg_free_list #(
         // revert
         if (revert_valid) begin
 
-            // check value at head - 1 == expected speculated value to re-free
-            assert(phys_reg_free_list_by_index[prev_head_index_ptr.index] ==
-                revert_speculated_dest_phys_reg_tag)
-            else begin
+            // DUT error: check value at head - 1 == expected speculated value to re-free
+            if (phys_reg_free_list_by_index[prev_head_index_ptr.index] != revert_speculated_dest_phys_reg_tag) begin
                 $display("phys_reg_free_list: ERROR: revert -> speculated phys reg mapping not in expected free list slot");
                 $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
                 $display("\t\tfree list value = 0x%h",
                     phys_reg_free_list_by_index[prev_head_index_ptr.index]);
+                next_DUT_error = 1'b1;
             end
 
             // decrement head
@@ -221,8 +248,8 @@ module phys_reg_free_list #(
                     .checkpoint_head_index_ptr;
 
                 // invalidate all other columns
-                for (checkpoint_column_t i = 0; i < CHECKPOINT_COLUMNS; i++) begin
-                    if (i != restore_checkpoint_safe_column) begin
+                for (int i = 0; i < CHECKPOINT_COLUMNS; i++) begin
+                    if (checkpoint_column_t'(i) != restore_checkpoint_safe_column) begin
                         next_checkpoint_columns_by_column_index[i]
                             .valid = 1'b0;
                     end
@@ -347,7 +374,7 @@ module phys_reg_free_list #(
 
             // otherwise, unexpected
             else begin
-                $display("phys_reg_free_list: invalid full/empty case");
+                $display("phys_reg_free_list: ERROR: invalid full/empty case");
                 assert(0);
             end
         end
