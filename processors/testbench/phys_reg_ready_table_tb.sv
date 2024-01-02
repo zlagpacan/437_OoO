@@ -96,21 +96,21 @@ module phys_reg_ready_table_tb ();
     task check_outputs();
     begin
 		if (expected_DUT_error !== DUT_DUT_error) begin
-			$display("\tERROR: expected_DUT_error (%h) != DUT_DUT_error (%h)",
+			$display("TB ERROR: expected_DUT_error (%h) != DUT_DUT_error (%h)",
 				expected_DUT_error, DUT_DUT_error);
 			num_errors++;
 			tb_error = 1'b1;
 		end
 
 		if (expected_dispatch_source_0_ready !== DUT_dispatch_source_0_ready) begin
-			$display("\tERROR: expected_dispatch_source_0_ready (%h) != DUT_dispatch_source_0_ready (%h)",
+			$display("TB ERROR: expected_dispatch_source_0_ready (%h) != DUT_dispatch_source_0_ready (%h)",
 				expected_dispatch_source_0_ready, DUT_dispatch_source_0_ready);
 			num_errors++;
 			tb_error = 1'b1;
 		end
 
 		if (expected_dispatch_source_1_ready !== DUT_dispatch_source_1_ready) begin
-			$display("\tERROR: expected_dispatch_source_1_ready (%h) != DUT_dispatch_source_1_ready (%h)",
+			$display("TB ERROR: expected_dispatch_source_1_ready (%h) != DUT_dispatch_source_1_ready (%h)",
 				expected_dispatch_source_1_ready, DUT_dispatch_source_1_ready);
 			num_errors++;
 			tb_error = 1'b1;
@@ -232,6 +232,357 @@ module phys_reg_ready_table_tb ();
 	    // complete
 
 		check_outputs();
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+        // strobe reset values:
+        test_case = "strobe reset values";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+		// iterate through phys reg's
+		for (int i = 0; i < NUM_PHYS_REGS; i++) begin
+
+			@(posedge CLK);
+
+			// inputs
+			sub_test_case = $sformatf("read phys reg %d", i);
+			$display("\t- sub_test: %s", sub_test_case);
+
+			// reset
+			nRST = 1'b1;
+			// DUT error
+			// dispatch
+			tb_dispatch_source_0_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_dispatch_source_1_phys_reg_tag = phys_reg_tag_t'(NUM_PHYS_REGS - 1 - i);
+			tb_dispatch_dest_write = 1'b0;
+			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(0);
+			// complete
+			tb_complete_bus_0_valid = 1'b0;
+			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+			tb_complete_bus_1_valid = 1'b0;
+			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+
+			@(negedge CLK);
+
+			// outputs:
+
+			// DUT error
+			expected_DUT_error = 1'b0;
+			// dispatch
+			expected_dispatch_source_0_ready = i < 32 ? 1'b1 : 1'b0;
+			expected_dispatch_source_1_ready = NUM_PHYS_REGS - 1 - i < 32 ? 1'b1 : 1'b0;
+			// complete
+
+			check_outputs();
+		end
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+        // complete all non-arch reg's complete bus 0/1:
+        test_case = "complete all non-arch reg's complete bus 0/1";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+		// iterate through phys reg's
+		for (int i = 32; i < 64; i++) begin
+
+			@(posedge CLK);
+
+			// inputs
+			sub_test_case = $sformatf("set-read phys reg %d", i);
+			$display("\t- sub_test: %s", sub_test_case);
+
+			// reset
+			nRST = 1'b1;
+			// DUT error
+			// dispatch
+			tb_dispatch_source_0_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_dispatch_source_1_phys_reg_tag = phys_reg_tag_t'(i + 1);
+			tb_dispatch_dest_write = 1'b0;
+			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(0);
+			// complete
+			tb_complete_bus_0_valid = i % 2 == 0 ? 1'b1 : 1'b0;
+			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_complete_bus_1_valid = i % 2 == 0 ? 1'b0 : 1'b1;
+			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i);
+
+			@(negedge CLK);
+
+			// outputs:
+
+			// DUT error
+			expected_DUT_error = 1'b0;
+			// dispatch
+			expected_dispatch_source_0_ready = 1'b1;
+			expected_dispatch_source_1_ready = i == 63 ? 1'b1 : 1'b0;
+			// complete
+
+			check_outputs();
+		end
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+        // dispatch all phys reg's:
+        test_case = "dispatch all phys reg's";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+		// iterate through phys reg's
+		for (int i = 0; i < 64; i++) begin
+
+			@(posedge CLK);
+
+			// inputs
+			sub_test_case = $sformatf("clear-read phys reg %d", i);
+			$display("\t- sub_test: %s", sub_test_case);
+
+			// reset
+			nRST = 1'b1;
+			// DUT error
+			// dispatch
+			tb_dispatch_source_0_phys_reg_tag = phys_reg_tag_t'(i + 1);
+			tb_dispatch_source_1_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_dispatch_dest_write = 1'b1;
+			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			// complete
+			tb_complete_bus_0_valid = 1'b0;
+			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+			tb_complete_bus_1_valid = 1'b0;
+			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+
+			@(negedge CLK);
+
+			// outputs:
+
+			// DUT error
+			expected_DUT_error = i == 1 ? 1'b1 : 1'b0; // intentional DUT_error when write to phys reg 0
+			// dispatch
+			expected_dispatch_source_0_ready = phys_reg_tag_t'(i + 1) != 0 ? 1'b1 : 1'b0;
+			expected_dispatch_source_1_ready = 1'b0;
+			// complete
+
+			check_outputs();
+		end
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+        // double complete all phys reg's:
+        test_case = "double complete all phys reg's";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+		// iterate through phys reg's
+		for (int i = 0; i < 64; i += 2) begin
+
+			@(posedge CLK);
+
+			// inputs
+			sub_test_case = $sformatf("complete-read phys reg %d and %d", i, i + 1);
+			$display("\t- sub_test: %s", sub_test_case);
+
+			// reset
+			nRST = 1'b1;
+			// DUT error
+			// dispatch
+			tb_dispatch_source_0_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_dispatch_source_1_phys_reg_tag = phys_reg_tag_t'(i + 1);
+			tb_dispatch_dest_write = 1'b0;
+			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(i * 2); // anything
+			// complete
+			tb_complete_bus_0_valid = 1'b1;
+			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i + 1);
+			tb_complete_bus_1_valid = 1'b1;
+			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i);
+
+			@(negedge CLK);
+
+			// outputs:
+
+			// DUT error
+			expected_DUT_error = i == 2 ? 1'b1 : 1'b0; // intentional DUT_error when write to phys reg 0
+			// dispatch
+			expected_dispatch_source_0_ready = 1'b1;
+			expected_dispatch_source_1_ready = 1'b1;
+			// complete
+
+			check_outputs();
+		end
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+        // dispatch + complete all phys reg's:
+        test_case = "dispatch + complete all phys reg's";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+		// iterate through phys reg's
+		for (int i = 0; i < 64; i++) begin
+
+			@(posedge CLK);
+
+			// inputs
+			sub_test_case = $sformatf("dispatch %d, complete-read phys reg %d", i, phys_reg_tag_t'(i - 2));
+			$display("\t- sub_test: %s", sub_test_case);
+
+			// reset
+			nRST = 1'b1;
+			// DUT error
+			// dispatch
+			tb_dispatch_source_0_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_dispatch_source_1_phys_reg_tag = phys_reg_tag_t'(i - 2);
+			tb_dispatch_dest_write = 1'b1;
+			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			// complete
+			tb_complete_bus_0_valid = i < 2 ? 1'b0 : i % 2 == 0 ? 1'b0 : 1'b1;
+			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i - 2);
+			tb_complete_bus_1_valid = i < 2 ? 1'b0 : i % 2 == 0 ? 1'b1 : 1'b0;
+			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i - 2);
+
+			@(negedge CLK);
+
+			// outputs:
+
+			// DUT error
+			expected_DUT_error = i == 1 | i == 3 ? 1'b1 : 1'b0; // intentional DUT_error when write to phys reg 0
+			// dispatch
+			expected_dispatch_source_0_ready = 1'b0;
+			expected_dispatch_source_1_ready = 1'b1;
+			// complete
+
+			check_outputs();
+		end
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+        // dispatch + double complete all phys reg's:
+        test_case = "dispatch + double complete all phys reg's";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+		// complete phys reg 62 and 63
+		
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = $sformatf("complete-read phys reg 62 and 63");
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+		// DUT error
+		// dispatch
+		tb_dispatch_source_0_phys_reg_tag = phys_reg_tag_t'(63);
+		tb_dispatch_source_1_phys_reg_tag = phys_reg_tag_t'(62);
+		tb_dispatch_dest_write = 1'b0;
+		tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(43);
+		// complete
+		tb_complete_bus_0_valid = 1'b1;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(62);
+		tb_complete_bus_1_valid = 1'b1;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(63);
+
+		@(negedge CLK);
+
+		// outputs:
+
+		// DUT error
+		expected_DUT_error = 1'b0;
+		// dispatch
+		expected_dispatch_source_0_ready = 1'b1;
+		expected_dispatch_source_1_ready = 1'b1;
+		// complete
+
+		check_outputs();
+
+		// iterate through phys reg's
+			// dispatch and read dispatch on odds
+			// dispatch + double complete and read completes on evens
+		for (int i = 0; i < 64; i++) begin
+
+			@(posedge CLK);
+
+			// inputs
+			sub_test_case = 
+				i < 2 ?
+				$sformatf("dispatch-read %d, read %d", i, i + 1)
+				:
+				i % 2 == 0 ?
+				$sformatf("dispatch %d, double complete-read phys reg %d and %d", i, i - 2, i - 1)
+				:
+				$sformatf("dispatch-read %d, read %d", i, i + 1)
+			;
+			$display("\t- sub_test: %s", sub_test_case);
+
+			// reset
+			nRST = 1'b1;
+			// DUT error
+			// dispatch
+			tb_dispatch_source_0_phys_reg_tag = 
+				i < 2 ?
+				phys_reg_tag_t'(i)
+				:
+				i % 2 == 0 ?
+				phys_reg_tag_t'(i - 1)
+				:
+				phys_reg_tag_t'(i)
+			;
+			tb_dispatch_source_1_phys_reg_tag = 
+				i < 2 ?
+				phys_reg_tag_t'(i + 1)
+				:
+				i % 2 == 0 ?
+				phys_reg_tag_t'(i - 2)
+				:
+				phys_reg_tag_t'(i + 1)
+			;
+			tb_dispatch_dest_write = 1'b1;
+			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			// complete
+			tb_complete_bus_0_valid = 
+				i < 2 ?
+				1'b0
+				:
+				i % 2 == 0 ?
+				1'b1
+				:
+				1'b0
+			;
+			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i - 2);
+			tb_complete_bus_1_valid = 
+				i < 2 ?
+				1'b0
+				:
+				i % 2 == 0 ?
+				1'b1
+				:
+				1'b0
+			;
+			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i - 1);
+
+			@(negedge CLK);
+
+			// outputs:
+
+			// DUT error
+			expected_DUT_error = i == 1 | i == 3 ? 1'b1 : 1'b0; // intentional DUT_error when write to phys reg 0
+			// dispatch
+			expected_dispatch_source_0_ready = 
+				i < 2 ?
+				1'b0
+				:
+				i % 2 == 0 ?
+				1'b1
+				:
+				1'b0
+			;
+			expected_dispatch_source_1_ready = 
+				i < 2 ?
+				1'b1
+				:
+				i % 2 == 0 ?
+				1'b1
+				:
+				1'b1
+			;
+			// complete
+
+			check_outputs();
+		end
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // finish:
