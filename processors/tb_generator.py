@@ -265,7 +265,7 @@ def generate_tb(tb_base_lines, design_name, design_signals):
                 print(f"add check for output_signal = {output_signal.name}") if PRINTS else None
                 task_check_outputs_lines.extend([
                     f"\t\tif (expected_{output_signal.name} !== DUT_{output_signal.name}) begin\n",
-                    f"\t\t\t$display(\"\\tERROR: expected_{output_signal.name} (%h) != DUT_{output_signal.name} (%h)\",\n",
+                    f"\t\t\t$display(\"TB ERROR: expected_{output_signal.name} (%h) != DUT_{output_signal.name} (%h)\",\n",
                     f"\t\t\t\texpected_{output_signal.name}, DUT_{output_signal.name});\n"
                     f"\t\t\tnum_errors++;\n",
                     f"\t\t\ttb_error = 1'b1;\n",
