@@ -7,6 +7,8 @@
     Description: 
         The Physical Register Map Table gives the current mapping for architectural registers to physical
         registers. The table also checkpoints mappings which can be restored using a FIFO of map tables.
+
+        It is the external controller's responsibility to not rename arch reg 0 away from phys reg 0.
 */
 
 `include "core_types.vh"
