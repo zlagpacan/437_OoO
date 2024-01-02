@@ -3,7 +3,7 @@
     Author: zlagpacan
 
     File Name: phys_reg_free_list.sv
-    Instantiation Hierarchy: system -> core -> phys_reg_free_list
+    Instantiation Hierarchy: system -> core -> dispatch_unit -> phys_reg_free_list
     Description: 
         The Physical Register Free List is a FIFO providing the next free physical register which a new
         register writing instruction can rename an architectural register to. The table can also checkpoint

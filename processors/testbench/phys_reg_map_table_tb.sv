@@ -3,7 +3,7 @@
     Author: zlagpacan
 
     File Name: phys_reg_map_table_tb.sv
-    Instantiation Hierarchy: system -> core -> phys_reg_map_table
+    Instantiation Hierarchy: system -> core -> dispatch_unit -> phys_reg_map_table
     Description: 
        Testbench for phys_reg_map_table module. 
 */

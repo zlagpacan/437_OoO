@@ -3,7 +3,7 @@
     Author: zlagpacan
 
     File Name: phys_reg_free_list_tb.sv
-    Instantiation Hierarchy: system -> core -> phys_reg_free_list
+    Instantiation Hierarchy: system -> core -> dispatch_unit -> phys_reg_free_list
     Description: 
        Testbench for phys_reg_free_list module. 
 */

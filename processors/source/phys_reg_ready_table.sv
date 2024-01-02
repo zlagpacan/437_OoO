@@ -3,7 +3,7 @@
     Author: zlagpacan
 
     File Name: phys_reg_ready_table.sv
-    Instantiation Hierarchy: system -> core -> phys_reg_ready_table
+    Instantiation Hierarchy: system -> core -> dispatch_unit -> phys_reg_ready_table
     Description: 
         The Physical Register Ready Table provides whether a physical register value is ready or is yet to
         be computed in the datapath. As far as can tell, this module does not require checkpointing or 
