@@ -8,6 +8,8 @@
         The Physical Register Free List is a FIFO providing the next free physical register which a new
         register writing instruction can rename an architectural register to. The table can also checkpoint
         a free list which can be restored using a FIFO of free list head pointers.
+
+        It is the external controller's responsibility to prevent making phys reg 0 free.
 */
 
 `include "core_types.vh"
