@@ -3,7 +3,7 @@
     Author: zlagpacan
 
     File Name: phys_reg_ready_table_tb.sv
-    Instantiation Hierarchy: system -> core -> phys_reg_ready_table
+    Instantiation Hierarchy: system -> core -> dispatch_unit -> phys_reg_ready_table
     Description: 
        Testbench for phys_reg_ready_table module. 
 */

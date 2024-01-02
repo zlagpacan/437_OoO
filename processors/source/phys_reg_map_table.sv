@@ -3,7 +3,7 @@
     Author: zlagpacan
 
     File Name: phys_reg_map_table.sv
-    Instantiation Hierarchy: system -> core -> phys_reg_map_table
+    Instantiation Hierarchy: system -> core -> dispatch_unit -> phys_reg_map_table
     Description: 
         The Physical Register Map Table gives the current mapping for architectural registers to physical
         registers. The table also checkpoints mappings which can be restored using a FIFO of map tables.
