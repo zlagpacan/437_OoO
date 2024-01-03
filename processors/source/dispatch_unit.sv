@@ -13,11 +13,11 @@
         Non-autonomous functionalities come from:
             - core control stall, flush, and halt
                 - facilitate speculation restores and reverts during flush
-            - kill bus (always, but should only happen during flush)
-                - perform phys reg revert
-                - combine with core control flush
             - checkpoint restore (always, but should only happen during flush)
                 - perform checkpoint restore
+                - combine with core control flush
+            - kill bus (always, but should only happen during flush)
+                - perform phys reg revert
                 - combine with core control flush
             - complete bus (always)
                 - update phys reg ready's
@@ -66,9 +66,17 @@ module dispatch_unit #(
         // kill for ROB_index, T, T_old
     input logic kill_bus_valid,
     input ROB_index_t kill_bus_ROB_index,
+        // actually don't need this, only need ROB index for execution unit kills
     input arch_reg_tag_t kill_bus_arch_reg_tag;
     input phys_reg_tag_t kill_bus_speculated_phys_reg_tag,
     input phys_reg_tag_t kill_bus_safe_phys_reg_tag,
+
+    // complete bus interface
+        // 2x ready @ T
+    input logic complete_bus_0_valid,
+    input phys_reg_tag_t complete_bus_0_dest_phys_reg_tag,
+    input logic complete_bus_1_valid,
+    input phys_reg_tag_t complete_bus_1_dest_phys_reg_tag,
 
     // ROB interface
     // dispatch @ tail
@@ -80,15 +88,10 @@ module dispatch_unit #(
     input logic ROB_retire_valid,
     input phys_reg_tag_t ROB_retire_phys_reg_tag;
 
-    // ALU RS 0 interface
-    input logic ALU_RS_0_full,
-    output logic ALU_RS_0_task_valid,
-    output ALU_RS_input_struct_t ALU_RS_0_task_struct,
-
-    // ALU RS 1 interface
-    input logic ALU_RS_1_full,
-    output logic ALU_RS_1_task_valid,
-    output ALU_RS_input_struct_t ALU_RS_1_task_struct,
+    // 2x ALU RS interface
+    input logic [1:0] ALU_RS_full,
+    output logic [1:0] ALU_RS_task_valid,
+    output ALU_RS_input_struct_t [1:0] ALU_RS_task_struct,
 
     // SQ interface
     input SQ_index_t SQ_tail_index,
@@ -357,7 +360,9 @@ module dispatch_unit #(
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // BIG logic:
 
-    // signals
+    // signals:
+
+    // instr fields
     r_t instr_rtype;
     i_t instr_itype;
     j_t instr_jtype;
@@ -367,6 +372,10 @@ module dispatch_unit #(
     arch_reg_tag_t instr_rd;
     imm16_t instr_imm16;
     funct_t instr_funct;
+
+    // ALU RS select
+    logic ALU_RS_select;
+    logic ALU_RS_both_full;
 
     // seq
         // all sequential logic is in map table, free list, and ready table?
@@ -451,16 +460,14 @@ module dispatch_unit #(
     
         // dispatch
         prrt_dispatch_source_0_phys_reg_tag = prmt_source_phys_reg_tag_0;   // always phys reg rs
-        prrt_dispatch_source_0_ready;
-        prrt_dispatch_source_1_phys_reg_tag;
-        prrt_dispatch_source_1_ready;
-        prrt_dispatch_dest_write;
-        prrt_dispatch_dest_phys_reg_tag;
+        prrt_dispatch_source_1_phys_reg_tag = prmt_source_phys_reg_tag_1;   // always phys reg rt
+        // prrt_dispatch_dest_write = 1'b0;    // can be 0 or 1 (successful dispatch writing instr)
+        prrt_dispatch_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;    // always dequeue'd phys reg from free list 
         // complete
-        prrt_complete_bus_0_valid;
-        prrt_complete_bus_0_dest_phys_reg_tag;
-        prrt_complete_bus_1_valid;
-        prrt_complete_bus_1_dest_phys_reg_tag;
+        prrt_complete_bus_0_valid = complete_bus_0_valid;   // always complete bus valid
+        prrt_complete_bus_0_dest_phys_reg_tag = complete_bus_0_dest_phys_reg_tag;   // always complete bus val
+        prrt_complete_bus_1_valid = complete_bus_1_valid;   // always complete bus valid
+        prrt_complete_bus_1_dest_phys_reg_tag = complete_bus_1_dest_phys_reg_tag;   // always complete bus val
 
         /////////////////////////////////////
         // internal module output signals: //
@@ -498,6 +505,10 @@ module dispatch_unit #(
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // default outputs:
+
+        // ALU RS select default 0
+        ALU_RS_select = 1'b0;
+        ALU_RS_both_full = 1'b0;
 
         ////////////////////////////////////
         // internal module input signals: //
@@ -547,6 +558,19 @@ module dispatch_unit #(
         // prfl_restore_checkpoint_ROB_index = restore_checkpoint_ROB_index;   // always restore val
         // prfl_restore_checkpoint_safe_column = restore_checkpoint_safe_column;   // always restore val
 
+        // phys_reg_ready_table:
+    
+        // dispatch
+        // prrt_dispatch_source_0_phys_reg_tag = prmt_source_phys_reg_tag_0;   // always phys reg rs
+        // prrt_dispatch_source_1_phys_reg_tag = prmt_source_phys_reg_tag_1;   // always phys reg rt
+        prrt_dispatch_dest_write = 1'b0;    // can be 0 or 1 (successful dispatch writing instr)
+        // prrt_dispatch_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;    // always dequeue'd phys reg from free list 
+        // complete
+        // prrt_complete_bus_0_valid = complete_bus_0_valid;   // always complete bus valid
+        // prrt_complete_bus_0_dest_phys_reg_tag = complete_bus_0_dest_phys_reg_tag;   // always complete bus val
+        // prrt_complete_bus_1_valid = complete_bus_1_valid;   // always complete bus valid
+        // prrt_complete_bus_1_dest_phys_reg_tag = complete_bus_1_dest_phys_reg_tag;   // always complete bus val
+
         /////////////////////
         // output signals: //
         /////////////////////
@@ -570,11 +594,11 @@ module dispatch_unit #(
 
         // ALU RS 0 interface
             // no task by default
-        ALU_RS_0_task_valid = 1'b0;
+        ALU_RS_task_valid[0] = 1'b0;
 
         // ALU RS 1 interface
             // no task by default
-        ALU_RS_1_task_valid = 1'b0;
+        ALU_RS_task_valid[1] = 1'b0;
 
         // SQ interface
             // no task by default
@@ -594,7 +618,8 @@ module dispatch_unit #(
 
         // ROB struct
             // invalid ALU 0
-            // no write, reg 0
+            // non-writing instr
+            // reg 0
         ROB_struct_out.valid = 1'b0;
         ROB_struct_out.complete = 1'b0;
         ROB_struct_out.dispatched_unit = ALU_0;
@@ -608,31 +633,31 @@ module dispatch_unit #(
             // RTYPE ADD
             // rs, rt, rd -> map table phys 0, map table phys 1, free list phys
             // needed and ready
-        ALU_RS_0_task_struct.op = ALU_ADD;
-        ALU_RS_0_task_struct.source_0.needed = 1'b1;
-        ALU_RS_0_task_struct.source_0.ready = 1'b1;
-        ALU_RS_0_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
-        ALU_RS_0_task_struct.source_1.needed = 1'b1;
-        ALU_RS_0_task_struct.source_1.ready = 1'b1;
-        ALU_RS_0_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-        ALU_RS_0_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
-        ALU_RS_0_task_struct.imm16 = instr_imm16;
-        ALU_RS_0_task_struct.ROB_index = ROB_tail_index;
+        ALU_RS_task_struct[0].op = ALU_ADD;
+        ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        ALU_RS_task_struct[0].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+        ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        ALU_RS_task_struct[0].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+        ALU_RS_task_struct[0].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+        ALU_RS_task_struct[0].imm16 = instr_imm16;
+        ALU_RS_task_struct[0].ROB_index = ROB_tail_index;
 
         // ALU 1 struct
             // RTYPE ADD
             // rs, rt, rd -> map table phys 0, map table phys 1, free list phys
             // rs and rt needed and ready
-        ALU_RS_1_task_struct.op = ALU_ADD;
-        ALU_RS_1_task_struct.source_0.needed = 1'b1;
-        ALU_RS_1_task_struct.source_0.ready = 1'b1;
-        ALU_RS_1_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
-        ALU_RS_1_task_struct.source_1.needed = 1'b1;
-        ALU_RS_1_task_struct.source_1.ready = 1'b1;
-        ALU_RS_1_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-        ALU_RS_1_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
-        ALU_RS_1_task_struct.imm16 = instr_imm16;
-        ALU_RS_1_task_struct.ROB_index = ROB_tail_index;
+        ALU_RS_task_struct[1].op = ALU_ADD;
+        ALU_RS_task_struct[1].source_0.needed = 1'b1;
+        ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        ALU_RS_task_struct[1].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+        ALU_RS_task_struct[1].source_1.needed = 1'b1;
+        ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        ALU_RS_task_struct[1].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+        ALU_RS_task_struct[1].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+        ALU_RS_task_struct[1].imm16 = instr_imm16;
+        ALU_RS_task_struct[1].ROB_index = ROB_tail_index;
 
         // LQ struct
             // LW
@@ -680,18 +705,212 @@ module dispatch_unit #(
         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
         BRU_RS_task_struct.ROB_index = ROB_tail_index;
 
-        ////////////
-        // logic: //
-        ////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // logic:
+
+        ////////////////////////////////
+        // ALU RS availability logic: //
+        ////////////////////////////////
+            // always allowed
+            // 0 > 1 priority
+
+        // cover 4 cases
+        casez (ALU_RS_full) begin
+            
+            2'b00:
+            begin
+                ALU_RS_select = 1'b0;
+                ALU_RS_both_full = 1'b0;
+            end
+
+            2'b01:
+            begin
+                ALU_RS_select = 1'b1;
+                ALU_RS_both_full = 1'b0;
+            end
+
+            2'b10:
+            begin
+                ALU_RS_select = 1'b0;
+                ALU_RS_both_full = 1'b0;
+            end
+
+            2'b11:
+            begin
+                ALU_RS_select = 1'b0;
+                ALU_RS_both_full = 1'b1;
+            end
+        end
+        endcase
+
+        /////////////////////
+        // complete logic: //
+        /////////////////////
+            // always allowed
+            // ALREADY CONNECTED
+
+        ////////////////////
+        // restore logic: //
+        ////////////////////
+            // always allowed
+            // MOSTLY CONNECTED
+            // need connect restore successes 
+                // can just choose one since should always be same
+            // assert restore successes always same
+            // assert in flush state if restoring
+
+        // top level restore success follows map table success
+        restore_checkpoint_success = prmt_restore_checkpoint_success;
+        // assert restore successes always same
+        if (prmt_restore_checkpoint_success != prfl_restore_checkpoint_success) begin
+            $display("dispatch_unit: ERROR: prmt_restore_checkpoint_success != prfl_restore_checkpoint_success");
+            $display("\tprmt_restore_checkpoint_success = %h", prmt_restore_checkpoint_success);
+            $display("\tprfl_restore_checkpoint_success = %h", prfl_restore_checkpoint_success);
+            next_DUT_error = 1'b1;
+        end
+        // assert in flush state if restoring
+        if (restore_checkpoint_valid & ~core_control_flush_dispatch_unit) begin
+            $display("dispatch_unit: ERROR: restoring but not flushing");
+            $display("\trestore_checkpoint_valid = %h", restore_checkpoint_valid);
+            $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
+            next_DUT_error = 1'b1;
+        end
+
+        /////////////////////
+        // kill bus logic: //
+        /////////////////////
+            // always allowed
+            // ALREADY CONNECTED
+            // assert in flush state if killing
+
+        // assert in flush state if killing
+        if (kill_bus_valid & ~core_control_flush_dispatch_unit) begin
+            $display("dispatch_unit: ERROR: killing but not flushing");
+            $display("\tkill_bus_valid = %h", kill_bus_valid);
+            $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
+            next_DUT_error = 1'b1;
+        end
+
+        /////////////////////
+        // dispatch logic: //
+        /////////////////////
+            // priority order
 
         // check for halt
         if (core_control_halt) begin
 
-            // keep default outputs
+            // FAIL: keep default outputs
 
-            // 
+            $display("dispatch_unit: FAIL: core_control_halt");
         end
 
+        // check for flush
+        else if (core_control_flush_dispatch_unit) begin
+
+            // FAIL: keep default outputs
+
+            $display("dispatch_unit: FAIL: core_control_flush_dispatch_unit");
+        end
+
+        // check for stall
+        else if (core_control_stall_dispatch_unit) begin
+
+            // FAIL: keep default outputs
+
+            $display("dispatch_unit: FAIL: core_control_stall_dispatch_unit");
+        end
+
+        // check for no available instr 
+        else if (dispatch_unit_ivalid) begin
+
+            // FAIL: keep default outputs
+
+            $display("dispatch_unit: FAIL: dispatch_unit_ivalid");
+        end
+
+        // otherwise, have instr that can try to dispatch
+        else begin
+
+            // by opcode
+            casez (instr_opcode) begin
+
+                // RTYPE
+                RTYPE: 
+                begin
+
+                    // special case: JR -> needs to go to BRU
+                    if ()
+
+                    // true RTYPE by funct
+                        // check no ALU_RS_both_full
+                    casez (instr_funct) begin
+
+                        SLLV:
+                        begin
+                            
+                        end
+
+                        SRLV:
+                        begin
+
+                        end
+
+                        JR:
+                        begin
+
+                        end
+
+                        ADD, ADDU:
+                        begin
+
+                        end
+
+                        SUB, SUBU:
+                        begin
+
+                        end
+
+                        AND:
+                        begin
+
+                        end
+
+                        OR:
+                        begin
+
+                        end
+
+                        XOR:
+                        begin
+
+                        end
+
+                        NOR:
+                        begin
+
+                        end
+
+                        SLT:
+                        begin
+
+                        end
+
+                        SLTU:
+                        begin
+
+                        end
+                    end
+                    endcase
+                end
+
+                // ITYPE
+
+                // JTYPE
+
+                // HALT
+            end
+            endcase
+        end
     end
 
 endmodule
