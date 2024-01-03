@@ -90,7 +90,7 @@ package core_types_pkg;
         opcode_t                opcode;
         arch_reg_tag_t          rs;
         arch_reg_tag_t          rt;
-        logic [IMM16_WIDTH-1:0] imm16;
+        imm16_t                 imm16;
     } i_t;
 
     // r type instr
@@ -128,7 +128,17 @@ package core_types_pkg;
 
     typedef logic [WORD_ADDR_SPACE_WIDTH-1:0] daddr_t;
 
-    // fetch unit:
+    typedef logic [IMM16_WIDTH-1:0] imm16_t;
+
+    typedef struct packed {
+        logic needed;
+        logic ready;
+        phys_reg_tag_t phys_reg_tag;
+    } source_reg_status_t;
+
+    /////////////////
+    // fetch unit: //
+    /////////////////
 
     parameter BTB_FRAMES = 256;
     parameter LOG_BTB_FRAMES = $clog2(BTB_FRAMES);
@@ -137,19 +147,25 @@ package core_types_pkg;
 
     typedef logic [LOG_BTB_FRAMES-1:0] BTB_DIRP_index_t;
 
-    // checkpoint system:
+    ////////////////////////
+    // checkpoint system: //
+    ////////////////////////
 
     parameter CHECKPOINT_COLUMNS = 4;
     parameter LOG_CHECKPOINT_COLUMNS = $clog2(CHECKPOINT_COLUMNS);
 
     typedef logic [LOG_CHECKPOINT_COLUMNS-1:0] checkpoint_column_t;
 
-    // phys reg map table:
+    /////////////////////////
+    // phys reg map table: //
+    /////////////////////////
 
         // need checkpoint columns
         // internal array follows NUM_ARCH_REGS
 
-    // phys reg free list:
+    /////////////////////////
+    // phys reg free list: //
+    /////////////////////////
 
         // need checkpoint columns
         // max size of free list is (NUM_PHYS_REGS - NUM_ARCH_REGS)?
@@ -158,12 +174,151 @@ package core_types_pkg;
     parameter FREE_LIST_DEPTH = NUM_PHYS_REGS - NUM_ARCH_REGS;
     parameter LOG_FREE_LIST_DEPTH = $clog2(FREE_LIST_DEPTH);
 
-    // ROB:
+    //////////
+    // ROB: //
+    //////////
 
     parameter ROB_DEPTH = 32;
     parameter LOG_ROB_DEPTH = $clog2(ROB_DEPTH);
 
     typedef logic [LOG_ROB_DEPTH-1:0] ROB_index_t;
+
+    typedef struct packed {
+        logic ALU_0;
+        logic ALU_1;
+        logic LQ;
+        logic SQ:
+        logic BRU;
+        logic J;
+    } dispatched_unit_t;
+
+    typedef struct packed {
+        logic valid;
+        logic complete;
+        dispatched_unit_t dispatched_unit;  // just a check that expected unit(s) give complete
+        // restore info
+        pc_t restart_PC;    // for general instr restart (restart this instr)
+        logic reg_write;
+        arch_reg_tag_t dest_arch_reg_tag;
+        phys_reg_tag_t safe_dest_phys_reg_tag;
+        phys_reg_tag_t speculated_dest_phys_reg_tag;
+    } ROB_entry_t;
+
+    //////////
+    // ALU: //
+    //////////
+
+    typedef enum logic [3:0] {
+        ALU_ADD,
+        ALU_ADDU,
+        ALU_SUB,
+        ALU_SUBU,
+        ALU_AND,
+        ALU_OR,
+        ALU_NOR,
+        ALU_XOR,
+        ALU_SLT,
+        ALU_SLTU,
+        ALU_SLLV,
+        ALU_SRLV,
+        ALU_LUI,
+        ALU_LINK
+    } ALU_op_t;
+
+    typedef struct packed {
+        // ALU needs
+        ALU_op_t op;
+        source_reg_status_t source_0;
+        source_reg_status_t source_1;
+        phys_reg_tag_t dest_phys_reg_tag;
+        imm16_t imm16;
+        // ROB needs
+        ROB_index_t ROB_index;
+    } ALU_RS_input_struct_t;
+
+    //////////
+    // LSQ: //
+    //////////
+
+    parameter LQ_DEPTH = 8;
+    parameter LOG_LQ_DEPTH = $clog2(LQ_DEPTH);
+    parameter SQ_DEPTH = 8;
+    parameter LOG_SQ_DEPTH = $clog2(SQ_DEPTH);
+
+    typedef logic [LOG_LQ_DEPTH-1:0] LQ_index_t;
+    typedef logic [LOG_SQ_DEPTH-1:0] SQ_index_t;
+
+    typedef enum logic [1:0] {
+        LQ_LW,
+        LQ_LL,
+        LQ_SC
+    } LQ_op_t;
+
+    typedef enum logic {
+        SQ_SW,
+        SQ_SC
+    } SQ_op_t;
+
+    // LQ structs
+    typedef struct packed {
+        // LQ needs
+        LQ_op_t op;
+        source_reg_status_t source;
+        phys_reg_tag_t dest_phys_reg_tag;
+        daddr_t imm14;
+        SQ_index_t SQ_index;   // for SC, doubles as SQ index for store part of SC to track
+            // may want separate counter tag to link the store and load parts of SC
+                // or ROB_index serves this role
+        // admin
+        ROB_index_t ROB_index;
+    } LQ_enqueue_struct_t;
+
+    typedef struct packed {
+
+    } LQ_entry_t;
+
+    // SQ structs
+    typedef struct packed {
+        // SQ needs
+        SQ_op_t op;
+        source_reg_status_t source_0;
+        source_reg_status_t source_1;
+        daddr_t imm14;
+        LQ_index_t LQ_index;
+            // may want separate counter tag to link the store and load parts of SC
+                // or ROB_index serves this role
+        // admin
+        ROB_index_t ROB_index;
+    } SQ_enqueue_struct_t;
+
+    typedef struct packed {
+
+    } SQ_entry_t;
+
+    //////////
+    // BRU: //
+    //////////
+
+    typedef enum logic [1:0] {
+        BRU_BEQ,
+        BRU_BNE,
+        BRU_JR
+    } BRU_op_t;
+
+    // structs
+    typedef struct packed {
+        // BRU needs
+        BRU_op_t op;
+        source_reg_status_t source_0;
+        source_reg_status_t source_1;
+        pc_t imm14;
+        pc_t PC;    // will use to grab PC bits for BTB/DIRP index and do branch add ((PC + 4) + imm16)
+        pc_t nPC;   // PC taken to check against
+        // save/restore info
+        checkpoint_column_t checkpoint_safe_column;
+        // admin
+        ROB_index_t ROB_index;
+    } BRU_RS_input_struct_t;
 
 endpackage
 
