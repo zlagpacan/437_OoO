@@ -472,6 +472,7 @@ module dispatch_unit #(
         /////////////////////////////////////
         // internal module output signals: //
         /////////////////////////////////////
+            // check these are actually used as intended later
 
         // phys_reg_map_table:
         // reg map reading
@@ -617,28 +618,35 @@ module dispatch_unit #(
         /////////////////////
 
         // ROB struct
-            // invalid ALU 0
-            // non-writing instr
-            // reg 0
-        ROB_struct_out.valid = 1'b0;
+            // valid, incomplete writing instr to rd
+            // no dispatched unit
+        ROB_struct_out.valid = 1'b1;
         ROB_struct_out.complete = 1'b0;
-        ROB_struct_out.dispatched_unit = ALU_0;
+        ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
+        ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        ROB_struct_out.dispatched_unit.SQ = 1'b0;
+        ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        ROB_struct_out.dispatched_unit.J = 1'b0;
+        ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        ROB_struct_out.dispatched_unit.HALT = 1'b0;
         ROB_struct_out.restart_PC = dispatch_unit_PC;
-        ROB_struct_out.reg_write = 1'b0;
-        ROB_struct_out.dest_arch_reg_tag = 0;
-        ROB_struct_out.safe_dest_phys_reg_tag = 0;
-        ROB_struct_out.speculated_dest_phys_reg_tag = 0;
+        ROB_struct_out.reg_write = 1'b1;
+        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
 
         // ALU 0 struct
             // RTYPE ADD
             // rs, rt, rd -> map table phys 0, map table phys 1, free list phys
             // needed and ready
         ALU_RS_task_struct[0].op = ALU_ADD;
+        ALU_RS_task_struct[0].itype = 1'b0;
         ALU_RS_task_struct[0].source_0.needed = 1'b1;
-        ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        ALU_RS_task_struct[0].source_0.ready = prrt_dispatch_source_0_ready;
         ALU_RS_task_struct[0].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
         ALU_RS_task_struct[0].source_1.needed = 1'b1;
-        ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        ALU_RS_task_struct[0].source_1.ready = prrt_dispatch_source_1_ready;
         ALU_RS_task_struct[0].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
         ALU_RS_task_struct[0].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
         ALU_RS_task_struct[0].imm16 = instr_imm16;
@@ -649,11 +657,12 @@ module dispatch_unit #(
             // rs, rt, rd -> map table phys 0, map table phys 1, free list phys
             // rs and rt needed and ready
         ALU_RS_task_struct[1].op = ALU_ADD;
+        ALU_RS_task_struct[1].itype = 1'b0;
         ALU_RS_task_struct[1].source_0.needed = 1'b1;
-        ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        ALU_RS_task_struct[1].source_0.ready = prrt_dispatch_source_0_ready;
         ALU_RS_task_struct[1].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
         ALU_RS_task_struct[1].source_1.needed = 1'b1;
-        ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        ALU_RS_task_struct[1].source_1.ready = prrt_dispatch_source_1_ready;
         ALU_RS_task_struct[1].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
         ALU_RS_task_struct[1].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
         ALU_RS_task_struct[1].imm16 = instr_imm16;
@@ -665,7 +674,7 @@ module dispatch_unit #(
             // rs needed and ready
         LQ_task_struct.op = LQ_LW;
         LQ_task_struct.source.needed = 1'b1;
-        LQ_task_struct.source.ready = 1'b1;
+        LQ_task_struct.source.ready = prrt_dispatch_source_0_ready;
         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
         LQ_task_struct.imm14 = imm16[15:2];
@@ -678,10 +687,10 @@ module dispatch_unit #(
             // rs and rt needed and ready
         SQ_task_struct.op = SQ_SW;
         SQ_task_struct.source_0.needed = 1'b1;
-        SQ_task_struct.source_0.ready = 1'b1;
+        SQ_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
         SQ_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
         SQ_task_struct.source_1.needed = 1'b1;
-        SQ_task_struct.source_1.ready = 1'b1;
+        SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
         SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
         SQ_task_struct.imm14 = imm16[15:2];
         SQ_task_struct.LQ_index = LQ_tail_index;
@@ -690,14 +699,14 @@ module dispatch_unit #(
         // BRU struct
             // BEQ
             // PC <= (low14(R[rs]) == low14(R[rt])) ? PC14+1+low14(imm16) : PC14+1
-            // rs and rt needed and ready
+            // rs and rt needed
             // checkpoint column from phys reg map table
         BRU_RS_task_struct.op = BRU_BEQ;
         BRU_RS_task_struct.source_0.needed = 1'b1;
-        BRU_RS_task_struct.source_0.ready = 1'b1;
+        BRU_RS_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
         BRU_RS_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
         BRU_RS_task_struct.source_1.needed = 1'b1;
-        BRU_RS_task_struct.source_1.ready = 1'b1;
+        BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
         BRU_RS_task_struct.imm14 = imm16[15:2];
         BRU_RS_task_struct.PC = dispatch_unit_PC;
@@ -821,11 +830,11 @@ module dispatch_unit #(
         end
 
         // check for no available instr 
-        else if (dispatch_unit_ivalid) begin
+        else if (~dispatch_unit_ivalid) begin
 
             // FAIL: keep default outputs
 
-            $display("dispatch_unit: FAIL: dispatch_unit_ivalid");
+            $display("dispatch_unit: FAIL: ~dispatch_unit_ivalid");
         end
 
         // otherwise, have instr that can try to dispatch
@@ -834,80 +843,1179 @@ module dispatch_unit #(
             // by opcode
             casez (instr_opcode) begin
 
+                ///////////////////////////////////////////////////////////////////////////////////////////
                 // RTYPE
                 RTYPE: 
                 begin
 
                     // special case: JR -> needs to go to BRU
-                    if ()
+                    if (instr_funct == JR) begin
 
-                    // true RTYPE by funct
-                        // check no ALU_RS_both_full
-                    casez (instr_funct) begin
-
-                        SLLV:
-                        begin
-                            
+                        // fail if BRU RS full
+                        if (BRU_RS_full) begin
+                            $display("dispatch_unit: FAIL: BRU_RS_full");
+                            core_control_dispatch_failed = 1'b1;
                         end
 
-                        SRLV:
-                        begin
+                        // otherwise, can dispatch to BRU
+                            // incomplete
+                            // need rs
+                            // non-writing instr
+                            // save checkpoint
+                        else begin
 
-                        end
-
-                        JR:
-                        begin
-
-                        end
-
-                        ADD, ADDU:
-                        begin
-
-                        end
-
-                        SUB, SUBU:
-                        begin
-
-                        end
-
-                        AND:
-                        begin
-
-                        end
-
-                        OR:
-                        begin
-
-                        end
-
-                        XOR:
-                        begin
-
-                        end
-
-                        NOR:
-                        begin
-
-                        end
-
-                        SLT:
-                        begin
-
-                        end
-
-                        SLTU:
-                        begin
-
+                            // internal module control
+                            prmt_old_dest_arch_reg_tag = instr_rd;
+                            prmt_rename_valid = 1'b0;
+                            prmt_rename_dest_arch_reg_tag = instr_rd;
+                            prmt_save_checkpoint_valid = 1'b1;
+                            prfl_dequeue_valid = 1'b0;
+                            prfl_save_checkpoint_valid = 1'b1;
+                            prrt_dispatch_dest_write = 1'b0;
+                            // no dispatch fail
+                            core_control_dispatch_failed = 1'b0;
+                            // enqueue ROB
+                            ROB_enqueue_valid = 1'b1;
+                            // fill in ROB struct
+                            ROB_struct_out.valid = 1'b1;
+                            ROB_struct_out.complete = 1'b0;
+                            ROB_struct_out.dispatched_unit.BRU = 1'b1;
+                            ROB_struct_out.restart_PC = dispatch_unit_PC;
+                            ROB_struct_out.reg_write = 1'b0;
+                            ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                            ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                            ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                            // send BRU task
+                            BRU_RS_task_valid = 1'b1;
+                            // fill in BRU struct
+                            BRU_RS_task_struct.op = BRU_JR;
+                            BRU_RS_task_struct.source_0.needed = 1'b1;
+                            BRU_RS_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
+                            BRU_RS_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                            BRU_RS_task_struct.source_1.needed = 1'b0;
+                            BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
+                            BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                            BRU_RS_task_struct.imm14 = imm16[15:2];
+                            BRU_RS_task_struct.PC = dispatch_unit_PC;
+                            BRU_RS_task_struct.nPC = dispatch_unit_nPC;
+                            BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
+                            BRU_RS_task_struct.ROB_index = ROB_tail_index;
                         end
                     end
-                    endcase
+
+                    // otherwise, potential proper RTYPE instr
+                    else begin
+
+                        // check for dead instr -> write to rd = $0
+                        if (instr_rd == 5'd0) begin
+                            $display("dispatch_unit: FAIL: instr_rd == 5'd0");
+                            
+                            // immediately complete
+                            // dispatched unit is DEAD
+
+                            // no dispatch fail
+                            core_control_dispatch_failed = 1'b0;
+                            // enqueue ROB
+                            ROB_enqueue_valid = 1'b1;
+                            // fill in ROB struct
+                            ROB_struct_out.valid = 1'b1;
+                            ROB_struct_out.complete = 1'b1;
+                            ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                            ROB_struct_out.restart_PC = dispatch_unit_PC;
+                            ROB_struct_out.reg_write = 1'b0;
+                            ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                            ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                            ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        end
+
+                        // fail if ALU RS's full 
+                        else if (ALU_RS_both_full) begin
+                            $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                            core_control_dispatch_failed = 1'b1;
+                        end
+
+                        // otherwise, can dispatch to an ALU RS
+                        else begin
+                            // incomplete
+                            // need rs and rt
+                            // writing instr
+
+                            // internal module control
+                            prmt_old_dest_arch_reg_tag = instr_rd;
+                            prmt_rename_valid = 1'b1;
+                            prmt_rename_dest_arch_reg_tag = instr_rd;
+                            prmt_save_checkpoint_valid = 1'b0;
+                            prfl_dequeue_valid = 1'b1;
+                            prfl_save_checkpoint_valid = 1'b0;
+                            prrt_dispatch_dest_write = 1'b1;
+                            // no dispatch fail
+                            core_control_dispatch_failed = 1'b0;
+                            // enqueue ROB
+                            ROB_enqueue_valid = 1'b1;
+                            // fill in ROB struct
+                            ROB_struct_out.valid = 1'b1;
+                            ROB_struct_out.complete = 1'b0;
+                            if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                            else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                            ROB_struct_out.restart_PC = dispatch_unit_PC;
+                            ROB_struct_out.reg_write = 1'b1;
+                            ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                            ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                            ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                            // send ALU RS task to selected
+                            ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                            // fill in selected ALU RS struct
+                                // ALU_RS_task_struct[ALU_RS_select].op = ALU_ADD;
+                                // select op below
+                            ALU_RS_task_struct[ALU_RS_select].itype = 1'b0;
+                            ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                            ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                            ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                            ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b1;
+                            ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                            ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                            ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                            ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                            ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+
+                            // fill in ALU RS struct by funct
+                            casez (instr_funct) begin
+
+                                NOP:
+                                begin
+                                    $display("dispatch_unit: ERROR: got to RTYPE NOP case when should've been caught in rd == $0 check");
+                                    next_DUT_error = 1'b1;
+                                end
+
+                                SLLV:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_SLLV;
+                                end
+
+                                SRLV:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_SRLV;
+                                end
+
+                                JR:
+                                begin
+                                    $display("dispatch_unit: ERROR: got to RTYPE JR case when should've been caught in RTYPE & JR check");
+                                    next_DUT_error = 1'b1;
+                                end
+
+                                ADD, ADDU:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_ADD;
+                                end
+
+                                SUB, SUBU:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_SUB;
+                                end
+
+                                AND:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_AND;
+                                end
+
+                                OR:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_OR;
+                                end
+
+                                XOR:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_XOR;
+                                end
+
+                                NOR:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_NOR;
+                                end
+
+                                SLT:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_SLT;
+                                end
+
+                                SLTU:
+                                begin
+                                    ALU_RS_task_struct[ALU_RS_select].op = ALU_SLTU;
+                                end
+
+                                // otherwise, unrecognized RTYPE instr
+                                default:
+                                begin
+                                    $display("dispatch_unit: ERROR: unrecognized RTYPE instr");
+                                    next_DUT_error = 1'b1;
+                                end
+                            end
+                            endcase
+                        end
+                    end
                 end
 
-                // ITYPE
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // JTYPE:
 
-                // JTYPE
+                J:
+                begin
+                    // immediately complete
+                    // dispatched unit is J
 
-                // HALT
+                    // no dispatch fail
+                    core_control_dispatch_failed = 1'b0;
+                    // enqueue ROB
+                    ROB_enqueue_valid = 1'b1;
+                    // fill in ROB struct
+                    ROB_struct_out.valid = 1'b1;
+                    ROB_struct_out.complete = 1'b1;
+                    ROB_struct_out.dispatched_unit.J = 1'b1;
+                    ROB_struct_out.restart_PC = dispatch_unit_PC;
+                    ROB_struct_out.reg_write = 1'b0;
+                    ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                    ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                    ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                end
+
+                JAL:
+                begin
+                    // JAL is an RTYPE LINK op to ALU RS
+
+                    // fail if ALU RS's full 
+                    if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // ALU LINK to ALU RS
+                        // dispatched units J and ALU
+                        // write to $31
+                        // don't need rs or rt
+                        // PC bits become imm16
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = 31;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = 31;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.J = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = 31;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_LINK;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = 16'{dispatch_unit_PC, 2'b00};
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // BRANCH:
+
+                BEQ:
+                begin
+                    // fail if BRU RS full
+                    if (BRU_RS_full) begin
+                        $display("dispatch_unit: FAIL: BRU_RS_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to BRU
+                        // incomplete
+                        // need rs and rt
+                        // non-writing instr
+                        // save checkpoint
+                    else begin
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rd;
+                        prmt_rename_valid = 1'b0;
+                        prmt_rename_dest_arch_reg_tag = instr_rd;
+                        prmt_save_checkpoint_valid = 1'b1;
+                        prfl_dequeue_valid = 1'b0;
+                        prfl_save_checkpoint_valid = 1'b1;
+                        prrt_dispatch_dest_write = 1'b0;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.BRU = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send BRU task
+                        BRU_RS_task_valid = 1'b1;
+                        // fill in BRU struct
+                        BRU_RS_task_struct.op = BRU_BEQ;
+                        BRU_RS_task_struct.source_0.needed = 1'b1;
+                        BRU_RS_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
+                        BRU_RS_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        BRU_RS_task_struct.source_1.needed = 1'b1;
+                        BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
+                        BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        BRU_RS_task_struct.imm14 = imm16[15:2];
+                        BRU_RS_task_struct.PC = dispatch_unit_PC;
+                        BRU_RS_task_struct.nPC = dispatch_unit_nPC;
+                        BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
+                        BRU_RS_task_struct.ROB_index = ROB_tail_index;
+                    end
+                end
+
+                BNE:
+                begin
+                    // fail if BRU RS full
+                    if (BRU_RS_full) begin
+                        $display("dispatch_unit: FAIL: BRU_RS_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to BRU
+                        // incomplete
+                        // need rs and rt
+                        // non-writing instr
+                        // save checkpoint
+                    else begin
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rd;
+                        prmt_rename_valid = 1'b0;
+                        prmt_rename_dest_arch_reg_tag = instr_rd;
+                        prmt_save_checkpoint_valid = 1'b1;
+                        prfl_dequeue_valid = 1'b0;
+                        prfl_save_checkpoint_valid = 1'b1;
+                        prrt_dispatch_dest_write = 1'b0;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.BRU = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send BRU task
+                        BRU_RS_task_valid = 1'b1;
+                        // fill in BRU struct
+                        BRU_RS_task_struct.op = BRU_BNE;
+                        BRU_RS_task_struct.source_0.needed = 1'b1;
+                        BRU_RS_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
+                        BRU_RS_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        BRU_RS_task_struct.source_1.needed = 1'b1;
+                        BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
+                        BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        BRU_RS_task_struct.imm14 = imm16[15:2];
+                        BRU_RS_task_struct.PC = dispatch_unit_PC;
+                        BRU_RS_task_struct.nPC = dispatch_unit_nPC;
+                        BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
+                        BRU_RS_task_struct.ROB_index = ROB_tail_index;
+                    end
+                end
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // ITYPE:
+
+                ADDI:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_ADD;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                ADDIU:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_ADD;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                SLTI:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_SLT;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                SLTIU:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_SLTU;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                ANDI:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_AND;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                ORI:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_OR;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                XORI:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_XOR;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                LUI:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if ALU RS's full 
+                    else if (ALU_RS_both_full) begin
+                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to an ALU RS
+                    else begin
+                        // incomplete
+                        // don't need rs or rt
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send ALU RS task to selected
+                        ALU_RS_task_valid[ALU_RS_select] = 1'b1;
+                        // fill in selected ALU RS struct
+                        ALU_RS_task_struct[ALU_RS_select].op = ALU_LUI;
+                        ALU_RS_task_struct[ALU_RS_select].itype = 1'b1;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.ready = prrt_dispatch_source_0_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.needed = 1'b0;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
+                        ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = instr_imm16;
+                        ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
+                    end
+                end
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // LOAD/STORE:
+
+                LW:
+                begin
+                    // check for dead instr -> write to rt = $0
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if LQ full
+                    else if (LQ_full) begin
+                        $display("dispatch_unit: FAIL: LQ_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to LQ
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.LQ = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send LQ task
+                        LQ_task_valid = 1'b1;
+                        // fill in LQ struct
+                        LQ_task_struct.op = LQ_LW;
+                        LQ_task_struct.source.needed = 1'b1;
+                        LQ_task_struct.source.ready = prrt_dispatch_source_0_ready;
+                        LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        LQ_task_struct.imm14 = imm16[15:2];
+                        LQ_task_struct.SQ_index = SQ_tail_index;
+                        LQ_task_struct.ROB_index = ROB_tail_index;
+                    end
+                end
+
+                SW:
+                begin
+                    // fail if SQ full
+                    if (SQ_full) begin
+                        $display("dispatch_unit: FAIL: SQ_full");
+                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // otherwise, can dispatch to SQ
+                    else begin
+                        // incomplete
+                        // need rs and rt
+                        // non-writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b0;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b0;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b0;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.SQ = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send SQ task
+                        SQ_task_valid = 1'b1;
+                        // fill in SQ struct
+                        SQ_task_struct.op = SQ_SW;
+                        SQ_task_struct.source_0.needed = 1'b1;
+                        SQ_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
+                        SQ_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        SQ_task_struct.source_1.needed = 1'b1;
+                        SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
+                        SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        SQ_task_struct.imm14 = imm16[15:2];
+                        SQ_task_struct.LQ_index = LQ_tail_index;
+                        SQ_task_struct.ROB_index = ROB_tail_index;
+                    end
+                end
+
+                LL:
+                begin
+                    $display("dispatch_unit: ERROR: LL not handled yet");
+                    next_DUT_error = 1'b1;
+                end
+
+                SC:
+                begin
+                    $display("dispatch_unit: ERROR: SC not handled yet");
+                    next_DUT_error = 1'b1;
+                end
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // HALT:
+
+                HALT:
+                begin
+                    // immediately complete
+                    // dispatched unit is HALT
+
+                    // no dispatch fail
+                    core_control_dispatch_failed = 1'b0;
+                    // enqueue ROB
+                    ROB_enqueue_valid = 1'b1;
+                    // fill in ROB struct
+                    ROB_struct_out.valid = 1'b1;
+                    ROB_struct_out.complete = 1'b1;
+                    ROB_struct_out.dispatched_unit.HALT = 1'b1;
+                    ROB_struct_out.restart_PC = dispatch_unit_PC;
+                    ROB_struct_out.reg_write = 1'b0;
+                    ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                    ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                    ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                end
+
+                default:
+                begin
+                    $display("dispatch_unit: ERROR: unrecognized opcode");
+                    next_DUT_error = 1'b1; 
+                end
             end
             endcase
         end
