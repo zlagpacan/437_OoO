@@ -29,6 +29,9 @@ package core_types_pkg;
     parameter IMM16_WIDTH = 16;
     parameter JADDR_WIDTH = 26;
 
+    // imm16
+    typedef logic [IMM16_WIDTH-1:0] imm16_t;
+
     // opcode
     typedef enum logic [OPCODE_WIDTH-1:0] {
         // R-type
@@ -129,8 +132,6 @@ package core_types_pkg;
 
     typedef logic [WORD_ADDR_SPACE_WIDTH-1:0] daddr_t;
 
-    typedef logic [IMM16_WIDTH-1:0] imm16_t;
-
     typedef struct packed {
         logic needed;
         logic ready;
@@ -188,7 +189,7 @@ package core_types_pkg;
         logic ALU_0;
         logic ALU_1;
         logic LQ;
-        logic SQ:
+        logic SQ;
         logic BRU;
         logic J;
         logic DEAD;
@@ -275,9 +276,9 @@ package core_types_pkg;
         ROB_index_t ROB_index;
     } LQ_enqueue_struct_t;
 
-    typedef struct packed {
+    // typedef struct packed {
 
-    } LQ_entry_t;
+    // } LQ_entry_t;
 
     // SQ structs
     typedef struct packed {
@@ -293,9 +294,9 @@ package core_types_pkg;
         ROB_index_t ROB_index;
     } SQ_enqueue_struct_t;
 
-    typedef struct packed {
+    // typedef struct packed {
 
-    } SQ_entry_t;
+    // } SQ_entry_t;
 
     //////////
     // BRU: //
