@@ -360,7 +360,7 @@ module dispatch_unit #(
 
     always_ff @ (posedge CLK, negedge nRST) begin
 
-        // reset (equivalent to flush/nop)
+        // reset -> insert nop
         if (~nRST) begin
             dispatch_unit_instr <= 32'h0;
             dispatch_unit_ivalid <= 1'b0;
@@ -368,7 +368,7 @@ module dispatch_unit #(
             dispatch_unit_nPC <= 14'h0;
         end
 
-        // check for flush
+        // check for flush -> insert nop
         else if (core_control_flush_dispatch_unit) begin
             dispatch_unit_instr <= 32'h0;
             dispatch_unit_ivalid <= 1'b0;
@@ -376,7 +376,15 @@ module dispatch_unit #(
             dispatch_unit_nPC <= 14'h0;
         end
 
-        // hold state if dispatch fails
+        // check for stall -> hold state
+        else if (core_control_stall_dispatch_unit) begin
+            dispatch_unit_instr <= dispatch_unit_instr;
+            dispatch_unit_ivalid <= dispatch_unit_ivalid;
+            dispatch_unit_PC <= dispatch_unit_PC;
+            dispatch_unit_nPC <= dispatch_unit_nPC;
+        end
+
+        // check for dispatch fail -> hold state
         else if (core_control_dispatch_failed) begin
             dispatch_unit_instr <= dispatch_unit_instr;
             dispatch_unit_ivalid <= dispatch_unit_ivalid;
@@ -384,7 +392,7 @@ module dispatch_unit #(
             dispatch_unit_nPC <= dispatch_unit_nPC;
         end
 
-        // otherwise, accept fetch unit
+        // otherwise -> accept fetch unit
         else begin
             dispatch_unit_instr <= fetch_unit_instr;
             dispatch_unit_ivalid <= fetch_unit_ivalid;
