@@ -27,8 +27,9 @@
                 - ROB not ready for dispatch
 
         Instruction input is latched at beginning of dispatch_unit. 
+            - need to determine if should keep current or latch new
         Demux'd task struct output is latched at beginning of execution unit
-            // i.e. not here in dispatch_unit
+            - i.e. not here in dispatch_unit
 */
 
 `include "core_types.vh"
@@ -358,12 +359,32 @@ module dispatch_unit #(
     pc_t dispatch_unit_nPC;
 
     always_ff @ (posedge CLK, negedge nRST) begin
+
+        // reset (equivalent to flush/nop)
         if (~nRST) begin
             dispatch_unit_instr <= 32'h0;
             dispatch_unit_ivalid <= 1'b0;
             dispatch_unit_PC <= 14'h0;
             dispatch_unit_nPC <= 14'h0;
         end
+
+        // check for flush
+        else if (core_control_flush_dispatch_unit) begin
+            dispatch_unit_instr <= 32'h0;
+            dispatch_unit_ivalid <= 1'b0;
+            dispatch_unit_PC <= 14'h0;
+            dispatch_unit_nPC <= 14'h0;
+        end
+
+        // hold state if dispatch fails
+        else if (core_control_dispatch_failed) begin
+            dispatch_unit_instr <= dispatch_unit_instr;
+            dispatch_unit_ivalid <= dispatch_unit_ivalid;
+            dispatch_unit_PC <= dispatch_unit_PC;
+            dispatch_unit_nPC <= dispatch_unit_nPC;
+        end
+
+        // otherwise, accept fetch unit
         else begin
             dispatch_unit_instr <= fetch_unit_instr;
             dispatch_unit_ivalid <= fetch_unit_ivalid;
@@ -597,8 +618,10 @@ module dispatch_unit #(
         next_DUT_error = prmt_DUT_error | prfl_DUT_error | prrt_DUT_error;
 
         // core control interface
-            // dispatch fails by default
-        core_control_dispatch_failed = 1'b1;
+            // dispatch doesn't fail by default
+            // dispatch fail defined as have good instr, but couldn't dispatch
+            // essentially, this tells fetch unit to stall
+        core_control_dispatch_failed = 1'b0;
 
         // restore interface
             // no success by default
@@ -842,39 +865,40 @@ module dispatch_unit #(
         // check for halt
         if (core_control_halt) begin
 
-            // FAIL: keep default outputs
+            // IDLE: keep default outputs
 
-            $display("dispatch_unit: FAIL: core_control_halt");
+            $display("dispatch_unit: IDLE: core_control_halt");
         end
 
         // check for flush
         else if (core_control_flush_dispatch_unit) begin
 
-            // FAIL: keep default outputs
+            // IDLE: keep default outputs
 
-            $display("dispatch_unit: FAIL: core_control_flush_dispatch_unit");
+            $display("dispatch_unit: IDLE: core_control_flush_dispatch_unit");
         end
 
         // check for stall
         else if (core_control_stall_dispatch_unit) begin
 
-            // FAIL: keep default outputs
+            // IDLE: keep default outputs
 
-            $display("dispatch_unit: FAIL: core_control_stall_dispatch_unit");
+            $display("dispatch_unit: IDLE: core_control_stall_dispatch_unit");
         end
 
         // check for no available instr 
         else if (~dispatch_unit_ivalid) begin
 
-            // FAIL: keep default outputs
+            // IDLE: keep default outputs
 
-            $display("dispatch_unit: FAIL: ~dispatch_unit_ivalid");
+            $display("dispatch_unit: IDLE: ~dispatch_unit_ivalid");
         end
 
         // check for ROB full
         else if (ROB_full) begin
 
-            // FAIL: keep default outputs
+            // FAIL: explicitly give dispatch fail
+            core_control_dispatch_failed = 1'b1;
 
             $display("dispatch_unit: FAIL: ROB_full");
         end
@@ -896,7 +920,8 @@ module dispatch_unit #(
                         // fail if BRU RS full
                         if (BRU_RS_full) begin
 
-                            // FAIL: keep default outputs
+                            // FAIL: explicitly give dispatch fail
+                            core_control_dispatch_failed = 1'b1;
 
                             $display("dispatch_unit: FAIL: BRU_RS_full");
                         end
@@ -975,7 +1000,8 @@ module dispatch_unit #(
                         // fail if free list empty 
                         else if (prfl_empty) begin
 
-                            // FAIL: keep default outputs
+                            // FAIL: explicitly give dispatch fail
+                            core_control_dispatch_failed = 1'b1;
 
                             $display("dispatch_unit: FAIL: free list empty");
                         end
@@ -983,7 +1009,8 @@ module dispatch_unit #(
                         // fail if ALU RS's full 
                         else if (ALU_RS_both_full) begin
 
-                            // FAIL: keep default outputs
+                            // FAIL: explicitly give dispatch fail
+                            core_control_dispatch_failed = 1'b1;
 
                             $display("dispatch_unit: FAIL: ALU_RS_both_full");
                         end
@@ -1139,7 +1166,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1147,7 +1175,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1209,7 +1238,8 @@ module dispatch_unit #(
                     // fail if BRU RS full
                     if (BRU_RS_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: BRU_RS_full");
                     end
@@ -1265,7 +1295,8 @@ module dispatch_unit #(
                     // fail if BRU RS full
                     if (BRU_RS_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: BRU_RS_full");
                     end
@@ -1346,7 +1377,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1354,7 +1386,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1431,7 +1464,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1439,7 +1473,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1516,7 +1551,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1524,7 +1560,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1601,7 +1638,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1609,7 +1647,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
                         
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1686,7 +1725,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1694,7 +1734,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1771,7 +1812,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1779,7 +1821,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1856,7 +1899,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1864,7 +1908,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
                         
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -1941,7 +1986,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -1949,7 +1995,8 @@ module dispatch_unit #(
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
@@ -2029,7 +2076,8 @@ module dispatch_unit #(
                     // fail if free list empty 
                     else if (prfl_empty) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: free list empty");
                     end
@@ -2037,7 +2085,8 @@ module dispatch_unit #(
                     // fail if LQ full
                     else if (LQ_full) begin
                         
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: LQ_full");
                     end
@@ -2088,7 +2137,8 @@ module dispatch_unit #(
                     // fail if SQ full
                     if (SQ_full) begin
 
-                        // FAIL: keep default outputs
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
 
                         $display("dispatch_unit: FAIL: SQ_full");
                     end
