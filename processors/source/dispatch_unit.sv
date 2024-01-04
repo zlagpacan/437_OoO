@@ -67,7 +67,7 @@ module dispatch_unit #(
     input logic kill_bus_valid,
     input ROB_index_t kill_bus_ROB_index,
         // actually don't need this, only need ROB index for execution unit kills
-    input arch_reg_tag_t kill_bus_arch_reg_tag;
+    input arch_reg_tag_t kill_bus_arch_reg_tag,
     input phys_reg_tag_t kill_bus_speculated_phys_reg_tag,
     input phys_reg_tag_t kill_bus_safe_phys_reg_tag,
 
@@ -83,21 +83,15 @@ module dispatch_unit #(
     input logic ROB_full,
     input ROB_index_t ROB_tail_index,
     output logic ROB_enqueue_valid,
-    output ROB_input_struct_t ROB_struct_out,
+    output ROB_entry_t ROB_struct_out,
     // retire from head
     input logic ROB_retire_valid,
-    input phys_reg_tag_t ROB_retire_phys_reg_tag;
+    input phys_reg_tag_t ROB_retire_phys_reg_tag,
 
     // 2x ALU RS interface
     input logic [1:0] ALU_RS_full,
     output logic [1:0] ALU_RS_task_valid,
     output ALU_RS_input_struct_t [1:0] ALU_RS_task_struct,
-
-    // SQ interface
-    input SQ_index_t SQ_tail_index,
-    input logic SQ_full,
-    output logic SQ_task_valid,
-    output SQ_enqueue_struct_t SQ_task_struct,
 
     // LQ interface
     input LQ_index_t LQ_tail_index,
@@ -105,11 +99,32 @@ module dispatch_unit #(
     output logic LQ_task_valid,
     output LQ_enqueue_struct_t LQ_task_struct,
 
+    // SQ interface
+    input SQ_index_t SQ_tail_index,
+    input logic SQ_full,
+    output logic SQ_task_valid,
+    output SQ_enqueue_struct_t SQ_task_struct,
+
     // BRU RS interface
     input logic BRU_RS_full,
     output logic BRU_RS_task_valid,
     output BRU_RS_input_struct_t BRU_RS_task_struct
 );
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DUT error:
+
+    logic next_DUT_error;
+
+    // seq + logic
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            DUT_error <= 1'b0;
+        end
+        else begin
+            DUT_error <= next_DUT_error;
+        end
+    end
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // phys_reg_map_table:
@@ -207,8 +222,8 @@ module dispatch_unit #(
 	phys_reg_tag_t prfl_enqueue_phys_reg_tag;
 
     // full/empty
-        // should be left unused but may want to account for potential functionality externally
-        // can use for assertions
+        // full should be left unused but may want to account for potential functionality externally
+            // can use for assertions?
 	logic prfl_full;
 	logic prfl_empty;
 
@@ -234,7 +249,7 @@ module dispatch_unit #(
     // phys_reg_free_list instantiation
 	phys_reg_free_list #(
 
-	) DUT (
+    ) prfl (
 		// seq
 		.CLK(CLK),
 		.nRST(nRST),
@@ -304,7 +319,7 @@ module dispatch_unit #(
     // phys_reg_ready_table instantiation
 	phys_reg_ready_table #(
 
-	) DUT (
+    ) prrt (
 		// seq
 		.CLK(CLK),
 		.nRST(nRST),
@@ -474,35 +489,35 @@ module dispatch_unit #(
         /////////////////////////////////////
             // check these are actually used as intended later
 
-        // phys_reg_map_table:
-        // reg map reading
-        prmt_source_phys_reg_tag_0;
-        prmt_source_phys_reg_tag_1;
-        prmt_old_dest_phys_reg_tag;
-        // reg map rename
-        // reg map revert
-        // reg map checkpoint save
-        prmt_save_checkpoint_safe_column;
-        // reg map checkpoint restore
-        prmt_restore_checkpoint_success;
+        // // phys_reg_map_table:
+        // // reg map reading
+        // prmt_source_phys_reg_tag_0;
+        // prmt_source_phys_reg_tag_1;
+        // prmt_old_dest_phys_reg_tag;
+        // // reg map rename
+        // // reg map revert
+        // // reg map checkpoint save
+        // prmt_save_checkpoint_safe_column;
+        // // reg map checkpoint restore
+        // prmt_restore_checkpoint_success;
 
-        // phys_reg_free_list:
-        // dequeue
-        prfl_dequeue_phys_reg_tag;
-        // enqueue
-        // full/empty
-        prfl_full;
-        prfl_empty;
-        // reg map revert
-        // free list checkpoint save
-        prfl_save_checkpoint_safe_column;
-        // free list checkpoint restore
-        prfl_restore_checkpoint_success;
+        // // phys_reg_free_list:
+        // // dequeue
+        // prfl_dequeue_phys_reg_tag;
+        // // enqueue
+        // // full/empty
+        // prfl_full;
+        // prfl_empty;
+        // // reg map revert
+        // // free list checkpoint save
+        // prfl_save_checkpoint_safe_column;
+        // // free list checkpoint restore
+        // prfl_restore_checkpoint_success;
 
-        // dispatch
-        prrt_dispatch_source_0_ready;
-        prrt_dispatch_source_1_ready;
-        // complete
+        // // dispatch
+        // prrt_dispatch_source_0_ready;
+        // prrt_dispatch_source_1_ready;
+        // // complete
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // default outputs:
@@ -677,7 +692,7 @@ module dispatch_unit #(
         LQ_task_struct.source.ready = prrt_dispatch_source_0_ready;
         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
-        LQ_task_struct.imm14 = imm16[15:2];
+        LQ_task_struct.imm14 = instr_imm16[15:2];
         LQ_task_struct.SQ_index = SQ_tail_index;
         LQ_task_struct.ROB_index = ROB_tail_index;
 
@@ -692,7 +707,7 @@ module dispatch_unit #(
         SQ_task_struct.source_1.needed = 1'b1;
         SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
         SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-        SQ_task_struct.imm14 = imm16[15:2];
+        SQ_task_struct.imm14 = instr_imm16[15:2];
         SQ_task_struct.LQ_index = LQ_tail_index;
         SQ_task_struct.ROB_index = ROB_tail_index;
 
@@ -708,7 +723,7 @@ module dispatch_unit #(
         BRU_RS_task_struct.source_1.needed = 1'b1;
         BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-        BRU_RS_task_struct.imm14 = imm16[15:2];
+        BRU_RS_task_struct.imm14 = instr_imm16[15:2];
         BRU_RS_task_struct.PC = dispatch_unit_PC;
         BRU_RS_task_struct.nPC = dispatch_unit_nPC;
         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -724,7 +739,7 @@ module dispatch_unit #(
             // 0 > 1 priority
 
         // cover 4 cases
-        casez (ALU_RS_full) begin
+        casez (ALU_RS_full)
             
             2'b00:
             begin
@@ -749,7 +764,13 @@ module dispatch_unit #(
                 ALU_RS_select = 1'b0;
                 ALU_RS_both_full = 1'b1;
             end
-        end
+
+            default:
+            begin
+                $display("dispatch_unit: ERROR: got to final case for ALU_RS_full");
+                next_DUT_error = 1'b1;
+            end
+
         endcase
 
         /////////////////////
@@ -757,6 +778,19 @@ module dispatch_unit #(
         /////////////////////
             // always allowed
             // ALREADY CONNECTED
+
+        ////////////////////
+        // restore logic: //
+        ////////////////////
+            // connected below with JR, BEQ, BNE
+            // assert save checkpoints are same
+        // assert save checkpoints are same
+        if (prmt_save_checkpoint_safe_column != prfl_save_checkpoint_safe_column) begin
+            $display("dispatch_unit: ERROR: prmt_save_checkpoint_safe_column != prfl_save_checkpoint_safe_column");
+            $display("\tprmt_save_checkpoint_safe_column = %h", prmt_save_checkpoint_safe_column);
+            $display("\tprfl_save_checkpoint_safe_column = %h", prfl_save_checkpoint_safe_column);
+            next_DUT_error = 1'b1;
+        end
 
         ////////////////////
         // restore logic: //
@@ -837,11 +871,19 @@ module dispatch_unit #(
             $display("dispatch_unit: FAIL: ~dispatch_unit_ivalid");
         end
 
+        // check for ROB full
+        else if (ROB_full) begin
+
+            // FAIL: keep default outputs
+
+            $display("dispatch_unit: FAIL: ROB_full");
+        end
+
         // otherwise, have instr that can try to dispatch
         else begin
 
             // by opcode
-            casez (instr_opcode) begin
+            casez (instr_opcode)
 
                 ///////////////////////////////////////////////////////////////////////////////////////////
                 // RTYPE
@@ -853,8 +895,10 @@ module dispatch_unit #(
 
                         // fail if BRU RS full
                         if (BRU_RS_full) begin
+
+                            // FAIL: keep default outputs
+
                             $display("dispatch_unit: FAIL: BRU_RS_full");
-                            core_control_dispatch_failed = 1'b1;
                         end
 
                         // otherwise, can dispatch to BRU
@@ -895,7 +939,7 @@ module dispatch_unit #(
                             BRU_RS_task_struct.source_1.needed = 1'b0;
                             BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                             BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                            BRU_RS_task_struct.imm14 = imm16[15:2];
+                            BRU_RS_task_struct.imm14 = instr_imm16[15:2];
                             BRU_RS_task_struct.PC = dispatch_unit_PC;
                             BRU_RS_task_struct.nPC = dispatch_unit_nPC;
                             BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -908,7 +952,7 @@ module dispatch_unit #(
 
                         // check for dead instr -> write to rd = $0
                         if (instr_rd == 5'd0) begin
-                            $display("dispatch_unit: FAIL: instr_rd == 5'd0");
+                            $display("dispatch_unit: dead instr, instr_rd == 5'd0");
                             
                             // immediately complete
                             // dispatched unit is DEAD
@@ -928,10 +972,20 @@ module dispatch_unit #(
                             ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                         end
 
+                        // fail if free list empty 
+                        else if (prfl_empty) begin
+
+                            // FAIL: keep default outputs
+
+                            $display("dispatch_unit: FAIL: free list empty");
+                        end
+
                         // fail if ALU RS's full 
                         else if (ALU_RS_both_full) begin
+
+                            // FAIL: keep default outputs
+
                             $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                            core_control_dispatch_failed = 1'b1;
                         end
 
                         // otherwise, can dispatch to an ALU RS
@@ -979,7 +1033,7 @@ module dispatch_unit #(
                             ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
 
                             // fill in ALU RS struct by funct
-                            casez (instr_funct) begin
+                            casez (instr_funct)
 
                                 NOP:
                                 begin
@@ -1049,7 +1103,7 @@ module dispatch_unit #(
                                     $display("dispatch_unit: ERROR: unrecognized RTYPE instr");
                                     next_DUT_error = 1'b1;
                                 end
-                            end
+
                             endcase
                         end
                     end
@@ -1084,8 +1138,18 @@ module dispatch_unit #(
 
                     // fail if ALU RS's full 
                     if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
+                    end
+
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1132,7 +1196,7 @@ module dispatch_unit #(
                         ALU_RS_task_struct[ALU_RS_select].source_1.ready = prrt_dispatch_source_1_ready;
                         ALU_RS_task_struct[ALU_RS_select].source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
                         ALU_RS_task_struct[ALU_RS_select].dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
-                        ALU_RS_task_struct[ALU_RS_select].imm16 = 16'{dispatch_unit_PC, 2'b00};
+                        ALU_RS_task_struct[ALU_RS_select].imm16 = {dispatch_unit_PC, 2'b00};
                         ALU_RS_task_struct[ALU_RS_select].ROB_index = ROB_tail_index;
                     end
                 end
@@ -1144,8 +1208,10 @@ module dispatch_unit #(
                 begin
                     // fail if BRU RS full
                     if (BRU_RS_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: BRU_RS_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to BRU
@@ -1186,7 +1252,7 @@ module dispatch_unit #(
                         BRU_RS_task_struct.source_1.needed = 1'b1;
                         BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                        BRU_RS_task_struct.imm14 = imm16[15:2];
+                        BRU_RS_task_struct.imm14 = instr_imm16[15:2];
                         BRU_RS_task_struct.PC = dispatch_unit_PC;
                         BRU_RS_task_struct.nPC = dispatch_unit_nPC;
                         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -1198,8 +1264,10 @@ module dispatch_unit #(
                 begin
                     // fail if BRU RS full
                     if (BRU_RS_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: BRU_RS_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to BRU
@@ -1240,7 +1308,7 @@ module dispatch_unit #(
                         BRU_RS_task_struct.source_1.needed = 1'b1;
                         BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                        BRU_RS_task_struct.imm14 = imm16[15:2];
+                        BRU_RS_task_struct.imm14 = instr_imm16[15:2];
                         BRU_RS_task_struct.PC = dispatch_unit_PC;
                         BRU_RS_task_struct.nPC = dispatch_unit_nPC;
                         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -1255,7 +1323,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1275,10 +1343,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1330,7 +1408,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1350,10 +1428,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1405,7 +1493,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1425,10 +1513,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1480,7 +1578,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1500,10 +1598,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+                        
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1555,7 +1663,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1575,10 +1683,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1630,7 +1748,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1650,10 +1768,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1705,7 +1833,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1725,10 +1853,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+                        
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1780,7 +1918,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1800,10 +1938,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if ALU RS's full 
                     else if (ALU_RS_both_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: ALU_RS_both_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1858,7 +2006,7 @@ module dispatch_unit #(
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: FAIL: instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1878,10 +2026,20 @@ module dispatch_unit #(
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                     end
 
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: keep default outputs
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
                     // fail if LQ full
                     else if (LQ_full) begin
+                        
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: LQ_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to LQ
@@ -1919,7 +2077,7 @@ module dispatch_unit #(
                         LQ_task_struct.source.ready = prrt_dispatch_source_0_ready;
                         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
                         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
-                        LQ_task_struct.imm14 = imm16[15:2];
+                        LQ_task_struct.imm14 = instr_imm16[15:2];
                         LQ_task_struct.SQ_index = SQ_tail_index;
                         LQ_task_struct.ROB_index = ROB_tail_index;
                     end
@@ -1929,8 +2087,10 @@ module dispatch_unit #(
                 begin
                     // fail if SQ full
                     if (SQ_full) begin
+
+                        // FAIL: keep default outputs
+
                         $display("dispatch_unit: FAIL: SQ_full");
-                        core_control_dispatch_failed = 1'b1;
                     end
 
                     // otherwise, can dispatch to SQ
@@ -1970,7 +2130,7 @@ module dispatch_unit #(
                         SQ_task_struct.source_1.needed = 1'b1;
                         SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                        SQ_task_struct.imm14 = imm16[15:2];
+                        SQ_task_struct.imm14 = instr_imm16[15:2];
                         SQ_task_struct.LQ_index = LQ_tail_index;
                         SQ_task_struct.ROB_index = ROB_tail_index;
                     end
@@ -2016,7 +2176,7 @@ module dispatch_unit #(
                     $display("dispatch_unit: ERROR: unrecognized opcode");
                     next_DUT_error = 1'b1; 
                 end
-            end
+
             endcase
         end
     end
