@@ -62,6 +62,7 @@ package core_types_pkg;
 
     // funct
     typedef enum logic [FUNCT_WIDTH-1:0] {
+        NOP     = 6'b000000,    // added so fully enumerated
         SLLV    = 6'b000100,
         SRLV    = 6'b000110,
         JR      = 6'b001000,
@@ -190,6 +191,8 @@ package core_types_pkg;
         logic SQ:
         logic BRU;
         logic J;
+        logic DEAD;
+        logic HALT;
     } dispatched_unit_t;
 
     typedef struct packed {
@@ -210,9 +213,7 @@ package core_types_pkg;
 
     typedef enum logic [3:0] {
         ALU_ADD,
-        ALU_ADDU,
         ALU_SUB,
-        ALU_SUBU,
         ALU_AND,
         ALU_OR,
         ALU_NOR,
@@ -221,13 +222,14 @@ package core_types_pkg;
         ALU_SLTU,
         ALU_SLLV,
         ALU_SRLV,
-        ALU_LUI,
-        ALU_LINK
+        ALU_LUI,    // R[dest] <= {imm16, 16'h0}
+        ALU_LINK    // R[dest] <= {16'h0, imm16[15:2] + 1, 2'b00}
     } ALU_op_t;
 
     typedef struct packed {
         // ALU needs
         ALU_op_t op;
+        logic itype;
         source_reg_status_t source_0;
         source_reg_status_t source_1;
         phys_reg_tag_t dest_phys_reg_tag;
