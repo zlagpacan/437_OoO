@@ -223,8 +223,8 @@ package core_types_pkg;
         ALU_SLTU,
         ALU_SLLV,
         ALU_SRLV,
-        ALU_LUI,    // R[dest] <= {imm16, 16'h0}
-        ALU_LINK    // R[dest] <= {16'h0, imm16[15:2] + 1, 2'b00}
+        ALU_LUI,    // R[dest] <= {imm16, 16'h0} (no reg input needed)
+        ALU_LINK    // R[dest] <= {16'h0, imm16[15:2] + 1, 2'b00} (no reg input needed)
     } ALU_op_t;
 
     typedef struct packed {
