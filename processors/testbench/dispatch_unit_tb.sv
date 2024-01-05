@@ -5326,7 +5326,7 @@ module dispatch_unit_tb ();
 		@(posedge CLK);
 
 		// inputs
-		sub_test_case = "23|87: SW r3->p3, 0x10D(r13->p3) in | 22|86: SLTIU r29->p51, r9->p9, 0x4BE9 out";
+		sub_test_case = "23|87: SW r3->p3, 0x10D(r13->p3) in | 22|86: SLTIU r29->p51, r9->p9, 0x4BE9 out + complete 35";
 		$display("\t- sub_test: %s", sub_test_case);
 
 		// reset
@@ -5353,8 +5353,8 @@ module dispatch_unit_tb ();
 		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
 		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
 	    // complete bus interface
-		tb_complete_bus_0_valid = 1'b0;
-		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_0_valid = 1'b1;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(35);
 		tb_complete_bus_1_valid = 1'b0;
 		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
 	    // ROB interface
@@ -5476,7 +5476,7 @@ module dispatch_unit_tb ();
 		@(posedge CLK);
 
 		// inputs
-		sub_test_case = "24|88: XORI r30->p34/p52, r30->p34, 0x1C9 in | 23|87: SW r3->p3, 0x10D(r13->p3) out";
+		sub_test_case = "24|88: XORI r30->p34/p52, r30->p34, 0x1C9 in (SQ full, fail) | 23|87: SW r3->p3, 0x10D(r13->p3) out (SQ full, fail)";
 		$display("\t- sub_test: %s", sub_test_case);
 
 		// reset
@@ -5487,9 +5487,9 @@ module dispatch_unit_tb ();
 		tb_core_control_flush_dispatch_unit = 1'b0;
 		tb_core_control_halt = 1'b0;
 	    // fetch_unit interface
-		tb_fetch_unit_instr = {6'b101011, 5'd13, 5'd3, 16'h10d};
+		tb_fetch_unit_instr = {6'b001110, 5'd30, 5'd30, 16'h1c9};
 		tb_fetch_unit_ivalid = 1'b1;
-		tb_fetch_unit_PC = pc_t'(87);
+		tb_fetch_unit_PC = pc_t'(88);
 		tb_fetch_unit_nPC = pc_t'(88);
 	    // restore interface
 		tb_restore_checkpoint_valid = 1'b0;
@@ -5510,7 +5510,307 @@ module dispatch_unit_tb ();
 	    // ROB interface
 	    // dispatch @ tail
 		tb_ROB_full = 1'b0;
-		tb_ROB_tail_index = ROB_index_t'(22);
+		tb_ROB_tail_index = ROB_index_t'(23);
+	    // retire from head
+		tb_ROB_retire_valid = 1'b0;
+		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
+	    // 2x ALU RS interface
+		tb_ALU_RS_full = 2'b00;
+	    // SQ interface
+		tb_SQ_tail_index = SQ_index_t'(0);
+		tb_SQ_full = 1'b1;
+	    // LQ interface
+		tb_LQ_tail_index = LQ_index_t'(0);
+		tb_LQ_full = 1'b0;
+	    // BRU RS interface
+		tb_BRU_RS_full = 1'b0; 
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // core control interface
+		expected_core_control_dispatch_failed = 1'b1;
+	    // fetch_unit interface
+	    // restore interface
+		expected_restore_checkpoint_success = 1'b0;
+	    // kill bus interface
+	    // complete bus interface
+	    // ROB interface
+	    // dispatch @ tail
+		expected_ROB_enqueue_valid = 1'b0;
+		expected_ROB_struct_out.valid = 1'b1;
+        expected_ROB_struct_out.complete = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.SQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.J = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.HALT = 1'b0;
+        expected_ROB_struct_out.restart_PC = pc_t'(87);
+        expected_ROB_struct_out.reg_write = 1'b1;
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(0);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(52);
+	    // retire from head
+	    // 2x ALU RS interface
+            // ALU RS 0
+		expected_ALU_RS_task_valid[0] = 1'b0;
+		expected_ALU_RS_task_struct[0].op = ALU_ADD;
+        expected_ALU_RS_task_struct[0].itype = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_ALU_RS_task_struct[0].imm16 = 16'h10d;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(23);
+            // ALU RS 1
+        expected_ALU_RS_task_valid[1] = 1'b0;
+		expected_ALU_RS_task_struct[1].op = ALU_ADD;
+        expected_ALU_RS_task_struct[1].itype = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_ALU_RS_task_struct[1].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_ALU_RS_task_struct[1].imm16 = 16'h10d;
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(23);
+        // LQ interface
+		expected_LQ_task_valid = 1'b0;
+		expected_LQ_task_struct.op = LQ_LW;
+        expected_LQ_task_struct.source.needed = 1'b1;
+        expected_LQ_task_struct.source.ready = 1'b1;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_LQ_task_struct.imm14 = 16'h10d >> 2;
+        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(23);
+	    // SQ interface
+		expected_SQ_task_valid = 1'b0;
+		expected_SQ_task_struct.op = SQ_SW;
+        expected_SQ_task_struct.source_0.needed = 1'b1;
+        expected_SQ_task_struct.source_0.ready = 1'b1;
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_SQ_task_struct.source_1.needed = 1'b1;
+        expected_SQ_task_struct.source_1.ready = 1'b1;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_SQ_task_struct.imm14 = 16'h10d >> 2;
+        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(23);
+	    // BRU RS interface
+		expected_BRU_RS_task_valid = 1'b0;
+		expected_BRU_RS_task_struct.op = BRU_BEQ;
+        expected_BRU_RS_task_struct.source_0.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_0.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_BRU_RS_task_struct.source_1.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_1.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_BRU_RS_task_struct.imm14 = 16'h10d >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(87);
+        expected_BRU_RS_task_struct.nPC = pc_t'(88);
+        expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(23);
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "24|88: XORI r30->p34/p52, r30->p34, 0x1C9 in (success) | 23|87: SW r3->p3, 0x10D(r13->p3) out (success)";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // core control interface
+		tb_core_control_stall_dispatch_unit = 1'b0;
+		tb_core_control_flush_dispatch_unit = 1'b0;
+		tb_core_control_halt = 1'b0;
+	    // fetch_unit interface
+		tb_fetch_unit_instr = {6'b001110, 5'd30, 5'd30, 16'h1c9};
+		tb_fetch_unit_ivalid = 1'b1;
+		tb_fetch_unit_PC = pc_t'(88);
+		tb_fetch_unit_nPC = pc_t'(89);
+	    // restore interface
+		tb_restore_checkpoint_valid = 1'b0;
+		tb_restore_checkpoint_speculate_failed = 1'b0;
+		tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+		tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+		tb_kill_bus_arch_reg_tag = arch_reg_tag_t'(0);
+		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
+	    // complete bus interface
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+	    // ROB interface
+	    // dispatch @ tail
+		tb_ROB_full = 1'b0;
+		tb_ROB_tail_index = ROB_index_t'(23);
+	    // retire from head
+		tb_ROB_retire_valid = 1'b0;
+		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
+	    // 2x ALU RS interface
+		tb_ALU_RS_full = 2'b00;
+	    // SQ interface
+		tb_SQ_tail_index = SQ_index_t'(2);
+		tb_SQ_full = 1'b0;
+	    // LQ interface
+		tb_LQ_tail_index = LQ_index_t'(5);
+		tb_LQ_full = 1'b0;
+	    // BRU RS interface
+		tb_BRU_RS_full = 1'b0; 
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // core control interface
+		expected_core_control_dispatch_failed = 1'b0;
+	    // fetch_unit interface
+	    // restore interface
+		expected_restore_checkpoint_success = 1'b0;
+	    // kill bus interface
+	    // complete bus interface
+	    // ROB interface
+	    // dispatch @ tail
+		expected_ROB_enqueue_valid = 1'b1;
+		expected_ROB_struct_out.valid = 1'b1;
+        expected_ROB_struct_out.complete = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.SQ = 1'b1;
+        expected_ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.J = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.HALT = 1'b0;
+        expected_ROB_struct_out.restart_PC = pc_t'(87);
+        expected_ROB_struct_out.reg_write = 1'b1;
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(3);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(3);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(52);
+	    // retire from head
+	    // 2x ALU RS interface
+            // ALU RS 0
+		expected_ALU_RS_task_valid[0] = 1'b0;
+		expected_ALU_RS_task_struct[0].op = ALU_ADD;
+        expected_ALU_RS_task_struct[0].itype = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_ALU_RS_task_struct[0].imm16 = 16'h10d;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(23);
+            // ALU RS 1
+        expected_ALU_RS_task_valid[1] = 1'b0;
+		expected_ALU_RS_task_struct[1].op = ALU_ADD;
+        expected_ALU_RS_task_struct[1].itype = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_ALU_RS_task_struct[1].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_ALU_RS_task_struct[1].imm16 = 16'h10d;
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(23);
+        // LQ interface
+		expected_LQ_task_valid = 1'b0;
+		expected_LQ_task_struct.op = LQ_LW;
+        expected_LQ_task_struct.source.needed = 1'b1;
+        expected_LQ_task_struct.source.ready = 1'b1;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_LQ_task_struct.imm14 = 16'h10d >> 2;
+        expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(23);
+	    // SQ interface
+		expected_SQ_task_valid = 1'b1;
+		expected_SQ_task_struct.op = SQ_SW;
+        expected_SQ_task_struct.source_0.needed = 1'b1;
+        expected_SQ_task_struct.source_0.ready = 1'b1;
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_SQ_task_struct.source_1.needed = 1'b1;
+        expected_SQ_task_struct.source_1.ready = 1'b1;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_SQ_task_struct.imm14 = 16'h10d >> 2;
+        expected_SQ_task_struct.LQ_index = LQ_index_t'(5);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(23);
+	    // BRU RS interface
+		expected_BRU_RS_task_valid = 1'b0;
+		expected_BRU_RS_task_struct.op = BRU_BEQ;
+        expected_BRU_RS_task_struct.source_0.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_0.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(35);
+        expected_BRU_RS_task_struct.source_1.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_1.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
+        expected_BRU_RS_task_struct.imm14 = 16'h10d >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(87);
+        expected_BRU_RS_task_struct.nPC = pc_t'(88);
+        expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(23);
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "25|89: J (goto 26) in | 24|88: XORI r30->p34/p52, r30->p34, 0x1C9 out";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // core control interface
+		tb_core_control_stall_dispatch_unit = 1'b0;
+		tb_core_control_flush_dispatch_unit = 1'b0;
+		tb_core_control_halt = 1'b0;
+	    // fetch_unit interface
+		tb_fetch_unit_instr = {6'b000010, 26'd26};
+		tb_fetch_unit_ivalid = 1'b1;
+		tb_fetch_unit_PC = pc_t'(89);
+		tb_fetch_unit_nPC = pc_t'(26);
+	    // restore interface
+		tb_restore_checkpoint_valid = 1'b0;
+		tb_restore_checkpoint_speculate_failed = 1'b0;
+		tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+		tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+		tb_kill_bus_arch_reg_tag = arch_reg_tag_t'(0);
+		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
+	    // complete bus interface
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+	    // ROB interface
+	    // dispatch @ tail
+		tb_ROB_full = 1'b0;
+		tb_ROB_tail_index = ROB_index_t'(24);
 	    // retire from head
 		tb_ROB_retire_valid = 1'b0;
 		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
@@ -5551,75 +5851,675 @@ module dispatch_unit_tb ();
         expected_ROB_struct_out.dispatched_unit.J = 1'b0;
         expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
         expected_ROB_struct_out.dispatched_unit.HALT = 1'b0;
-        expected_ROB_struct_out.restart_PC = pc_t'(86);
+        expected_ROB_struct_out.restart_PC = pc_t'(88);
         expected_ROB_struct_out.reg_write = 1'b1;
-        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(29);
-        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(29);
-        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(51);
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(30);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(34);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(52);
 	    // retire from head
 	    // 2x ALU RS interface
             // ALU RS 0
 		expected_ALU_RS_task_valid[0] = 1'b1;
-		expected_ALU_RS_task_struct[0].op = ALU_SLTU;
+		expected_ALU_RS_task_struct[0].op = ALU_XOR;
         expected_ALU_RS_task_struct[0].itype = 1'b1;
         expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
         expected_ALU_RS_task_struct[0].source_0.ready = 1'b1;
-        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(9);
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(34);
         expected_ALU_RS_task_struct[0].source_1.needed = 1'b0;
         expected_ALU_RS_task_struct[0].source_1.ready = 1'b1;
-        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(29);
-        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(51);
-        expected_ALU_RS_task_struct[0].imm16 = 16'h4be9;
-        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(22);
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(34);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_ALU_RS_task_struct[0].imm16 = 16'h1c9;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(24);
             // ALU RS 1
         expected_ALU_RS_task_valid[1] = 1'b0;
 		expected_ALU_RS_task_struct[1].op = ALU_ADD;
         expected_ALU_RS_task_struct[1].itype = 1'b0;
         expected_ALU_RS_task_struct[1].source_0.needed = 1'b1;
         expected_ALU_RS_task_struct[1].source_0.ready = 1'b1;
-        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(9);
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(34);
         expected_ALU_RS_task_struct[1].source_1.needed = 1'b1;
         expected_ALU_RS_task_struct[1].source_1.ready = 1'b1;
-        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(29);
-        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(51);
-        expected_ALU_RS_task_struct[1].imm16 = 16'h4be9;
-        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(22);
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(34);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_ALU_RS_task_struct[1].imm16 = 16'h1c9;
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(24);
         // LQ interface
 		expected_LQ_task_valid = 1'b0;
 		expected_LQ_task_struct.op = LQ_LW;
         expected_LQ_task_struct.source.needed = 1'b1;
         expected_LQ_task_struct.source.ready = 1'b1;
-        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(9);
-        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(51);
-        expected_LQ_task_struct.imm14 = 16'h4be9 >> 2;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(52);
+        expected_LQ_task_struct.imm14 = 16'h1c9 >> 2;
         expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
-        expected_LQ_task_struct.ROB_index = ROB_index_t'(22);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(24);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
 		expected_SQ_task_struct.op = SQ_SW;
         expected_SQ_task_struct.source_0.needed = 1'b1;
         expected_SQ_task_struct.source_0.ready = 1'b1;
-        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(9);
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(34);
         expected_SQ_task_struct.source_1.needed = 1'b1;
         expected_SQ_task_struct.source_1.ready = 1'b1;
-        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(29);
-        expected_SQ_task_struct.imm14 = 16'h4be9 >> 2;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(34);
+        expected_SQ_task_struct.imm14 = 16'h1c9 >> 2;
         expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
-        expected_SQ_task_struct.ROB_index = ROB_index_t'(22);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(24);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
 		expected_BRU_RS_task_struct.op = BRU_BEQ;
         expected_BRU_RS_task_struct.source_0.needed = 1'b1;
         expected_BRU_RS_task_struct.source_0.ready = 1'b1;
-        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(9);
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(34);
         expected_BRU_RS_task_struct.source_1.needed = 1'b1;
         expected_BRU_RS_task_struct.source_1.ready = 1'b1;
-        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(29);
-        expected_BRU_RS_task_struct.imm14 = 16'h4be9 >> 2;
-        expected_BRU_RS_task_struct.PC = pc_t'(86);
-        expected_BRU_RS_task_struct.nPC = pc_t'(87);
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(34);
+        expected_BRU_RS_task_struct.imm14 = 16'h1c9 >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(88);
+        expected_BRU_RS_task_struct.nPC = pc_t'(89);
         expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
-        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(22);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(24);
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "26|26: JAL (goto 99) (r31->p31/p53 <= PC+1) in | 25|89: J (goto 26) out";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // core control interface
+		tb_core_control_stall_dispatch_unit = 1'b0;
+		tb_core_control_flush_dispatch_unit = 1'b0;
+		tb_core_control_halt = 1'b0;
+	    // fetch_unit interface
+		tb_fetch_unit_instr = {6'b000011, 26'd99};
+		tb_fetch_unit_ivalid = 1'b1;
+		tb_fetch_unit_PC = pc_t'(26);
+		tb_fetch_unit_nPC = pc_t'(99);
+	    // restore interface
+		tb_restore_checkpoint_valid = 1'b0;
+		tb_restore_checkpoint_speculate_failed = 1'b0;
+		tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+		tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+		tb_kill_bus_arch_reg_tag = arch_reg_tag_t'(0);
+		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
+	    // complete bus interface
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+	    // ROB interface
+	    // dispatch @ tail
+		tb_ROB_full = 1'b0;
+		tb_ROB_tail_index = ROB_index_t'(25);
+	    // retire from head
+		tb_ROB_retire_valid = 1'b0;
+		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
+	    // 2x ALU RS interface
+		tb_ALU_RS_full = 2'b00;
+	    // SQ interface
+		tb_SQ_tail_index = SQ_index_t'(0);
+		tb_SQ_full = 1'b0;
+	    // LQ interface
+		tb_LQ_tail_index = LQ_index_t'(0);
+		tb_LQ_full = 1'b0;
+	    // BRU RS interface
+		tb_BRU_RS_full = 1'b0; 
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // core control interface
+		expected_core_control_dispatch_failed = 1'b0;
+	    // fetch_unit interface
+	    // restore interface
+		expected_restore_checkpoint_success = 1'b0;
+	    // kill bus interface
+	    // complete bus interface
+	    // ROB interface
+	    // dispatch @ tail
+		expected_ROB_enqueue_valid = 1'b1;
+		expected_ROB_struct_out.valid = 1'b1;
+        expected_ROB_struct_out.complete = 1'b1;
+        expected_ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.SQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.J = 1'b1;
+        expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.HALT = 1'b0;
+        expected_ROB_struct_out.restart_PC = pc_t'(89);
+        expected_ROB_struct_out.reg_write = 1'b0;
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(0);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(53);
+	    // retire from head
+	    // 2x ALU RS interface
+            // ALU RS 0
+		expected_ALU_RS_task_valid[0] = 1'b0;
+		expected_ALU_RS_task_struct[0].op = ALU_ADD;
+        expected_ALU_RS_task_struct[0].itype = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[0].imm16 = 16'd26;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(25);
+            // ALU RS 1
+        expected_ALU_RS_task_valid[1] = 1'b0;
+		expected_ALU_RS_task_struct[1].op = ALU_ADD;
+        expected_ALU_RS_task_struct[1].itype = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[1].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[1].imm16 = 16'd26;
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(25);
+        // LQ interface
+		expected_LQ_task_valid = 1'b0;
+		expected_LQ_task_struct.op = LQ_LW;
+        expected_LQ_task_struct.source.needed = 1'b1;
+        expected_LQ_task_struct.source.ready = 1'b1;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_LQ_task_struct.imm14 = 16'd26 >> 2;
+        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(25);
+	    // SQ interface
+		expected_SQ_task_valid = 1'b0;
+		expected_SQ_task_struct.op = SQ_SW;
+        expected_SQ_task_struct.source_0.needed = 1'b1;
+        expected_SQ_task_struct.source_0.ready = 1'b1;
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_SQ_task_struct.source_1.needed = 1'b1;
+        expected_SQ_task_struct.source_1.ready = 1'b1;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_SQ_task_struct.imm14 = 16'd26 >> 2;
+        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(25);
+	    // BRU RS interface
+		expected_BRU_RS_task_valid = 1'b0;
+		expected_BRU_RS_task_struct.op = BRU_BEQ;
+        expected_BRU_RS_task_struct.source_0.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_0.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_BRU_RS_task_struct.source_1.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_1.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_BRU_RS_task_struct.imm14 = 16'd26 >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(89);
+        expected_BRU_RS_task_struct.nPC = pc_t'(26);
+        expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(25);
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "27|99: HALT in (ALU RS full, fail) | 26|26: JAL (goto 99) (r31->p31/p53 <= PC+1) out (ALU RS full, fail)";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // core control interface
+		tb_core_control_stall_dispatch_unit = 1'b0;
+		tb_core_control_flush_dispatch_unit = 1'b0;
+		tb_core_control_halt = 1'b0;
+	    // fetch_unit interface
+		tb_fetch_unit_instr = {32'hffffffff};
+		tb_fetch_unit_ivalid = 1'b1;
+		tb_fetch_unit_PC = pc_t'(99);
+		tb_fetch_unit_nPC = pc_t'(99);
+	    // restore interface
+		tb_restore_checkpoint_valid = 1'b0;
+		tb_restore_checkpoint_speculate_failed = 1'b0;
+		tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+		tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+		tb_kill_bus_arch_reg_tag = arch_reg_tag_t'(0);
+		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
+	    // complete bus interface
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+	    // ROB interface
+	    // dispatch @ tail
+		tb_ROB_full = 1'b0;
+		tb_ROB_tail_index = ROB_index_t'(26);
+	    // retire from head
+		tb_ROB_retire_valid = 1'b0;
+		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
+	    // 2x ALU RS interface
+		tb_ALU_RS_full = 2'b11;
+	    // SQ interface
+		tb_SQ_tail_index = SQ_index_t'(0);
+		tb_SQ_full = 1'b0;
+	    // LQ interface
+		tb_LQ_tail_index = LQ_index_t'(0);
+		tb_LQ_full = 1'b0;
+	    // BRU RS interface
+		tb_BRU_RS_full = 1'b0; 
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // core control interface
+		expected_core_control_dispatch_failed = 1'b1;
+	    // fetch_unit interface
+	    // restore interface
+		expected_restore_checkpoint_success = 1'b0;
+	    // kill bus interface
+	    // complete bus interface
+	    // ROB interface
+	    // dispatch @ tail
+		expected_ROB_enqueue_valid = 1'b0;
+		expected_ROB_struct_out.valid = 1'b1;
+        expected_ROB_struct_out.complete = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.SQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.J = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.HALT = 1'b0;
+        expected_ROB_struct_out.restart_PC = pc_t'(26);
+        expected_ROB_struct_out.reg_write = 1'b1;
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(0);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(53);
+	    // retire from head
+	    // 2x ALU RS interface
+            // ALU RS 0
+		expected_ALU_RS_task_valid[0] = 1'b0;
+		expected_ALU_RS_task_struct[0].op = ALU_ADD;
+        expected_ALU_RS_task_struct[0].itype = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[0].imm16 = 16'd99;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(26);
+            // ALU RS 1
+        expected_ALU_RS_task_valid[1] = 1'b0;
+		expected_ALU_RS_task_struct[1].op = ALU_ADD;
+        expected_ALU_RS_task_struct[1].itype = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[1].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[1].imm16 = 16'd99;
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(26);
+        // LQ interface
+		expected_LQ_task_valid = 1'b0;
+		expected_LQ_task_struct.op = LQ_LW;
+        expected_LQ_task_struct.source.needed = 1'b1;
+        expected_LQ_task_struct.source.ready = 1'b1;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_LQ_task_struct.imm14 = 16'd99 >> 2;
+        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(26);
+	    // SQ interface
+		expected_SQ_task_valid = 1'b0;
+		expected_SQ_task_struct.op = SQ_SW;
+        expected_SQ_task_struct.source_0.needed = 1'b1;
+        expected_SQ_task_struct.source_0.ready = 1'b1;
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_SQ_task_struct.source_1.needed = 1'b1;
+        expected_SQ_task_struct.source_1.ready = 1'b1;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_SQ_task_struct.imm14 = 16'd99 >> 2;
+        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(26);
+	    // BRU RS interface
+		expected_BRU_RS_task_valid = 1'b0;
+		expected_BRU_RS_task_struct.op = BRU_BEQ;
+        expected_BRU_RS_task_struct.source_0.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_0.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_BRU_RS_task_struct.source_1.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_1.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_BRU_RS_task_struct.imm14 = 16'd99 >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(26);
+        expected_BRU_RS_task_struct.nPC = pc_t'(99);
+        expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(26);
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "27|99: HALT in (success) | 26|26: JAL (goto 99) (r31->p31/p53 <= PC+1) out (success, ALU RS 1)";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // core control interface
+		tb_core_control_stall_dispatch_unit = 1'b0;
+		tb_core_control_flush_dispatch_unit = 1'b0;
+		tb_core_control_halt = 1'b0;
+	    // fetch_unit interface
+		tb_fetch_unit_instr = {32'hffffffff};
+		tb_fetch_unit_ivalid = 1'b1;
+		tb_fetch_unit_PC = pc_t'(99);
+		tb_fetch_unit_nPC = pc_t'(100);
+	    // restore interface
+		tb_restore_checkpoint_valid = 1'b0;
+		tb_restore_checkpoint_speculate_failed = 1'b0;
+		tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+		tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+		tb_kill_bus_arch_reg_tag = arch_reg_tag_t'(0);
+		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
+	    // complete bus interface
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+	    // ROB interface
+	    // dispatch @ tail
+		tb_ROB_full = 1'b0;
+		tb_ROB_tail_index = ROB_index_t'(26);
+	    // retire from head
+		tb_ROB_retire_valid = 1'b0;
+		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
+	    // 2x ALU RS interface
+		tb_ALU_RS_full = 2'b01;
+	    // SQ interface
+		tb_SQ_tail_index = SQ_index_t'(0);
+		tb_SQ_full = 1'b0;
+	    // LQ interface
+		tb_LQ_tail_index = LQ_index_t'(0);
+		tb_LQ_full = 1'b0;
+	    // BRU RS interface
+		tb_BRU_RS_full = 1'b0; 
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // core control interface
+		expected_core_control_dispatch_failed = 1'b0;
+	    // fetch_unit interface
+	    // restore interface
+		expected_restore_checkpoint_success = 1'b0;
+	    // kill bus interface
+	    // complete bus interface
+	    // ROB interface
+	    // dispatch @ tail
+		expected_ROB_enqueue_valid = 1'b1;
+		expected_ROB_struct_out.valid = 1'b1;
+        expected_ROB_struct_out.complete = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
+        expected_ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.SQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.J = 1'b1;
+        expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.HALT = 1'b0;
+        expected_ROB_struct_out.restart_PC = pc_t'(26);
+        expected_ROB_struct_out.reg_write = 1'b1;
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(31);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(31);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(53);
+	    // retire from head
+	    // 2x ALU RS interface
+            // ALU RS 0
+		expected_ALU_RS_task_valid[0] = 1'b0;
+		expected_ALU_RS_task_struct[0].op = ALU_ADD;
+        expected_ALU_RS_task_struct[0].itype = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[0].imm16 = 16'd99;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(26);
+            // ALU RS 1
+        expected_ALU_RS_task_valid[1] = 1'b1;
+		expected_ALU_RS_task_struct[1].op = ALU_LINK;
+        expected_ALU_RS_task_struct[1].itype = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.needed = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[1].source_1.needed = 1'b0;
+        expected_ALU_RS_task_struct[1].source_1.ready = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[1].imm16 = 16'd26 << 2;	// should be byte-addr PC, not imm16
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(26);
+        // LQ interface
+		expected_LQ_task_valid = 1'b0;
+		expected_LQ_task_struct.op = LQ_LW;
+        expected_LQ_task_struct.source.needed = 1'b1;
+        expected_LQ_task_struct.source.ready = 1'b1;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_LQ_task_struct.imm14 = 16'd99 >> 2;
+        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(26);
+	    // SQ interface
+		expected_SQ_task_valid = 1'b0;
+		expected_SQ_task_struct.op = SQ_SW;
+        expected_SQ_task_struct.source_0.needed = 1'b1;
+        expected_SQ_task_struct.source_0.ready = 1'b1;
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_SQ_task_struct.source_1.needed = 1'b1;
+        expected_SQ_task_struct.source_1.ready = 1'b1;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_SQ_task_struct.imm14 = 16'd99 >> 2;
+        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(26);
+	    // BRU RS interface
+		expected_BRU_RS_task_valid = 1'b0;
+		expected_BRU_RS_task_struct.op = BRU_BEQ;
+        expected_BRU_RS_task_struct.source_0.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_0.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_BRU_RS_task_struct.source_1.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_1.ready = 1'b1;
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        expected_BRU_RS_task_struct.imm14 = 16'd99 >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(26);
+        expected_BRU_RS_task_struct.nPC = pc_t'(99);
+        expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(26);
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "invalid NOP in | 27|99: HALT out";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // core control interface
+		tb_core_control_stall_dispatch_unit = 1'b0;
+		tb_core_control_flush_dispatch_unit = 1'b0;
+		tb_core_control_halt = 1'b0;
+	    // fetch_unit interface
+		tb_fetch_unit_instr = {32'h00000000};
+		tb_fetch_unit_ivalid = 1'b0;
+		tb_fetch_unit_PC = pc_t'(100);
+		tb_fetch_unit_nPC = pc_t'(101);
+	    // restore interface
+		tb_restore_checkpoint_valid = 1'b0;
+		tb_restore_checkpoint_speculate_failed = 1'b0;
+		tb_restore_checkpoint_ROB_index = ROB_index_t'(0);
+		tb_restore_checkpoint_safe_column = checkpoint_column_t'(0);
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+		tb_kill_bus_arch_reg_tag = arch_reg_tag_t'(0);
+		tb_kill_bus_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_kill_bus_safe_phys_reg_tag = phys_reg_tag_t'(0);
+	    // complete bus interface
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+	    // ROB interface
+	    // dispatch @ tail
+		tb_ROB_full = 1'b0;
+		tb_ROB_tail_index = ROB_index_t'(27);
+	    // retire from head
+		tb_ROB_retire_valid = 1'b0;
+		tb_ROB_retire_phys_reg_tag = phys_reg_tag_t'(0);
+	    // 2x ALU RS interface
+		tb_ALU_RS_full = 2'b00;
+	    // SQ interface
+		tb_SQ_tail_index = SQ_index_t'(0);
+		tb_SQ_full = 1'b0;
+	    // LQ interface
+		tb_LQ_tail_index = LQ_index_t'(0);
+		tb_LQ_full = 1'b0;
+	    // BRU RS interface
+		tb_BRU_RS_full = 1'b0; 
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // core control interface
+		expected_core_control_dispatch_failed = 1'b0;
+	    // fetch_unit interface
+	    // restore interface
+		expected_restore_checkpoint_success = 1'b0;
+	    // kill bus interface
+	    // complete bus interface
+	    // ROB interface
+	    // dispatch @ tail
+		expected_ROB_enqueue_valid = 1'b1;
+		expected_ROB_struct_out.valid = 1'b1;
+        expected_ROB_struct_out.complete = 1'b1;
+        expected_ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.LQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.SQ = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.BRU = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.J = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.DEAD = 1'b0;
+        expected_ROB_struct_out.dispatched_unit.HALT = 1'b1;
+        expected_ROB_struct_out.restart_PC = pc_t'(99);
+        expected_ROB_struct_out.reg_write = 1'b0;
+        expected_ROB_struct_out.dest_arch_reg_tag = arch_reg_tag_t'(31);
+        expected_ROB_struct_out.safe_dest_phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ROB_struct_out.speculated_dest_phys_reg_tag = phys_reg_tag_t'(54);
+	    // retire from head
+	    // 2x ALU RS interface
+            // ALU RS 0
+		expected_ALU_RS_task_valid[0] = 1'b0;
+		expected_ALU_RS_task_struct[0].op = ALU_ADD;
+        expected_ALU_RS_task_struct[0].itype = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_0.ready = 1'b0;
+        expected_ALU_RS_task_struct[0].source_0.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[0].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[0].source_1.ready = 1'b0;
+        expected_ALU_RS_task_struct[0].source_1.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[0].dest_phys_reg_tag = phys_reg_tag_t'(54);
+        expected_ALU_RS_task_struct[0].imm16 = 16'hffff;
+        expected_ALU_RS_task_struct[0].ROB_index = ROB_index_t'(27);
+            // ALU RS 1
+        expected_ALU_RS_task_valid[1] = 1'b0;
+		expected_ALU_RS_task_struct[1].op = ALU_ADD;
+        expected_ALU_RS_task_struct[1].itype = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_0.ready = 1'b0;
+        expected_ALU_RS_task_struct[1].source_0.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[1].source_1.needed = 1'b1;
+        expected_ALU_RS_task_struct[1].source_1.ready = 1'b0;
+        expected_ALU_RS_task_struct[1].source_1.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_ALU_RS_task_struct[1].dest_phys_reg_tag = phys_reg_tag_t'(54);
+        expected_ALU_RS_task_struct[1].imm16 = 16'hffff;
+        expected_ALU_RS_task_struct[1].ROB_index = ROB_index_t'(27);
+        // LQ interface
+		expected_LQ_task_valid = 1'b0;
+		expected_LQ_task_struct.op = LQ_LW;
+        expected_LQ_task_struct.source.needed = 1'b1;
+        expected_LQ_task_struct.source.ready = 1'b0;
+        expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(54);
+        expected_LQ_task_struct.imm14 = 16'hffff >> 2;
+        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        expected_LQ_task_struct.ROB_index = ROB_index_t'(27);
+	    // SQ interface
+		expected_SQ_task_valid = 1'b0;
+		expected_SQ_task_struct.op = SQ_SW;
+        expected_SQ_task_struct.source_0.needed = 1'b1;
+        expected_SQ_task_struct.source_0.ready = 1'b0;
+        expected_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_SQ_task_struct.source_1.needed = 1'b1;
+        expected_SQ_task_struct.source_1.ready = 1'b0;
+        expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_SQ_task_struct.imm14 = 16'hffff >> 2;
+        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        expected_SQ_task_struct.ROB_index = ROB_index_t'(27);
+	    // BRU RS interface
+		expected_BRU_RS_task_valid = 1'b0;
+		expected_BRU_RS_task_struct.op = BRU_BEQ;
+        expected_BRU_RS_task_struct.source_0.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_0.ready = 1'b0;
+        expected_BRU_RS_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_BRU_RS_task_struct.source_1.needed = 1'b1;
+        expected_BRU_RS_task_struct.source_1.ready = 1'b0;
+        expected_BRU_RS_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(53);
+        expected_BRU_RS_task_struct.imm14 = 16'hffff >> 2;
+        expected_BRU_RS_task_struct.PC = pc_t'(99);
+        expected_BRU_RS_task_struct.nPC = pc_t'(100);
+        expected_BRU_RS_task_struct.checkpoint_safe_column = checkpoint_column_t'(3);
+        expected_BRU_RS_task_struct.ROB_index = ROB_index_t'(27);
 
 		check_outputs();
 
