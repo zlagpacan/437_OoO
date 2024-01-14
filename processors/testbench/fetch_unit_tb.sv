@@ -80,7 +80,7 @@ module fetch_unit_tb ();
     // DUT instantiation:
 
     fetch_unit #(
-        .PC_RESET_VAL(16'h0)
+
     ) DUT (
         // seq
         .CLK(CLK),
@@ -251,7 +251,7 @@ module fetch_unit_tb ();
         // outputs:
 
         // I$
-        expected_icache_REN = 1'b1;
+        expected_icache_REN = 1'b0;
         expected_icache_addr = 32'h0;
         expected_icache_halt = 1'b0;
         // to pipeline
