@@ -108,9 +108,9 @@ module dispatch_unit_tb ();
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT instantiation:
 
-	dispatch_unit #(
-
-	) DUT (
+	`ifndef MAPPED
+	dispatch_unit DUT (
+		
 		// seq
 		.CLK(CLK),
 		.nRST(nRST),
@@ -185,6 +185,177 @@ module dispatch_unit_tb ();
 		.BRU_RS_task_valid(DUT_BRU_RS_task_valid),
 		.BRU_RS_task_struct(DUT_BRU_RS_task_struct)
 	);
+	`else
+
+	// // mapped enum types to explicitly cast to
+	// typedef logic [3:0] four_wide_t;
+	// typedef logic [1:0] two_wide_t;
+	// typedef logic one_wide_t;
+
+	// signals for type cast
+	logic [3:0] DUT_ALU_RS_task_struct_0_op_casted;
+	logic [3:0] DUT_ALU_RS_task_struct_1_op_casted;
+	logic [1:0] DUT_LQ_task_struct_op_casted;
+	logic DUT_SQ_task_struct_op_casted;
+	logic [1:0] DUT_BRU_RS_task_struct_op_casted;
+
+	// assign enum to pure logic array
+	assign DUT_ALU_RS_task_struct[0].op = ALU_op_t'(DUT_ALU_RS_task_struct_0_op_casted);
+	assign DUT_ALU_RS_task_struct[1].op = ALU_op_t'(DUT_ALU_RS_task_struct_1_op_casted);
+	assign DUT_LQ_task_struct.op = LQ_op_t'(DUT_LQ_task_struct_op_casted);
+	assign DUT_SQ_task_struct.op = SQ_op_t'(DUT_SQ_task_struct_op_casted);
+	assign DUT_BRU_RS_task_struct.op = BRU_op_t'(DUT_BRU_RS_task_struct_op_casted);
+
+	dispatch_unit DUT (
+		
+		// seq
+		.CLK(CLK),
+		.nRST(nRST),
+
+	    // DUT error
+		.DUT_error(DUT_DUT_error),
+
+	    // core control interface
+		.core_control_stall_dispatch_unit(tb_core_control_stall_dispatch_unit),
+		.core_control_flush_dispatch_unit(tb_core_control_flush_dispatch_unit),
+		.core_control_halt(tb_core_control_halt),
+		.core_control_dispatch_failed(DUT_core_control_dispatch_failed),
+
+	    // fetch_unit interface
+		.fetch_unit_instr(tb_fetch_unit_instr),
+		.fetch_unit_ivalid(tb_fetch_unit_ivalid),
+		.fetch_unit_PC(tb_fetch_unit_PC),
+		.fetch_unit_nPC(tb_fetch_unit_nPC),
+
+	    // restore interface
+		.restore_checkpoint_valid(tb_restore_checkpoint_valid),
+		.restore_checkpoint_speculate_failed(tb_restore_checkpoint_speculate_failed),
+		.restore_checkpoint_ROB_index(tb_restore_checkpoint_ROB_index),
+		.restore_checkpoint_safe_column(tb_restore_checkpoint_safe_column),
+		.restore_checkpoint_success(DUT_restore_checkpoint_success),
+
+	    // kill bus interface
+	        // kill for ROB_index, T, T_old
+		.kill_bus_valid(tb_kill_bus_valid),
+		.kill_bus_ROB_index(tb_kill_bus_ROB_index),
+	        // actually don't need this, only need ROB index for execution unit kills
+		.kill_bus_arch_reg_tag(tb_kill_bus_arch_reg_tag),
+		.kill_bus_speculated_phys_reg_tag(tb_kill_bus_speculated_phys_reg_tag),
+		.kill_bus_safe_phys_reg_tag(tb_kill_bus_safe_phys_reg_tag),
+
+	    // complete bus interface
+	        // 2x ready @ T
+		.complete_bus_0_valid(tb_complete_bus_0_valid),
+		.complete_bus_0_dest_phys_reg_tag(tb_complete_bus_0_dest_phys_reg_tag),
+		.complete_bus_1_valid(tb_complete_bus_1_valid),
+		.complete_bus_1_dest_phys_reg_tag(tb_complete_bus_1_dest_phys_reg_tag),
+
+	    // ROB interface
+	    // dispatch @ tail
+		.ROB_full(tb_ROB_full),
+		.ROB_tail_index(tb_ROB_tail_index),
+		.ROB_enqueue_valid(DUT_ROB_enqueue_valid),
+		// struct -> need to enumerate
+		.\ROB_struct_out.valid (DUT_ROB_struct_out.valid),
+		.\ROB_struct_out.complete (DUT_ROB_struct_out.complete),
+		.\ROB_struct_out.dispatched_unit.ALU_0 (DUT_ROB_struct_out.dispatched_unit.ALU_0),
+		.\ROB_struct_out.dispatched_unit.ALU_1 (DUT_ROB_struct_out.dispatched_unit.ALU_1),
+		.\ROB_struct_out.dispatched_unit.LQ (DUT_ROB_struct_out.dispatched_unit.LQ),
+		.\ROB_struct_out.dispatched_unit.SQ (DUT_ROB_struct_out.dispatched_unit.SQ),
+		.\ROB_struct_out.dispatched_unit.BRU (DUT_ROB_struct_out.dispatched_unit.BRU),
+		.\ROB_struct_out.dispatched_unit.J (DUT_ROB_struct_out.dispatched_unit.J),
+		.\ROB_struct_out.dispatched_unit.DEAD (DUT_ROB_struct_out.dispatched_unit.DEAD),
+		.\ROB_struct_out.dispatched_unit.HALT (DUT_ROB_struct_out.dispatched_unit.HALT),
+		.\ROB_struct_out.restart_PC (DUT_ROB_struct_out.restart_PC),
+		.\ROB_struct_out.reg_write (DUT_ROB_struct_out.reg_write),
+		.\ROB_struct_out.dest_arch_reg_tag (DUT_ROB_struct_out.dest_arch_reg_tag),
+		.\ROB_struct_out.safe_dest_phys_reg_tag (DUT_ROB_struct_out.safe_dest_phys_reg_tag),
+		.\ROB_struct_out.speculated_dest_phys_reg_tag (DUT_ROB_struct_out.speculated_dest_phys_reg_tag),
+	    // retire from head
+		.ROB_retire_valid(tb_ROB_retire_valid),
+		.ROB_retire_phys_reg_tag(tb_ROB_retire_phys_reg_tag),
+
+	    // 2x ALU RS interface
+		.ALU_RS_full(tb_ALU_RS_full),
+		.ALU_RS_task_valid(DUT_ALU_RS_task_valid),
+		// struct -> need to enumerate
+			// need to typecast enum's as well
+		.\ALU_RS_task_struct[0].op (DUT_ALU_RS_task_struct_0_op_casted),
+		.\ALU_RS_task_struct[0].itype (DUT_ALU_RS_task_struct[0].itype),
+		.\ALU_RS_task_struct[0].source_0.needed (DUT_ALU_RS_task_struct[0].source_0.needed),
+		.\ALU_RS_task_struct[0].source_0.ready (DUT_ALU_RS_task_struct[0].source_0.ready),
+		.\ALU_RS_task_struct[0].source_0.phys_reg_tag (DUT_ALU_RS_task_struct[0].source_0.phys_reg_tag),
+		.\ALU_RS_task_struct[0].source_1.needed (DUT_ALU_RS_task_struct[0].source_1.needed),
+		.\ALU_RS_task_struct[0].source_1.ready (DUT_ALU_RS_task_struct[0].source_1.ready),
+		.\ALU_RS_task_struct[0].source_1.phys_reg_tag (DUT_ALU_RS_task_struct[0].source_1.phys_reg_tag),
+		.\ALU_RS_task_struct[0].dest_phys_reg_tag (DUT_ALU_RS_task_struct[0].dest_phys_reg_tag),
+		.\ALU_RS_task_struct[0].imm16 (DUT_ALU_RS_task_struct[0].imm16),
+		.\ALU_RS_task_struct[0].ROB_index (DUT_ALU_RS_task_struct[0].ROB_index),
+		// struct -> need to enumerate
+			// need to typecast enum's as well
+		.\ALU_RS_task_struct[1].op (DUT_ALU_RS_task_struct_1_op_casted),
+		.\ALU_RS_task_struct[1].itype (DUT_ALU_RS_task_struct[1].itype),
+		.\ALU_RS_task_struct[1].source_0.needed (DUT_ALU_RS_task_struct[1].source_0.needed),
+		.\ALU_RS_task_struct[1].source_0.ready (DUT_ALU_RS_task_struct[1].source_0.ready),
+		.\ALU_RS_task_struct[1].source_0.phys_reg_tag (DUT_ALU_RS_task_struct[1].source_0.phys_reg_tag),
+		.\ALU_RS_task_struct[1].source_1.needed (DUT_ALU_RS_task_struct[1].source_1.needed),
+		.\ALU_RS_task_struct[1].source_1.ready (DUT_ALU_RS_task_struct[1].source_1.ready),
+		.\ALU_RS_task_struct[1].source_1.phys_reg_tag (DUT_ALU_RS_task_struct[1].source_1.phys_reg_tag),
+		.\ALU_RS_task_struct[1].dest_phys_reg_tag (DUT_ALU_RS_task_struct[1].dest_phys_reg_tag),
+		.\ALU_RS_task_struct[1].imm16 (DUT_ALU_RS_task_struct[1].imm16),
+		.\ALU_RS_task_struct[1].ROB_index (DUT_ALU_RS_task_struct[1].ROB_index),
+
+	    // SQ interface
+		.SQ_tail_index(tb_SQ_tail_index),
+		.SQ_full(tb_SQ_full),
+		.SQ_task_valid(DUT_SQ_task_valid),
+		// struct -> need to enumerate
+			// need to typecast enum's as well
+		.\SQ_task_struct.op (DUT_SQ_task_struct_op_casted),
+		.\SQ_task_struct.source_0.needed (DUT_SQ_task_struct.source_0.needed),
+		.\SQ_task_struct.source_0.ready (DUT_SQ_task_struct.source_0.ready),
+		.\SQ_task_struct.source_0.phys_reg_tag (DUT_SQ_task_struct.source_0.phys_reg_tag),
+		.\SQ_task_struct.source_1.needed (DUT_SQ_task_struct.source_1.needed),
+		.\SQ_task_struct.source_1.ready (DUT_SQ_task_struct.source_1.ready),
+		.\SQ_task_struct.source_1.phys_reg_tag (DUT_SQ_task_struct.source_1.phys_reg_tag),
+		.\SQ_task_struct.imm14 (DUT_SQ_task_struct.imm14),
+		.\SQ_task_struct.LQ_index (DUT_SQ_task_struct.LQ_index),
+		.\SQ_task_struct.ROB_index (DUT_SQ_task_struct.ROB_index),
+
+	    // LQ interface
+		.LQ_tail_index(tb_LQ_tail_index),
+		.LQ_full(tb_LQ_full),
+		.LQ_task_valid(DUT_LQ_task_valid),
+		// struct -> need to enumerate
+			// need to typecast enum's as well
+		.\LQ_task_struct.op (DUT_LQ_task_struct_op_casted),
+		.\LQ_task_struct.source.needed (DUT_LQ_task_struct.source.needed),
+		.\LQ_task_struct.source.ready (DUT_LQ_task_struct.source.ready),
+		.\LQ_task_struct.source.phys_reg_tag (DUT_LQ_task_struct.source.phys_reg_tag),
+		.\LQ_task_struct.dest_phys_reg_tag (DUT_LQ_task_struct.dest_phys_reg_tag),
+		.\LQ_task_struct.imm14 (DUT_LQ_task_struct.imm14),
+		.\LQ_task_struct.SQ_index (DUT_LQ_task_struct.SQ_index),
+		.\LQ_task_struct.ROB_index (DUT_LQ_task_struct.ROB_index),
+
+	    // BRU RS interface
+		.BRU_RS_full(tb_BRU_RS_full),
+		.BRU_RS_task_valid(DUT_BRU_RS_task_valid),
+		// struct -> need to enumerate
+			// need to typecast enum's as well
+		.\BRU_RS_task_struct.op (DUT_BRU_RS_task_struct_op_casted),
+		.\BRU_RS_task_struct.source_0.needed (DUT_BRU_RS_task_struct.source_0.needed),
+		.\BRU_RS_task_struct.source_0.ready (DUT_BRU_RS_task_struct.source_0.ready),
+		.\BRU_RS_task_struct.source_0.phys_reg_tag (DUT_BRU_RS_task_struct.source_0.phys_reg_tag),
+		.\BRU_RS_task_struct.source_1.needed (DUT_BRU_RS_task_struct.source_1.needed),
+		.\BRU_RS_task_struct.source_1.ready (DUT_BRU_RS_task_struct.source_1.ready),
+		.\BRU_RS_task_struct.source_1.phys_reg_tag (DUT_BRU_RS_task_struct.source_1.phys_reg_tag),
+		.\BRU_RS_task_struct.imm14 (DUT_BRU_RS_task_struct.imm14),
+		.\BRU_RS_task_struct.PC (DUT_BRU_RS_task_struct.PC),
+		.\BRU_RS_task_struct.nPC (DUT_BRU_RS_task_struct.nPC),
+		.\BRU_RS_task_struct.checkpoint_safe_column (DUT_BRU_RS_task_struct.checkpoint_safe_column),
+		.\BRU_RS_task_struct.ROB_index (DUT_BRU_RS_task_struct.ROB_index)
+	);
+	`endif
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // tasks:

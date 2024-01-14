@@ -35,9 +35,8 @@
 `include "core_types.vh"
 import core_types_pkg::*;
 
-module dispatch_unit #(
-
-) (
+module dispatch_unit (
+    
     // seq
     input logic CLK, nRST,
 
@@ -166,9 +165,8 @@ module dispatch_unit #(
     logic prmt_restore_checkpoint_success;
 
     // phys_reg_map_table instantiation
-    phys_reg_map_table #(
-        // no params
-    ) prmt (
+    phys_reg_map_table prmt (
+
         // seq
         .CLK(CLK),
         .nRST(nRST),
@@ -248,9 +246,8 @@ module dispatch_unit #(
 	logic prfl_restore_checkpoint_success;
 
     // phys_reg_free_list instantiation
-	phys_reg_free_list #(
+	phys_reg_free_list prfl (
 
-    ) prfl (
 		// seq
 		.CLK(CLK),
 		.nRST(nRST),
@@ -318,9 +315,8 @@ module dispatch_unit #(
 	phys_reg_tag_t prrt_complete_bus_1_dest_phys_reg_tag;
 
     // phys_reg_ready_table instantiation
-	phys_reg_ready_table #(
-
-    ) prrt (
+	phys_reg_ready_table prrt (
+        
 		// seq
 		.CLK(CLK),
 		.nRST(nRST),
