@@ -15,9 +15,8 @@
 `include "core_types.vh"
 import core_types_pkg::*;
 
-module phys_reg_free_list #(
-
-) (
+module phys_reg_free_list (
+    
     // seq
     input logic CLK, nRST,
 

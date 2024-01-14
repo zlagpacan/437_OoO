@@ -18,9 +18,8 @@
 `include "core_types.vh"
 import core_types_pkg::*;
 
-module phys_reg_ready_table #(
-
-) (
+module phys_reg_ready_table (
+    
     // seq
     input logic CLK, nRST,
 

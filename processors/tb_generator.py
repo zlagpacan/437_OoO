@@ -10,6 +10,15 @@
     Usage:
         from 437_OoO/processors directory:
         python3 tb_generator.py <path to design .sv file>
+    Notes:
+        - need to manually set struct fields
+            - if use struct, also need to manually enumerate connections in TB for synthesized
+        - need to manually create signals to allow type conversion b/w enums and pure logic arrays
+            - output: constantly assign pure logic array synthesized module output to enum TB value
+                - explicit enum typecast
+            - input: constantly assign enum TB value to pure logic array synthesized module input
+                - explicit pure logic array typecast
+                    - may not be necessary?
 """
 
 import sys
