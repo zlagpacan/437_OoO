@@ -604,7 +604,7 @@ module fetch_unit_tb ();
         $display("\ntest %d: %s", test_num, test_case);
         test_num++;
 
-        // hit (j), hit (jal), hit, hit (jr), hit, hit (jal), hit (jal), hit (jr), hit, hit (jr)
+        // hit (j), hit (jal), hit (jr 0), hit (jr ra), hit (jr 14), hit (jal), hit (jal), hit (jr ra), hit, hit (jr ra)
 
         @(posedge CLK);
 
@@ -690,7 +690,7 @@ module fetch_unit_tb ();
 
         // inputs:
             // hit
-        sub_test_case = "hit";
+        sub_test_case = "hit (jr 0)";
         $display("\t- sub_test:%s", sub_test_case);
 
         // reset
@@ -705,7 +705,7 @@ module fetch_unit_tb ();
         tb_from_pipeline_resolved_PC = 14'h0;
         // I$
         tb_icache_hit = 1'b1;
-        tb_icache_load = 32'h00abcdef;
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd0 << 21);
         // core controller
         tb_core_control_stall_fetch_unit = 1'b0;
         tb_core_control_halt = 1'b0;
@@ -719,7 +719,7 @@ module fetch_unit_tb ();
         expected_icache_addr = 32'hb00 << 2;
         expected_icache_halt = 1'b0;
         // to pipeline
-        expected_to_pipeline_instr = 32'h00abcdef;
+        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd0 << 21);
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hb00;
         expected_to_pipeline_nPC = 14'hb01;
@@ -730,7 +730,7 @@ module fetch_unit_tb ();
 
         // inputs:
             // hit (jr)
-        sub_test_case = "hit (jr)";
+        sub_test_case = "hit (jr ra)";
         $display("\t- sub_test:%s", sub_test_case);
 
         // reset
@@ -745,7 +745,7 @@ module fetch_unit_tb ();
         tb_from_pipeline_resolved_PC = 14'h0;
         // I$
         tb_icache_hit = 1'b1;
-        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd31 << 21);
         // core controller
         tb_core_control_stall_fetch_unit = 1'b0;
         tb_core_control_halt = 1'b0;
@@ -759,7 +759,7 @@ module fetch_unit_tb ();
         expected_icache_addr = 32'hb01 << 2;
         expected_icache_halt = 1'b0;
         // to pipeline
-        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd31 << 21);
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hb01;
         expected_to_pipeline_nPC = 14'ha01;
@@ -770,7 +770,7 @@ module fetch_unit_tb ();
 
         // inputs:
             // hit
-        sub_test_case = "hit";
+        sub_test_case = "hit (jr 14";
         $display("\t- sub_test:%s", sub_test_case);
 
         // reset
@@ -785,7 +785,7 @@ module fetch_unit_tb ();
         tb_from_pipeline_resolved_PC = 14'h0;
         // I$
         tb_icache_hit = 1'b1;
-        tb_icache_load = 32'h00fedcba;
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd14 << 21);
         // core controller
         tb_core_control_stall_fetch_unit = 1'b0;
         tb_core_control_halt = 1'b0;
@@ -799,7 +799,7 @@ module fetch_unit_tb ();
         expected_icache_addr = 32'ha01 << 2;
         expected_icache_halt = 1'b0;
         // to pipeline
-        expected_to_pipeline_instr = 32'h00fedcba;
+        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd14 << 21);
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'ha01;
         expected_to_pipeline_nPC = 14'ha02;
@@ -890,7 +890,7 @@ module fetch_unit_tb ();
 
         // inputs:
             // hit (jr)
-        sub_test_case = "hit (jr)";
+        sub_test_case = "hit (jr ra)";
         $display("\t- sub_test:%s", sub_test_case);
 
         // reset
@@ -905,7 +905,7 @@ module fetch_unit_tb ();
         tb_from_pipeline_resolved_PC = 14'h0;
         // I$
         tb_icache_hit = 1'b1;
-        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd31 << 21);
         // core controller
         tb_core_control_stall_fetch_unit = 1'b0;
         tb_core_control_halt = 1'b0;
@@ -919,7 +919,7 @@ module fetch_unit_tb ();
         expected_icache_addr = 32'hd00 << 2;
         expected_icache_halt = 1'b0;
         // to pipeline
-        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd31 << 21);
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hd00;
         expected_to_pipeline_nPC = 14'hc01;
@@ -970,7 +970,7 @@ module fetch_unit_tb ();
 
         // inputs:
             // hit (jr)
-        sub_test_case = "hit (jr)";
+        sub_test_case = "hit (jr ra)";
         $display("\t- sub_test:%s", sub_test_case);
 
         // reset
@@ -985,7 +985,7 @@ module fetch_unit_tb ();
         tb_from_pipeline_resolved_PC = 14'h0;
         // I$
         tb_icache_hit = 1'b1;
-        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        tb_icache_load = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd31 << 21);
         // core controller
         tb_core_control_stall_fetch_unit = 1'b0;
         tb_core_control_halt = 1'b0;
@@ -999,7 +999,7 @@ module fetch_unit_tb ();
         expected_icache_addr = 32'hc02 << 2;
         expected_icache_halt = 1'b0;
         // to pipeline
-        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR);
+        expected_to_pipeline_instr = (opcode_t'(RTYPE) << 26) + funct_t'(JR) + (5'd31 << 21);
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hc02;
         expected_to_pipeline_nPC = 14'ha03;

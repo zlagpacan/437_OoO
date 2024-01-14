@@ -115,12 +115,14 @@ module fetch_unit #(
     pc_t RAS_push_val;
 
     // pre-decode
-    word_t instr;
-    opcode_t instr_opcode;
+    // word_t instr;
+    r_t instr;
+    // opcode_t instr_opcode;
     logic is_beq_bne;
     logic is_j;
     logic is_jal;
     logic is_jr;
+    logic is_ra;
 
     // PC select logic
 
@@ -244,8 +246,8 @@ module fetch_unit #(
             next_RAS_top_write_index = RAS_top_write_index + 3'd1;
         end
 
-        // pop from RAS on jump to register
-        if (is_jr) begin
+        // pop from RAS on jump to ret addr
+        if (is_jr & is_ra) begin
 
             // decrement top index
             next_RAS_top_write_index = RAS_top_read_index;
@@ -260,19 +262,21 @@ module fetch_unit #(
 
         // get instruction opcode
         instr = icache_load;
-        instr_opcode = opcode_t'(instr[31:26]);
 
         // check for BEQ/BNE
-        is_beq_bne = (instr_opcode == BEQ | instr_opcode == BNE);
+        is_beq_bne = (instr.opcode == BEQ | instr.opcode == BNE);
 
         // check for J
-        is_j = (instr_opcode == J);
+        is_j = (instr.opcode == J);
 
         // check for JAL
-        is_jal = (instr_opcode == JAL);
+        is_jal = (instr.opcode == JAL);
 
         // check for JR
-        is_jr = (instr_opcode == RTYPE) & (funct_t'(instr[5:0]) == JR);
+        is_jr = (instr.opcode == RTYPE) & (instr.funct == JR);
+
+        // check for $rs = ret addr (31)
+        is_ra = (instr.rs == 5'd31);
     end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +310,7 @@ module fetch_unit #(
         // nPC select mux
             // priority:    resolved (from_pipeline_resolved_PC) > 
             //              ihit & ~stall {is_beq_bne (DIRP_state -> BTB_target vs. PC+4), 
-            //                  is_j/is_jal (jPC), is_jr (RAS_pop_val), else (PC+4)} > 
+            //                  is_j/is_jal (jPC), is_jr & is_ra (RAS_pop_val), else (PC+4)} > 
             //              ~icache_hit | stall {PC}
 
         // resolved PC
@@ -342,8 +346,8 @@ module fetch_unit #(
                 // take imm j address
                 nPC = jPC;
             end
-            // jr
-            else if (is_jr) begin
+            // JR $ra
+            else if (is_jr & is_ra) begin
 
                 // take RAS pop address
                 nPC = RAS_pop_val;
