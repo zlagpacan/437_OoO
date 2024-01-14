@@ -14,9 +14,8 @@
 `include "core_types.vh"
 import core_types_pkg::*;
 
-module phys_reg_map_table #(
+module phys_reg_map_table (
     
-) (
     // seq
     input logic CLK, nRST,
 
