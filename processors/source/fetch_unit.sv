@@ -241,7 +241,7 @@ module fetch_unit #(
             next_RAS_entry_by_top_index[RAS_top_write_index] = RAS_push_val;
 
             // increment top index
-            next_RAS_top_write_index = RAS_top_write_index + 1;
+            next_RAS_top_write_index = RAS_top_write_index + 3'd1;
         end
 
         // pop from RAS on jump to register
@@ -281,7 +281,7 @@ module fetch_unit #(
     // seq
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
-            PC <= PC_RESET_VAL[ADDR_SPACE_WIDTH:2]; // bits 15:2 (lower 14 bits at word granularity)
+            PC <= PC_RESET_VAL[ADDR_SPACE_WIDTH-1:2]; // bits 15:2 (lower 14 bits at word granularity)
         end
         else begin
             PC <= nPC;
@@ -298,7 +298,10 @@ module fetch_unit #(
         jPC = instr[PC_WIDTH-1:0];
 
         // PC + 4
-        PC_plus_4 = PC + 1; // PC + 4 equivalent to PC + 1 since chop of 2 lsb
+        PC_plus_4 = PC + 14'd1; // PC + 4 equivalent to PC + 1 since chop of 2 lsb
+
+        // synthesis wants default val for nPC
+        nPC = PC;
 
         // nPC select mux
             // priority:    resolved (from_pipeline_resolved_PC) > 
@@ -364,7 +367,7 @@ module fetch_unit #(
     // ireq controls:
 
     // seq
-    always_ff @ (posedge CLK, nRST) begin
+    always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
             icache_REN <= 1'b0;
             icache_halt <= 1'b0;
