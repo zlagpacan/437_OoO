@@ -10,6 +10,8 @@
         revert logic since future instr's that use a value will use the most recent dispatch's ready val,
         which may or may not have been completed since. 
         
+        Set and cleared ready values are forwarded to the current reading.
+
         It is the external controller's responsibility to prevent the clearing of phys reg 0.
 */
 
