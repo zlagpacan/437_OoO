@@ -13,6 +13,8 @@
         Set and cleared ready values are forwarded to the current reading.
 
         It is the external controller's responsibility to prevent the clearing of phys reg 0.
+
+        Support 3 complete buses (ALU 0, ALU 1, LQ)
 */
 
 `include "core_types.vh"
@@ -40,10 +42,13 @@ module phys_reg_ready_table (
     // complete
         // set @ complete bus 0 dest
         // set @ complete bus 1 dest
+        // set @ complete bus 2 dest
     input logic complete_bus_0_valid,
     input phys_reg_tag_t complete_bus_0_dest_phys_reg_tag,
     input logic complete_bus_1_valid,
-    input phys_reg_tag_t complete_bus_1_dest_phys_reg_tag
+    input phys_reg_tag_t complete_bus_1_dest_phys_reg_tag,
+    input logic complete_bus_2_valid,
+    input phys_reg_tag_t complete_bus_2_dest_phys_reg_tag
 );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +93,7 @@ module phys_reg_ready_table (
 
         // write logic:
             // determine writes first so reads can take forwarded write value
-            // assume complete bus 0, complete bus 1, and dispatch can all happen at the same time but 
+            // assume complete bus 0, complete bus 1, complete bus 2, and dispatch can all happen at the same time but 
                 // will never write to same location (essentially, priority doesn't matter)
 
         // default outputs:
@@ -102,13 +107,17 @@ module phys_reg_ready_table (
         // WARNING: no default on reads
             // intend to fully enumerate these in read logic
 
-        // 3 writes: {dispatch, complete bus 0, complete bus 1}
+        // 4 writes: {dispatch, complete bus 0, complete bus 1, complete bus 2}
 
         // DUT error: check for multple writers to same phys reg
         if (
             ((dispatch_dest_phys_reg_tag == complete_bus_0_dest_phys_reg_tag) & dispatch_dest_write & complete_bus_0_valid) |
             ((dispatch_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & dispatch_dest_write & complete_bus_1_valid) | 
-            ((complete_bus_0_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & complete_bus_0_valid & complete_bus_1_valid)
+            ((complete_bus_0_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & complete_bus_0_valid & complete_bus_1_valid) |
+            // add complete bus 2:
+            ((complete_bus_2_dest_phys_reg_tag == dispatch_dest_phys_reg_tag) & complete_bus_2_valid & dispatch_dest_write) |
+            ((complete_bus_2_dest_phys_reg_tag == complete_bus_0_dest_phys_reg_tag) & complete_bus_2_valid & complete_bus_0_valid) |
+            ((complete_bus_2_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & complete_bus_2_valid & complete_bus_1_valid)
         ) begin
             $display("phys_reg_ready_table: ERROR: multiple writers to same phys reg");
             next_DUT_error = 1'b1;
@@ -118,7 +127,9 @@ module phys_reg_ready_table (
         if (
             ((dispatch_dest_phys_reg_tag == phys_reg_tag_t'(0)) & dispatch_dest_write) |
             ((complete_bus_0_dest_phys_reg_tag == phys_reg_tag_t'(0)) & complete_bus_0_valid) |
-            ((complete_bus_1_dest_phys_reg_tag == phys_reg_tag_t'(0)) & complete_bus_1_valid)
+            ((complete_bus_1_dest_phys_reg_tag == phys_reg_tag_t'(0)) & complete_bus_1_valid) |
+            // add complete bus 2:
+            ((complete_bus_2_dest_phys_reg_tag == phys_reg_tag_t'(0)) & complete_bus_2_valid)
         ) begin
             $display("phys_reg_ready_table: ERROR: write to phys reg 0");
             next_DUT_error = 1'b1;
@@ -143,6 +154,13 @@ module phys_reg_ready_table (
 
             // set ready bit at complete bus 1 phys reg tag
             next_ready_table_by_phys_reg_tag_index[complete_bus_1_dest_phys_reg_tag] = 1'b1;
+        end
+
+        // complete bus 2
+        if (complete_bus_2_valid) begin
+
+            // set ready bit at complete bus 2 phys reg tag
+            next_ready_table_by_phys_reg_tag_index[complete_bus_2_dest_phys_reg_tag] = 1'b1;
         end
 
         // read logic:
