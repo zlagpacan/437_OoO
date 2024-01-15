@@ -176,6 +176,18 @@ package core_types_pkg;
     parameter FREE_LIST_DEPTH = NUM_PHYS_REGS - NUM_ARCH_REGS;
     parameter LOG_FREE_LIST_DEPTH = $clog2(FREE_LIST_DEPTH);
 
+    ///////////////////////////
+    // phys reg ready table: //
+    ///////////////////////////
+
+        // internal array follows NUM_PHYS_REGS
+
+    ////////////////////////
+    // phys reg reg file: //
+    ////////////////////////
+
+        // 
+
     //////////
     // ROB: //
     //////////
