@@ -3,7 +3,6 @@
     Author: zlagpacan
 
     File Name: <design_name>_tb.sv
-    Instantiation Hierarchy: 
     Description: 
        Testbench for <design_name> module. 
 */

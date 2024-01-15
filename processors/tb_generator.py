@@ -3,7 +3,6 @@
     Author: zlagpacan
 
     File Name: tb_generator.py
-    Instantiation Hierarchy: N/A
     Description: 
        Python script for translating a leaf SystemVerilog design .sv file into a base testbench for the
        design
@@ -114,7 +113,8 @@ def parse_design(design_lines):
             continue
 
         # try to enter io
-        if line.lstrip().startswith(")") and line.rstrip().endswith("("):
+        if (line.lstrip().startswith(")") and line.rstrip().endswith("(")) or (
+            line.lstrip().startswith("module") and line.rstrip().endswith("(") and "#" not in line):
             inside_io = True
             continue
 
