@@ -72,6 +72,8 @@ module dispatch_unit_tb ();
 	phys_reg_tag_t tb_complete_bus_0_dest_phys_reg_tag;
 	logic tb_complete_bus_1_valid;
 	phys_reg_tag_t tb_complete_bus_1_dest_phys_reg_tag;
+	logic tb_complete_bus_2_valid;
+	phys_reg_tag_t tb_complete_bus_2_dest_phys_reg_tag;
 
     // ROB interface
     // dispatch @ tail
@@ -152,6 +154,8 @@ module dispatch_unit_tb ();
 		.complete_bus_0_dest_phys_reg_tag(tb_complete_bus_0_dest_phys_reg_tag),
 		.complete_bus_1_valid(tb_complete_bus_1_valid),
 		.complete_bus_1_dest_phys_reg_tag(tb_complete_bus_1_dest_phys_reg_tag),
+		.complete_bus_2_valid(tb_complete_bus_2_valid),
+		.complete_bus_2_dest_phys_reg_tag(tb_complete_bus_2_dest_phys_reg_tag),
 
 	    // ROB interface
 	    // dispatch @ tail
@@ -249,6 +253,8 @@ module dispatch_unit_tb ();
 		.complete_bus_0_dest_phys_reg_tag(tb_complete_bus_0_dest_phys_reg_tag),
 		.complete_bus_1_valid(tb_complete_bus_1_valid),
 		.complete_bus_1_dest_phys_reg_tag(tb_complete_bus_1_dest_phys_reg_tag),
+		.complete_bus_2_valid(tb_complete_bus_2_valid),
+		.complete_bus_2_dest_phys_reg_tag(tb_complete_bus_2_dest_phys_reg_tag),
 
 	    // ROB interface
 	    // dispatch @ tail
@@ -568,6 +574,9 @@ module dispatch_unit_tb ();
 		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
 		tb_complete_bus_1_valid = 1'b0;
 		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_valid = 1'b0;
+		tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(0);
+			// don't bother changing entire tb, complete bus 2 tested enough in phys_reg_ready_table
 	    // ROB interface
 	    // dispatch @ tail
 		tb_ROB_full = 1'b0;
