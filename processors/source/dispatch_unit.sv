@@ -77,6 +77,8 @@ module dispatch_unit (
     input phys_reg_tag_t complete_bus_0_dest_phys_reg_tag,
     input logic complete_bus_1_valid,
     input phys_reg_tag_t complete_bus_1_dest_phys_reg_tag,
+    input logic complete_bus_2_valid,
+    input phys_reg_tag_t complete_bus_2_dest_phys_reg_tag,
 
     // ROB interface
     // dispatch @ tail
@@ -309,10 +311,13 @@ module dispatch_unit (
     // complete
         // set @ complete bus 0 dest
         // set @ complete bus 1 dest
+        // set @ complete bus 2 dest
 	logic prrt_complete_bus_0_valid;
 	phys_reg_tag_t prrt_complete_bus_0_dest_phys_reg_tag;
 	logic prrt_complete_bus_1_valid;
 	phys_reg_tag_t prrt_complete_bus_1_dest_phys_reg_tag;
+    logic prrt_complete_bus_2_valid;
+	phys_reg_tag_t prrt_complete_bus_2_dest_phys_reg_tag;
 
     // phys_reg_ready_table instantiation
 	phys_reg_ready_table prrt (
@@ -341,7 +346,9 @@ module dispatch_unit (
 		.complete_bus_0_valid(prrt_complete_bus_0_valid),
 		.complete_bus_0_dest_phys_reg_tag(prrt_complete_bus_0_dest_phys_reg_tag),
 		.complete_bus_1_valid(prrt_complete_bus_1_valid),
-		.complete_bus_1_dest_phys_reg_tag(prrt_complete_bus_1_dest_phys_reg_tag)
+		.complete_bus_1_dest_phys_reg_tag(prrt_complete_bus_1_dest_phys_reg_tag),
+        .complete_bus_2_valid(prrt_complete_bus_2_valid),
+		.complete_bus_2_dest_phys_reg_tag(prrt_complete_bus_2_dest_phys_reg_tag)
 	);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -508,6 +515,8 @@ module dispatch_unit (
         prrt_complete_bus_0_dest_phys_reg_tag = complete_bus_0_dest_phys_reg_tag;   // always complete bus val
         prrt_complete_bus_1_valid = complete_bus_1_valid;   // always complete bus valid
         prrt_complete_bus_1_dest_phys_reg_tag = complete_bus_1_dest_phys_reg_tag;   // always complete bus val
+        prrt_complete_bus_2_valid = complete_bus_2_valid;   // always complete bus valid
+        prrt_complete_bus_2_dest_phys_reg_tag = complete_bus_2_dest_phys_reg_tag;   // always complete bus val
 
         /////////////////////////////////////
         // internal module output signals: //
@@ -611,6 +620,8 @@ module dispatch_unit (
         // prrt_complete_bus_0_dest_phys_reg_tag = complete_bus_0_dest_phys_reg_tag;   // always complete bus val
         // prrt_complete_bus_1_valid = complete_bus_1_valid;   // always complete bus valid
         // prrt_complete_bus_1_dest_phys_reg_tag = complete_bus_1_dest_phys_reg_tag;   // always complete bus val
+        // prrt_complete_bus_2_valid = complete_bus_2_valid;   // always complete bus valid
+        // prrt_complete_bus_2_dest_phys_reg_tag = complete_bus_2_dest_phys_reg_tag;   // always complete bus val
 
         /////////////////////
         // output signals: //
