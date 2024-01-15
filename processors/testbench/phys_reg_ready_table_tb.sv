@@ -56,6 +56,8 @@ module phys_reg_ready_table_tb ();
 	phys_reg_tag_t tb_complete_bus_0_dest_phys_reg_tag;
 	logic tb_complete_bus_1_valid;
 	phys_reg_tag_t tb_complete_bus_1_dest_phys_reg_tag;
+	logic tb_complete_bus_2_valid;
+	phys_reg_tag_t tb_complete_bus_2_dest_phys_reg_tag;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT instantiation:
@@ -87,7 +89,9 @@ module phys_reg_ready_table_tb ();
 		.complete_bus_0_valid(tb_complete_bus_0_valid),
 		.complete_bus_0_dest_phys_reg_tag(tb_complete_bus_0_dest_phys_reg_tag),
 		.complete_bus_1_valid(tb_complete_bus_1_valid),
-		.complete_bus_1_dest_phys_reg_tag(tb_complete_bus_1_dest_phys_reg_tag)
+		.complete_bus_1_dest_phys_reg_tag(tb_complete_bus_1_dest_phys_reg_tag),
+		.complete_bus_2_valid(tb_complete_bus_2_valid),
+		.complete_bus_2_dest_phys_reg_tag(tb_complete_bus_2_dest_phys_reg_tag)
 	);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +153,8 @@ module phys_reg_ready_table_tb ();
 		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
 		tb_complete_bus_1_valid = 1'b0;
 		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_valid = 1'b0;
+		tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(0);
 
 		@(posedge CLK);
 
@@ -219,6 +225,8 @@ module phys_reg_ready_table_tb ();
 		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
 		tb_complete_bus_1_valid = 1'b0;
 		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_valid = 1'b0;
+		tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(0);
 
 		@(negedge CLK);
 
@@ -261,6 +269,8 @@ module phys_reg_ready_table_tb ();
 			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(0);
 			tb_complete_bus_1_valid = 1'b0;
 			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(0);
+			tb_complete_bus_2_valid = 1'b0;
+			tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(0);
 
 			@(negedge CLK);
 
@@ -300,10 +310,12 @@ module phys_reg_ready_table_tb ();
 			tb_dispatch_dest_write = 1'b0;
 			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(0);
 			// complete
-			tb_complete_bus_0_valid = i % 2 == 0 ? 1'b1 : 1'b0;
+			tb_complete_bus_0_valid = i % 3 == 0;
 			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i);
-			tb_complete_bus_1_valid = i % 2 == 0 ? 1'b0 : 1'b1;
+			tb_complete_bus_1_valid = i % 3 == 1;
 			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			tb_complete_bus_2_valid = i % 3 == 2;
+			tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(i);
 
 			@(negedge CLK);
 
@@ -386,10 +398,17 @@ module phys_reg_ready_table_tb ();
 			tb_dispatch_dest_write = 1'b0;
 			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(i * 2); // anything
 			// complete
-			tb_complete_bus_0_valid = 1'b1;
-			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i + 1);
-			tb_complete_bus_1_valid = 1'b1;
-			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			// tb_complete_bus_0_valid = 1'b1;
+			// tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i + 1);
+			// tb_complete_bus_1_valid = 1'b1;
+			// tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i);
+			// add complete 2: round robin i and i+1
+			tb_complete_bus_0_valid = (i % 3 == 0) | (i % 3 == 1);
+			tb_complete_bus_0_dest_phys_reg_tag = (i % 3 == 0) ? i : i + 1;
+			tb_complete_bus_1_valid = (i % 3 == 1) | (i % 3 == 2);
+			tb_complete_bus_1_dest_phys_reg_tag = (i % 3 == 1) ? i : i + 1;
+			tb_complete_bus_2_valid = (i % 3 == 2) | (i % 3 == 0);
+			tb_complete_bus_2_dest_phys_reg_tag = (i % 3 == 2) ? i : i + 1;
 
 			@(negedge CLK);
 
@@ -429,10 +448,12 @@ module phys_reg_ready_table_tb ();
 			tb_dispatch_dest_write = 1'b1;
 			tb_dispatch_dest_phys_reg_tag = phys_reg_tag_t'(i);
 			// complete
-			tb_complete_bus_0_valid = i < 2 ? 1'b0 : i % 2 == 0 ? 1'b0 : 1'b1;
+			tb_complete_bus_0_valid = i < 2 ? 1'b0 : i % 3 == 0;
 			tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(i - 2);
-			tb_complete_bus_1_valid = i < 2 ? 1'b0 : i % 2 == 0 ? 1'b1 : 1'b0;
+			tb_complete_bus_1_valid = i < 2 ? 1'b0 : i % 3 == 1;
 			tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(i - 2);
+			tb_complete_bus_2_valid = i < 2 ? 1'b0 : i % 3 == 2;
+			tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(i - 2);
 
 			@(negedge CLK);
 
@@ -475,6 +496,8 @@ module phys_reg_ready_table_tb ();
 		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(62);
 		tb_complete_bus_1_valid = 1'b1;
 		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(63);
+		tb_complete_bus_2_valid = 1'b0;
+		tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(63);	// complete bus 2 tested enough
 
 		@(negedge CLK);
 
