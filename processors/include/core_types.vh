@@ -192,7 +192,7 @@ package core_types_pkg;
     // ROB: //
     //////////
 
-    parameter ROB_DEPTH = 32;
+    parameter ROB_DEPTH = 16;
     parameter LOG_ROB_DEPTH = $clog2(ROB_DEPTH);
 
     typedef logic [LOG_ROB_DEPTH-1:0] ROB_index_t;
@@ -219,6 +219,8 @@ package core_types_pkg;
         phys_reg_tag_t safe_dest_phys_reg_tag;
         phys_reg_tag_t speculated_dest_phys_reg_tag;
     } ROB_entry_t;
+        // consider adding safe checkpoint column here to better support general instr checkpointing
+            // fine for now since checkpoint goes to BRU, and only BRU instr's are allowed to checkpoint
 
     //////////
     // ALU: //
