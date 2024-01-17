@@ -6,7 +6,6 @@
     Description: 
        Testbench for <design_name> module. 
 */
-fill in ^
 
 `timescale 1ns/100ps
 
