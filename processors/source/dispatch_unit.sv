@@ -675,14 +675,14 @@ module dispatch_unit (
             // no dispatched unit
         ROB_struct_out.valid = 1'b1;
         ROB_struct_out.complete = 1'b0;
-        ROB_struct_out.dispatched_unit.ALU_0 = 1'b0;
-        ROB_struct_out.dispatched_unit.ALU_1 = 1'b0;
-        ROB_struct_out.dispatched_unit.LQ = 1'b0;
-        ROB_struct_out.dispatched_unit.SQ = 1'b0;
-        ROB_struct_out.dispatched_unit.BRU = 1'b0;
-        ROB_struct_out.dispatched_unit.J = 1'b0;
-        ROB_struct_out.dispatched_unit.DEAD = 1'b0;
-        ROB_struct_out.dispatched_unit.HALT = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_LQ = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_SQ = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_BRU = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_J = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b0;
+        ROB_struct_out.dispatched_unit.DU_HALT = 1'b0;
         ROB_struct_out.restart_PC = dispatch_unit_PC;
         ROB_struct_out.reg_write = 1'b1;
         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -963,7 +963,7 @@ module dispatch_unit (
                             // fill in ROB struct
                             ROB_struct_out.valid = 1'b1;
                             ROB_struct_out.complete = 1'b0;
-                            ROB_struct_out.dispatched_unit.BRU = 1'b1;
+                            ROB_struct_out.dispatched_unit.DU_BRU = 1'b1;
                             ROB_struct_out.restart_PC = dispatch_unit_PC;
                             ROB_struct_out.reg_write = 1'b0;
                             ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1004,7 +1004,7 @@ module dispatch_unit (
                             // fill in ROB struct
                             ROB_struct_out.valid = 1'b1;
                             ROB_struct_out.complete = 1'b1;
-                            ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                            ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                             ROB_struct_out.restart_PC = dispatch_unit_PC;
                             ROB_struct_out.reg_write = 1'b0;
                             ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1051,8 +1051,8 @@ module dispatch_unit (
                             // fill in ROB struct
                             ROB_struct_out.valid = 1'b1;
                             ROB_struct_out.complete = 1'b0;
-                            if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                            else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                            if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                            else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                             ROB_struct_out.restart_PC = dispatch_unit_PC;
                             ROB_struct_out.reg_write = 1'b1;
                             ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1166,7 +1166,7 @@ module dispatch_unit (
                     // fill in ROB struct
                     ROB_struct_out.valid = 1'b1;
                     ROB_struct_out.complete = 1'b1;
-                    ROB_struct_out.dispatched_unit.J = 1'b1;
+                    ROB_struct_out.dispatched_unit.DU_J = 1'b1;
                     ROB_struct_out.restart_PC = dispatch_unit_PC;
                     ROB_struct_out.reg_write = 1'b0;
                     ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1220,9 +1220,9 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        ROB_struct_out.dispatched_unit.J = 1'b1;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_J = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = 31;
@@ -1281,7 +1281,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        ROB_struct_out.dispatched_unit.BRU = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_BRU = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1338,7 +1338,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        ROB_struct_out.dispatched_unit.BRU = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_BRU = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1381,7 +1381,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1428,8 +1428,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1468,7 +1468,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1515,8 +1515,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1555,7 +1555,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1602,8 +1602,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1642,7 +1642,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1689,8 +1689,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1729,7 +1729,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1776,8 +1776,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1816,7 +1816,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1863,8 +1863,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1903,7 +1903,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -1950,8 +1950,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -1990,7 +1990,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -2037,8 +2037,8 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.ALU_1 = 1'b1;
-                        else                ROB_struct_out.dispatched_unit.ALU_0 = 1'b1;
+                        if (ALU_RS_select)  ROB_struct_out.dispatched_unit.DU_ALU_1 = 1'b1;
+                        else                ROB_struct_out.dispatched_unit.DU_ALU_0 = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -2080,7 +2080,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b1;
-                        ROB_struct_out.dispatched_unit.DEAD = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rd;
@@ -2127,7 +2127,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        ROB_struct_out.dispatched_unit.LQ = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_LQ = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -2179,7 +2179,7 @@ module dispatch_unit (
                         // fill in ROB struct
                         ROB_struct_out.valid = 1'b1;
                         ROB_struct_out.complete = 1'b0;
-                        ROB_struct_out.dispatched_unit.SQ = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_SQ = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
                         ROB_struct_out.reg_write = 1'b1;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
@@ -2228,7 +2228,7 @@ module dispatch_unit (
                     // fill in ROB struct
                     ROB_struct_out.valid = 1'b1;
                     ROB_struct_out.complete = 1'b1;
-                    ROB_struct_out.dispatched_unit.HALT = 1'b1;
+                    ROB_struct_out.dispatched_unit.DU_HALT = 1'b1;
                     ROB_struct_out.restart_PC = dispatch_unit_PC;
                     ROB_struct_out.reg_write = 1'b0;
                     ROB_struct_out.dest_arch_reg_tag = instr_rd;
