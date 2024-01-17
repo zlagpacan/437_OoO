@@ -198,14 +198,14 @@ package core_types_pkg;
     typedef logic [LOG_ROB_DEPTH:0] ROB_index_t;
 
     typedef struct packed {
-        logic ALU_0;
-        logic ALU_1;
-        logic LQ;
-        logic SQ;
-        logic BRU;
-        logic J;
-        logic DEAD;
-        logic HALT;
+        logic DU_ALU_0;
+        logic DU_ALU_1;
+        logic DU_LQ;
+        logic DU_SQ;
+        logic DU_BRU;
+        logic DU_J;
+        logic DU_DEAD;
+        logic DU_HALT;
     } dispatched_unit_t;
 
     typedef struct packed {
@@ -222,14 +222,14 @@ package core_types_pkg;
         // consider adding safe checkpoint column here to better support general instr checkpointing
             // fine for now since checkpoint goes to BRU, and only BRU instr's are allowed to checkpoint
 
-    typedef logic [1:0] enum {
-        IDLE,
-        RESTORE,
-        REVERT,
-        // KILL,
+    typedef enum logic [1:0] {
+        ROB_IDLE,
+        ROB_RESTORE,
+        ROB_REVERT,
+        // ROB_KILL,
             // instead of kill state, always work kill jobs so can go back to IDLE for new instr dispatch
             // allocate kill jobs when get successful restore
-        HALT
+        ROB_HALT
     } ROB_state_t;
 
     //////////
