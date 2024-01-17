@@ -195,7 +195,7 @@ package core_types_pkg;
     parameter ROB_DEPTH = 16;
     parameter LOG_ROB_DEPTH = $clog2(ROB_DEPTH);
 
-    typedef logic [LOG_ROB_DEPTH-1:0] ROB_index_t;
+    typedef logic [LOG_ROB_DEPTH:0] ROB_index_t;
 
     typedef struct packed {
         logic ALU_0;
@@ -221,6 +221,16 @@ package core_types_pkg;
     } ROB_entry_t;
         // consider adding safe checkpoint column here to better support general instr checkpointing
             // fine for now since checkpoint goes to BRU, and only BRU instr's are allowed to checkpoint
+
+    typedef logic [1:0] enum {
+        IDLE,
+        RESTORE,
+        REVERT,
+        // KILL,
+            // instead of kill state, always work kill jobs so can go back to IDLE for new instr dispatch
+            // allocate kill jobs when get successful restore
+        HALT
+    } ROB_state_t;
 
     //////////
     // ALU: //

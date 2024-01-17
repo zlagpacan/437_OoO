@@ -22,12 +22,14 @@ module fetch_unit #(
     output logic DUT_error,
 
     // BTB/DIRP inputs from pipeline
+        // these are always received from BRU
     input logic from_pipeline_BTB_DIRP_update,              // shared b/w BTB and DIRP
     input BTB_DIRP_index_t from_pipeline_BTB_DIRP_index,    // shared b/w BTB and DIRP
     input pc_t from_pipeline_BTB_target,                    // only need 14-bit addr
     input logic from_pipeline_DIRP_taken,
     
     // resolved target from pipeline
+        // these come from ROB's restart behavior
     input logic from_pipeline_take_resolved,
     input pc_t from_pipeline_resolved_PC,
 
