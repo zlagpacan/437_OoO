@@ -356,18 +356,18 @@ module rob (
         // complete bus 0
         if (complete_bus_0_valid) begin
 
-            next_ROB_array_by_entry[complete_bus_0_ROB_index].complete = 1'b1;
+            next_ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
 
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
-            if (~ROB_array_by_entry[complete_bus_0_ROB_index].valid) begin
+            if (~ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion on complete bus 0");
                 invalid_complete = 1'b1;
             end
 
             // assert tag match
-            if (ROB_array_by_entry[complete_bus_0_ROB_index].speculated_dest_phys_reg_tag != 
+            if (ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].speculated_dest_phys_reg_tag != 
                 complete_bus_0_dest_phys_reg_tag
             ) begin
                 $display("rob: ERROR: tag mismatch on complete bus 0");
@@ -375,7 +375,7 @@ module rob (
             end
 
             // assert bus match: ALU 0
-            if (~ROB_array_by_entry[complete_bus_0_ROB_index].dispatched_unit.DU_ALU_0) begin
+            if (~ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_ALU_0) begin
                 $display("rob: ERROR: bus mismatch on complete bus 0 (no ALU 0)");
                 next_DUT_error = 1'b1;
             end
@@ -384,18 +384,18 @@ module rob (
         // complete bus 1
         if (complete_bus_1_valid) begin
 
-            next_ROB_array_by_entry[complete_bus_1_ROB_index].complete = 1'b1;
+            next_ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
 
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
-            if (~ROB_array_by_entry[complete_bus_1_ROB_index].valid) begin
+            if (~ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion on complete bus 1");
                 invalid_complete = 1'b1;
             end
 
             // assert tag match
-            if (ROB_array_by_entry[complete_bus_1_ROB_index].speculated_dest_phys_reg_tag != 
+            if (ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].speculated_dest_phys_reg_tag != 
                 complete_bus_1_dest_phys_reg_tag
             ) begin
                 $display("rob: ERROR: tag mismatch on complete bus 1");
@@ -403,7 +403,7 @@ module rob (
             end
 
             // assert bus match: ALU 1
-            if (~ROB_array_by_entry[complete_bus_1_ROB_index].dispatched_unit.DU_ALU_1) begin
+            if (~ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_ALU_1) begin
                 $display("rob: ERROR: bus mismatch on complete bus 1 (no ALU 1)");
                 next_DUT_error = 1'b1;
             end
@@ -412,18 +412,18 @@ module rob (
         // complete bus 2
         if (complete_bus_2_valid) begin
 
-            next_ROB_array_by_entry[complete_bus_2_ROB_index].complete = 1'b1;
+            next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
 
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
-            if (~ROB_array_by_entry[complete_bus_2_ROB_index].valid) begin
+            if (~ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion on complete bus 2");
                 invalid_complete = 1'b1;
             end
 
             // assert tag match
-            if (ROB_array_by_entry[complete_bus_2_ROB_index].speculated_dest_phys_reg_tag != 
+            if (ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].speculated_dest_phys_reg_tag != 
                 complete_bus_2_dest_phys_reg_tag
             ) begin
                 $display("rob: ERROR: tag mismatch on complete bus 2");
@@ -431,7 +431,7 @@ module rob (
             end
 
             // assert bus match: LQ
-            if (~ROB_array_by_entry[complete_bus_2_ROB_index].dispatched_unit.DU_LQ) begin
+            if (~ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_LQ) begin
                 $display("rob: ERROR: bus mismatch on complete bus 2 (no LQ)");
                 next_DUT_error = 1'b1;
             end
@@ -440,12 +440,12 @@ module rob (
         // BRU complete
         if (BRU_complete_valid) begin
 
-            next_ROB_array_by_entry[BRU_complete_ROB_index].complete = 1'b1;
+            next_ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
 
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
-            if (~ROB_array_by_entry[BRU_complete_ROB_index].valid) begin
+            if (~ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion by BRU");
                 invalid_complete = 1'b1;
             end
@@ -459,7 +459,7 @@ module rob (
             end
 
             // assert BRU match
-            if (~ROB_array_by_entry[BRU_complete_ROB_index].dispatched_unit.DU_BRU) begin
+            if (~ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
                 $display("rob: ERROR: BRU mismatch on complete");
                 next_DUT_error = 1'b1;
             end
@@ -468,18 +468,18 @@ module rob (
         // SQ complete
         if (SQ_complete_valid) begin
 
-            next_ROB_array_by_entry[SQ_complete_ROB_index].complete = 1'b1;
+            next_ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
 
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
-            if (~ROB_array_by_entry[SQ_complete_ROB_index].valid) begin
+            if (~ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion by SQ");
                 invalid_complete = 1'b1;
             end
 
             // assert BRU match
-            if (~ROB_array_by_entry[BRU_complete_ROB_index].dispatched_unit.DU_BRU) begin
+            if (~ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
                 $display("rob: ERROR: BRU mismatch on complete");
                 next_DUT_error = 1'b1;
             end
@@ -489,7 +489,7 @@ module rob (
         if (inorder_kill_start_ROB_index != inorder_kill_end_ROB_index) begin
 
             // kill if entry valid
-            if (ROB_array_by_entry[inorder_kill_start_ROB_index].valid) begin
+            if (ROB_array_by_entry[inorder_kill_start_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
 
                 // send kill command
                 kill_bus_valid = 1'b1;
@@ -497,7 +497,7 @@ module rob (
             end
 
             // invalidate entry
-            next_ROB_array_by_entry[inorder_kill_start_ROB_index].valid = 1'b0;
+            next_ROB_array_by_entry[inorder_kill_start_ROB_index[LOG_ROB_DEPTH-1:0]].valid = 1'b0;
 
             // increment start
             next_inorder_kill_start_ROB_index = inorder_kill_start_ROB_index + 1;
@@ -579,9 +579,9 @@ module rob (
 
                     // check BRU older -> restart BRU
                     if (
-                        BRU_restart_ROB_index - head_index_ptr.index 
+                        BRU_restart_ROB_index - head_index_ptr
                         <= 
-                        LQ_restart_ROB_index - head_index_ptr.index
+                        LQ_restart_ROB_index - head_index_ptr
                     ) begin
 
                         // BRU -> check for checkpoint restore
@@ -615,7 +615,7 @@ module rob (
                         // route LQ ROB entry restart PC to fetch unit
                             // fetch at load instr again
                         fetch_unit_take_resolved = 1'b1;
-                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index].restart_PC;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
                     end
                 end
 
@@ -655,7 +655,7 @@ module rob (
                     // route LQ ROB entry restart PC to fetch unit
                         // fetch at load instr again
                     fetch_unit_take_resolved = 1'b1;
-                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index].restart_PC;
+                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
                 end
                 
             end
@@ -704,16 +704,16 @@ module rob (
 
                 // check BRU valid and older than current restart
                 if (BRU_restart_valid & (
-                    BRU_restart_ROB_index - head_index_ptr.index
+                    BRU_restart_ROB_index - head_index_ptr
                     <=
-                    restart_ROB_index_ptr.index - head_index_ptr.index
+                    restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
                     // check LQ valid and older than BRU -> restart LQ
                     if (LQ_restart_valid & (
-                        LQ_restart_ROB_index - head_index_ptr.index
+                        LQ_restart_ROB_index - head_index_ptr
                         <=
-                        BRU_restart_ROB_index - head_index_ptr.index
+                        BRU_restart_ROB_index - head_index_ptr
                     )) begin
 
                         // LQ -> no check for checkpoint restore, immediately revert
@@ -730,7 +730,7 @@ module rob (
                         // route LQ ROB entry restart PC to fetch unit
                             // fetch at load instr again
                         fetch_unit_take_resolved = 1'b1;
-                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index].restart_PC;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
                     end
 
                     // otherwise, restart BRU
@@ -753,9 +753,9 @@ module rob (
 
                 // check LQ valid and older than current restart
                 if (LQ_restart_valid & (
-                    LQ_restart_ROB_index - head_index_ptr.index
+                    LQ_restart_ROB_index - head_index_ptr
                     <=
-                    restart_ROB_index_ptr.index - head_index_ptr.index
+                    restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
                     // LQ -> no check for checkpoint restore, immediately revert
@@ -772,7 +772,7 @@ module rob (
                     // route LQ ROB entry restart PC to fetch unit
                         // fetch at load instr again
                     fetch_unit_take_resolved = 1'b1;
-                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index].restart_PC;
+                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
                 end
 
             end
@@ -809,14 +809,16 @@ module rob (
                 // revert and kill if entry valid
                 if (ROB_array_by_entry[tail_index_ptr.index].valid) begin
 
-                    // assert revert command
+                    // assert revert command if entry writes reg
                         // current tail points to youngest ROB entry with dispatched instr
                             // although may have been invalidated along the way
-                    revert_valid = 1'b1;
-                    revert_ROB_index = tail_index_ptr;
-                    revert_arch_reg_tag = ROB_array_by_entry[tail_index_ptr.index].dest_arch_reg_tag;
-                    revert_safe_phys_reg_tag = ROB_array_by_entry[tail_index_ptr.index].safe_dest_phys_reg_tag;
-                    revert_speculated_phys_reg_tag = ROB_array_by_entry[tail_index_ptr.index].speculated_dest_phys_reg_tag;
+                    if (ROB_array_by_entry[tail_index_ptr.index].reg_write) begin
+                        revert_valid = 1'b1;
+                        revert_ROB_index = tail_index_ptr;
+                        revert_arch_reg_tag = ROB_array_by_entry[tail_index_ptr.index].dest_arch_reg_tag;
+                        revert_safe_phys_reg_tag = ROB_array_by_entry[tail_index_ptr.index].safe_dest_phys_reg_tag;
+                        revert_speculated_phys_reg_tag = ROB_array_by_entry[tail_index_ptr.index].speculated_dest_phys_reg_tag;
+                    end
 
                     // send kill command
                     kill_bus_valid = 1'b1;
@@ -830,16 +832,16 @@ module rob (
 
                 // check BRU valid and older than current restart
                 if (BRU_restart_valid & (
-                    BRU_restart_ROB_index - head_index_ptr.index
+                    BRU_restart_ROB_index - head_index_ptr
                     <=
-                    restart_ROB_index_ptr.index - head_index_ptr.index
+                    restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
                     // check LQ valid and older than BRU -> restart LQ
                     if (LQ_restart_valid & (
-                        LQ_restart_ROB_index - head_index_ptr.index
+                        LQ_restart_ROB_index - head_index_ptr
                         <=
-                        BRU_restart_ROB_index - head_index_ptr.index
+                        BRU_restart_ROB_index - head_index_ptr
                     )) begin
 
                         // LQ -> no check for checkpoint restore, immediately revert
@@ -856,7 +858,7 @@ module rob (
                         // route LQ ROB entry restart PC to fetch unit
                             // fetch at load instr again
                         fetch_unit_take_resolved = 1'b1;
-                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index].restart_PC;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
                     end
 
                     // otherwise, restart BRU
@@ -879,9 +881,9 @@ module rob (
 
                 // check LQ valid and older than current restart
                 if (LQ_restart_valid & (
-                    LQ_restart_ROB_index - head_index_ptr.index
+                    LQ_restart_ROB_index - head_index_ptr
                     <=
-                    restart_ROB_index_ptr.index - head_index_ptr.index
+                    restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
                     // LQ -> no check for checkpoint restore, immediately revert
@@ -898,7 +900,7 @@ module rob (
                     // route LQ ROB entry restart PC to fetch unit
                         // fetch at load instr again
                     fetch_unit_take_resolved = 1'b1;
-                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index].restart_PC;
+                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
                 end
             end
 
