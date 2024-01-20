@@ -76,11 +76,15 @@ module fetch_unit_tb ();
     pc_t fu_to_pipeline_PC, expected_to_pipeline_PC;
     pc_t fu_to_pipeline_nPC, expected_to_pipeline_nPC;
 
+    // fetch unit state
+    fetch_unit_state_t fu_FU_state_out, expected_FU_state_out;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT instantiation:
 
+    `ifndef MAPPED
     fetch_unit #(
-
+        .PC_RESET_VAL(16'h0)
     ) DUT (
         // seq
         .CLK(CLK),
@@ -112,8 +116,56 @@ module fetch_unit_tb ();
         .to_pipeline_instr(fu_to_pipeline_instr),
         .to_pipeline_ivalid(fu_to_pipeline_ivalid),
         .to_pipeline_PC(fu_to_pipeline_PC),
-        .to_pipeline_nPC(fu_to_pipeline_nPC)
+        .to_pipeline_nPC(fu_to_pipeline_nPC),
+
+        .FU_state_out(fu_FU_state_out)
     );
+    `else
+
+    // signals for type cast
+    logic fu_FU_state_out_casted;
+
+    // assign enum to pure logic array
+    assign fu_FU_state_out = fetch_unit_state_t'(fu_FU_state_out_casted);
+
+    fetch_unit DUT (
+        // seq
+        .CLK(CLK),
+        .nRST(nRST),
+
+        // DUT error
+        .DUT_error(DUT_DUT_error),
+
+        // inputs
+        .from_pipeline_BTB_DIRP_update(tb_from_pipeline_BTB_DIRP_update),
+        .from_pipeline_BTB_DIRP_index(tb_from_pipeline_BTB_DIRP_index),
+        .from_pipeline_BTB_target(tb_from_pipeline_BTB_target),
+        .from_pipeline_DIRP_taken(tb_from_pipeline_DIRP_taken),
+        
+        .from_pipeline_take_resolved(tb_from_pipeline_take_resolved),
+        .from_pipeline_resolved_PC(tb_from_pipeline_resolved_PC),
+        
+        .icache_hit(tb_icache_hit),
+        .icache_load(tb_icache_load),
+        
+        .core_control_stall_fetch_unit(tb_core_control_stall_fetch_unit),
+        .core_control_halt(tb_core_control_halt),
+
+        // outputs
+        .icache_REN(fu_icache_REN),
+        .icache_addr(fu_icache_addr),
+        .icache_halt(fu_icache_halt),
+
+        .to_pipeline_instr(fu_to_pipeline_instr),
+        .to_pipeline_ivalid(fu_to_pipeline_ivalid),
+        .to_pipeline_PC(fu_to_pipeline_PC),
+        .to_pipeline_nPC(fu_to_pipeline_nPC),
+
+        // .FU_state_out(fu_FU_state_out)
+            // enum -> use typecast signal
+        .FU_state_out(fu_FU_state_out_casted)
+    );
+    `endif
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // tasks:
@@ -164,6 +216,12 @@ module fetch_unit_tb ();
 
         if (expected_to_pipeline_nPC !== fu_to_pipeline_nPC) begin
             $display("\tERROR: expected_to_pipeline_nPC (%h) != fu_to_pipeline_nPC (%h)", expected_to_pipeline_nPC, fu_to_pipeline_nPC);
+            num_errors++;
+            error = 1'b1;
+        end
+
+        if (expected_FU_state_out !== fu_FU_state_out) begin
+            $display("\tERROR: expected_FU_state_out (%h) != fu_FU_state_out (%h)", expected_FU_state_out, fu_FU_state_out);
             num_errors++;
             error = 1'b1;
         end
@@ -221,6 +279,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0;
         expected_to_pipeline_nPC = 14'h0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -259,6 +319,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0;
         expected_to_pipeline_nPC = 14'h0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -307,6 +369,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0;
         expected_to_pipeline_nPC = 14'h1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -347,6 +411,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h1;
         expected_to_pipeline_nPC = 14'h2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -387,6 +453,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h2;
         expected_to_pipeline_nPC = 14'h3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -435,6 +503,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h3;
         expected_to_pipeline_nPC = 14'h3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -475,6 +545,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h3;
         expected_to_pipeline_nPC = 14'h3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -515,6 +587,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h3;
         expected_to_pipeline_nPC = 14'h4;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -555,6 +629,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h4;
         expected_to_pipeline_nPC = 14'h4;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -595,6 +671,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h4;
         expected_to_pipeline_nPC = 14'h5;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -643,6 +721,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h5;
         expected_to_pipeline_nPC = 14'ha00;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -683,6 +763,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'ha00;
         expected_to_pipeline_nPC = 14'hb00;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -723,6 +805,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hb00;
         expected_to_pipeline_nPC = 14'hb01;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -763,6 +847,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hb01;
         expected_to_pipeline_nPC = 14'ha01;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -803,6 +889,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'ha01;
         expected_to_pipeline_nPC = 14'ha02;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -843,6 +931,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'ha02;
         expected_to_pipeline_nPC = 14'hc00;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -883,6 +973,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hc00;
         expected_to_pipeline_nPC = 14'hd00;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -923,6 +1015,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hd00;
         expected_to_pipeline_nPC = 14'hc01;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -963,6 +1057,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hc01;
         expected_to_pipeline_nPC = 14'hc02;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1003,6 +1099,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'hc02;
         expected_to_pipeline_nPC = 14'ha03;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1051,6 +1149,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'ha03;
         expected_to_pipeline_nPC = 14'h0a0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1091,6 +1191,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0a0;
         expected_to_pipeline_nPC = 14'h0a1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1131,6 +1233,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0a1;
         expected_to_pipeline_nPC = 14'h0a2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1171,6 +1275,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0a2;
         expected_to_pipeline_nPC = 14'h0a3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1223,6 +1329,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0a3;
         expected_to_pipeline_nPC = 14'h0b0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
         
@@ -1263,6 +1371,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b0;
         expected_to_pipeline_nPC = 14'h0b1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1303,6 +1413,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b1;
         expected_to_pipeline_nPC = 14'h0b2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1343,6 +1455,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b2;
         expected_to_pipeline_nPC = 14'h0b3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1383,6 +1497,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0b3;
         expected_to_pipeline_nPC = 14'h0c0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1423,6 +1539,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c0;
         expected_to_pipeline_nPC = 14'h0c1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1463,6 +1581,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c1;
         expected_to_pipeline_nPC = 14'h0b0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1503,6 +1623,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b0;
         expected_to_pipeline_nPC = 14'h0c0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1543,6 +1665,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c0;
         expected_to_pipeline_nPC = 14'h0c1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1583,6 +1707,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c1;
         expected_to_pipeline_nPC = 14'h0b0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1623,6 +1749,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b0;
         expected_to_pipeline_nPC = 14'h0c0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1663,6 +1791,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c0;
         expected_to_pipeline_nPC = 14'h0c1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1703,6 +1833,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c1;
         expected_to_pipeline_nPC = 14'h0b0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1743,6 +1875,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b0;
         expected_to_pipeline_nPC = 14'h0c0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1783,6 +1917,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c0;
         expected_to_pipeline_nPC = 14'h0c1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1823,6 +1959,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0c1;
         expected_to_pipeline_nPC = 14'h0b0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1863,6 +2001,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b0;
         expected_to_pipeline_nPC = 14'h0b1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1903,6 +2043,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b1;
         expected_to_pipeline_nPC = 14'h0b2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -1955,6 +2097,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0b2;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
         
@@ -1995,6 +2139,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0e1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2035,6 +2181,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e1;
         expected_to_pipeline_nPC = 14'h0e2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2075,6 +2223,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e2;
         expected_to_pipeline_nPC = 14'h0e3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2115,6 +2265,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e3;
         expected_to_pipeline_nPC = 14'h0f0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2155,6 +2307,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f0;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2195,6 +2349,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2235,6 +2391,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0f0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2275,6 +2433,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f0;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2315,6 +2475,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2355,6 +2517,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0f0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2395,6 +2559,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f0;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2435,6 +2601,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2475,6 +2643,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0f0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2515,6 +2685,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f0;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2555,6 +2727,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2595,6 +2769,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0e1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2635,6 +2811,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e1;
         expected_to_pipeline_nPC = 14'h0e2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2689,6 +2867,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e2;
         expected_to_pipeline_nPC = 14'h0e2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2729,6 +2909,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e2;
         expected_to_pipeline_nPC = 14'h0e2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2769,6 +2951,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e2;
         expected_to_pipeline_nPC = 14'h0e2;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2809,6 +2993,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e2;
         expected_to_pipeline_nPC = 14'h0e3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2851,6 +3037,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e3;
         expected_to_pipeline_nPC = 14'h0e3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2891,6 +3079,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e3;
         expected_to_pipeline_nPC = 14'h0e3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2931,6 +3121,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e3;
         expected_to_pipeline_nPC = 14'h0e3;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -2971,6 +3163,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e3;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3013,6 +3207,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3053,6 +3249,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3093,6 +3291,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0e0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3133,6 +3333,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h0e0;
         expected_to_pipeline_nPC = 14'h0f0;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3175,6 +3377,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0f0;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3215,6 +3419,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
         
@@ -3255,6 +3461,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3295,6 +3503,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h0f1;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3344,6 +3554,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h0f1;
         expected_to_pipeline_nPC = 14'h040;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3384,6 +3596,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h040;
         expected_to_pipeline_nPC = 14'h040;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3424,6 +3638,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h040;
         expected_to_pipeline_nPC = 14'h041;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3466,6 +3682,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h041;
         expected_to_pipeline_nPC = 14'h050;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3506,6 +3724,8 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b0;
         expected_to_pipeline_PC = 14'h050;
         expected_to_pipeline_nPC = 14'h050;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
 
         check_outputs();
 
@@ -3546,6 +3766,394 @@ module fetch_unit_tb ();
         expected_to_pipeline_ivalid = 1'b1;
         expected_to_pipeline_PC = 14'h050;
         expected_to_pipeline_nPC = 14'h051;
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
+
+        check_outputs();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // exercise halt w/ resolve and core control
+        test_case = "exercise halt w/ resolve and core control";
+        $display("\ntest %d: %s", test_num, test_case);
+        test_num++;
+
+        // halt hit, no ireq, resolve, ireq hit, halt hit, no ireq, core control halt
+
+        @(posedge CLK);
+
+        // inputs:
+            // halt hit
+        sub_test_case = "halt hit";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'hffffffff; // halt instr
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h051 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hffffffff;
+        expected_to_pipeline_ivalid = 1'b1;
+        expected_to_pipeline_PC = 14'h051;
+        expected_to_pipeline_nPC = 14'h051; // freeze PC when see halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // no ireq
+        sub_test_case = "no ireq";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h051 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hdeadbeef;
+        expected_to_pipeline_ivalid = 1'b0;
+        expected_to_pipeline_PC = 14'h051;
+        expected_to_pipeline_nPC = 14'h051; // freeze PC when see halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_HALT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // resolve
+        sub_test_case = "resolve";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b1;
+        tb_from_pipeline_resolved_PC = 14'h060;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h051 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hdeadbeef;
+        expected_to_pipeline_ivalid = 1'b0;
+        expected_to_pipeline_PC = 14'h051;
+        expected_to_pipeline_nPC = 14'h060; // resolved PC
+        // fetch_unit_state
+        expected_FU_state_out = FU_HALT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // ireq hit
+        sub_test_case = "ireq hit";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'h00112233;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h060 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'h00112233;
+        expected_to_pipeline_ivalid = 1'b1;
+        expected_to_pipeline_PC = 14'h060;
+        expected_to_pipeline_nPC = 14'h061; // resolved PC
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // halt hit
+        sub_test_case = "halt hit";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b1;
+        tb_icache_load = 32'hffffffff;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b1;
+        expected_icache_addr = 32'h061 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hffffffff;
+        expected_to_pipeline_ivalid = 1'b1;
+        expected_to_pipeline_PC = 14'h061;
+        expected_to_pipeline_nPC = 14'h061; // freeze PC on halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_DEFAULT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // no ireq
+        sub_test_case = "no ireq";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b0;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h061 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hdeadbeef;
+        expected_to_pipeline_ivalid = 1'b0;
+        expected_to_pipeline_PC = 14'h061;
+        expected_to_pipeline_nPC = 14'h061; // freeze PC on halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_HALT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // no ireq + give core control halt
+        sub_test_case = " no ireq + give core control halt";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b1;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h061 << 2;
+        expected_icache_halt = 1'b0;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hdeadbeef;
+        expected_to_pipeline_ivalid = 1'b0;
+        expected_to_pipeline_PC = 14'h061;
+        expected_to_pipeline_nPC = 14'h061; // freeze PC on halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_HALT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // no ireq + core control halt
+        sub_test_case = "no ireq + core control halt";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b1;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h061 << 2;
+        expected_icache_halt = 1'b1;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hdeadbeef;
+        expected_to_pipeline_ivalid = 1'b0;
+        expected_to_pipeline_PC = 14'h061;
+        expected_to_pipeline_nPC = 14'h061; // freeze PC on halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_HALT;
+
+        check_outputs();
+
+        @(posedge CLK);
+
+        // inputs:
+            // still no ireq + core control halt
+        sub_test_case = "still no ireq + core control halt";
+        $display("\t- sub_test:%s", sub_test_case);
+
+        // reset
+        nRST = 1'b1;
+        // BTB/DIRP inputs from pipeline
+        tb_from_pipeline_BTB_DIRP_update = 1'b0;
+        tb_from_pipeline_BTB_DIRP_index = 8'h0;
+        tb_from_pipeline_BTB_target = 14'h0;
+        tb_from_pipeline_DIRP_taken = 1'b0;
+        // resolved target from pipepline
+        tb_from_pipeline_take_resolved = 1'b0;
+        tb_from_pipeline_resolved_PC = 14'h0;
+        // I$
+        tb_icache_hit = 1'b0;
+        tb_icache_load = 32'hdeadbeef;
+        // core controller
+        tb_core_control_stall_fetch_unit = 1'b0;
+        tb_core_control_halt = 1'b1;
+
+        @(negedge CLK);
+
+        // outputs:
+
+        // I$
+        expected_icache_REN = 1'b0;
+        expected_icache_addr = 32'h061 << 2;
+        expected_icache_halt = 1'b1;
+        // to pipeline
+        expected_to_pipeline_instr = 32'hdeadbeef;
+        expected_to_pipeline_ivalid = 1'b0;
+        expected_to_pipeline_PC = 14'h061;
+        expected_to_pipeline_nPC = 14'h061; // freeze PC on halt
+        // fetch_unit_state
+        expected_FU_state_out = FU_HALT;
 
         check_outputs();
 

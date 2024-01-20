@@ -149,6 +149,11 @@ package core_types_pkg;
 
     typedef logic [LOG_BTB_FRAMES-1:0] BTB_DIRP_index_t;
 
+    typedef enum logic {
+        FU_DEFAULT,
+        FU_HALT
+    } fetch_unit_state_t;
+
     ////////////////////////
     // checkpoint system: //
     ////////////////////////
