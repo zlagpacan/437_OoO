@@ -48,7 +48,12 @@ module fetch_unit #(
     output word_t to_pipeline_instr,
     output logic to_pipeline_ivalid,
     output pc_t to_pipeline_PC,         // only need 14-bit addr
-    output pc_t to_pipeline_nPC         // only need 14-bit addr
+    output pc_t to_pipeline_nPC,        // only need 14-bit addr
+
+    // optional outputs:
+
+    // fetch unit state
+    output fetch_unit_state_t FU_state_out
 );
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,6 +83,10 @@ module fetch_unit #(
     pc_t RAS_pop_val;   // only need 14-bit addr
     pc_t BTB_target;    // only need 14-bit addr
         // resolved PC
+
+    // fetch_unit state
+    fetch_unit_state_t FU_state;
+    fetch_unit_state_t next_FU_state;
 
     // BTB/DIRP
         // BTB_FRAMES x frames BTB/DIRP
@@ -125,6 +134,7 @@ module fetch_unit #(
     logic is_jal;
     logic is_jr;
     logic is_ra;
+    logic is_halt;
 
     // PC select logic
 
@@ -279,10 +289,27 @@ module fetch_unit #(
 
         // check for $rs = ret addr (31)
         is_ra = (instr.rs == 5'd31);
+
+        // check for HALT
+        is_halt = (instr.opcode == HALT);
+    end
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // fetch_unit state reg:
+
+    // seq
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            FU_state <= FU_DEFAULT;
+        end
+        else begin
+            FU_state <= next_FU_state;
+        end
     end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // PC select logic:
+        // and fetch_unit state logic
 
     // seq
     always_ff @ (posedge CLK, negedge nRST) begin
@@ -309,15 +336,24 @@ module fetch_unit #(
         // synthesis wants default val for nPC
         nPC = PC;
 
+        // hold state
+        next_FU_state = FU_state;
+
         // nPC select mux
             // priority:    resolved (from_pipeline_resolved_PC) > 
+            //              fetch_unit halt state >
             //              ihit & ~stall {is_beq_bne (DIRP_state -> BTB_target vs. PC+4), 
             //                  is_j/is_jal (jPC), is_jr & is_ra (RAS_pop_val), else (PC+4)} > 
             //              ~icache_hit | stall {PC}
 
         // resolved PC
         if (from_pipeline_take_resolved) begin
+
+            // take resolved PC
             nPC = from_pipeline_resolved_PC;
+
+            // make sure in default state
+            next_FU_state = FU_DEFAULT;
         end
 
         // icache hit
@@ -354,7 +390,15 @@ module fetch_unit #(
                 // take RAS pop address
                 nPC = RAS_pop_val;
             end
-
+            // HALT
+            else if (is_halt) begin
+                
+                // enter halt state
+                next_FU_state = FU_HALT;
+                
+                // freeze PC
+                nPC = PC;
+            end
             // PC + 4
             else begin
 
@@ -398,6 +442,11 @@ module fetch_unit #(
             // PC will automatically be paused since will not get ihit's
         end
 
+        // speculated halt on fetch unit (FU_HALT state)
+        else if (next_FU_state == FU_HALT) begin
+            next_icache_REN = 1'b0;
+        end
+
         // // pause fetch unit
         //     // don't need REN disable since ivalid already turned off
         //     // likely will want next instr so good idea to fetch
@@ -419,11 +468,13 @@ module fetch_unit #(
         icache_hit & 
         ~from_pipeline_take_resolved & 
         ~core_control_stall_fetch_unit & 
-        ~core_control_halt;
+        ~core_control_halt &
+        (FU_state != FU_HALT);
 
     // wires
     assign to_pipeline_instr = instr;
     assign to_pipeline_PC = PC;
     assign to_pipeline_nPC = nPC;
+    assign FU_state_out = FU_state;
 
 endmodule
