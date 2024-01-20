@@ -113,7 +113,7 @@ module rob (
     // BRU interface
     // complete
     input logic BRU_complete_valid,
-    input ROB_index_t BRU_complete_ROB_index,
+    // input ROB_index_t BRU_complete_ROB_index,
     // restart info
     input logic BRU_restart_valid,
     input ROB_index_t BRU_restart_ROB_index,
@@ -289,9 +289,9 @@ module rob (
         dispatch_unit_retire_valid = 1'b0;
         dispatch_unit_retire_phys_reg_tag = ROB_array_by_entry[head_index_ptr.index].safe_dest_phys_reg_tag;
         LQ_retire_valid = 1'b0;
-        LQ_retire_ROB_index = head_index_ptr.index;
+        LQ_retire_ROB_index = head_index_ptr;
         SQ_retire_valid = 1'b0;
-        SQ_retire_ROB_index = head_index_ptr.index;
+        SQ_retire_ROB_index = head_index_ptr;
 
         // restore from BRU ROB index (invalid)
         restore_checkpoint_valid = 1'b0;
@@ -440,12 +440,12 @@ module rob (
         // BRU complete
         if (BRU_complete_valid) begin
 
-            next_ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
+            next_ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
 
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
-            if (~ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
+            if (~ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion by BRU");
                 invalid_complete = 1'b1;
             end
@@ -459,7 +459,7 @@ module rob (
             end
 
             // assert BRU match
-            if (~ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
+            if (~ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
                 $display("rob: ERROR: BRU mismatch on complete");
                 next_DUT_error = 1'b1;
             end
@@ -478,9 +478,9 @@ module rob (
                 invalid_complete = 1'b1;
             end
 
-            // assert BRU match
-            if (~ROB_array_by_entry[BRU_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
-                $display("rob: ERROR: BRU mismatch on complete");
+            // assert SQ match
+            if (~ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_SQ) begin
+                $display("rob: ERROR: SQ mismatch on complete");
                 next_DUT_error = 1'b1;
             end
         end
@@ -552,13 +552,13 @@ module rob (
                     // if in LQ, send retire
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ) begin
                         LQ_retire_valid = 1'b1;
-                        LQ_retire_ROB_index = head_index_ptr.index;
+                        LQ_retire_ROB_index = head_index_ptr;
                     end
 
                     // if in SQ, send retire
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ) begin
                         SQ_retire_valid = 1'b1;
-                        SQ_retire_ROB_index = head_index_ptr.index;
+                        SQ_retire_ROB_index = head_index_ptr;
                     end
 
                     // if halt, goto ROB_HALT state
@@ -604,9 +604,16 @@ module rob (
                         // LQ -> no check for checkpoint restore, immediately revert
                         next_ROB_state = ROB_REVERT;
 
-                        // decrement the tail so points to youngest dispatched instr
-                        next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
-
+                        // set tail so points to youngest dispatched instr
+                            // if dispatching this cycle, keep tail same
+                            // otherwise, decrement tail
+                        if (dispatch_unit_enqueue_valid) begin
+                            next_tail_index_ptr = tail_index_ptr;
+                        end
+                        else begin
+                            next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                        end
+                        
                         // save ROB index restarting to
                             // need to restart load itself
                                 // without anything fancy, can just fetch and dispatch load again
@@ -644,8 +651,15 @@ module rob (
                     // LQ -> no check for checkpoint restore, immediately revert
                     next_ROB_state = ROB_REVERT;
 
-                    // decrement the tail so points to youngest dispatched instr
-                    next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                    // set tail so points to youngest dispatched instr
+                        // if dispatching this cycle, keep tail same
+                        // otherwise, decrement tail
+                    if (dispatch_unit_enqueue_valid) begin
+                        next_tail_index_ptr = tail_index_ptr;
+                    end
+                    else begin
+                        next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                    end
 
                     // save ROB index restarting to
                         // need to restart load itself
@@ -687,7 +701,7 @@ module rob (
                     // setup inorder kill pointers
                         // start from oldest wrong instr
                     next_inorder_kill_start_ROB_index = restart_ROB_index_ptr;
-                    next_inorder_kill_end_ROB_index = tail_index_ptr.index;
+                    next_inorder_kill_end_ROB_index = tail_index_ptr;
 
                     // set tail pointer to oldest wrong instr (first instr that can replace)
                     next_tail_index_ptr = restart_ROB_index_ptr;
@@ -719,8 +733,15 @@ module rob (
                         // LQ -> no check for checkpoint restore, immediately revert
                         next_ROB_state = ROB_REVERT;
 
-                        // decrement the tail so points to youngest dispatched instr
-                        next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                        // set tail so points to youngest dispatched instr
+                            // if dispatching this cycle, keep tail same
+                            // otherwise, decrement tail
+                        if (dispatch_unit_enqueue_valid) begin
+                            next_tail_index_ptr = tail_index_ptr;
+                        end
+                        else begin
+                            next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                        end
 
                         // save ROB index restarting to
                             // need to restart load itself
@@ -761,8 +782,15 @@ module rob (
                     // LQ -> no check for checkpoint restore, immediately revert
                     next_ROB_state = ROB_REVERT;
 
-                    // decrement the tail so points to youngest dispatched instr
-                    next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                    // set tail so points to youngest dispatched instr
+                        // if dispatching this cycle, keep tail same
+                        // otherwise, decrement tail
+                    if (dispatch_unit_enqueue_valid) begin
+                        next_tail_index_ptr = tail_index_ptr;
+                    end
+                    else begin
+                        next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                    end
 
                     // save ROB index restarting to
                         // need to restart load itself
@@ -912,6 +940,7 @@ module rob (
             ROB_HALT:
             begin
                 // core control halt
+                core_control_halt_assert = 1'b1;
                 next_ROB_state = ROB_HALT;
             end
 
@@ -921,8 +950,6 @@ module rob (
             
             default:
             begin
-                core_control_halt_assert = 1'b1;
-
                 $display("rob: ERROR: ROB in default state");
                 next_DUT_error = 1'b1;
             end

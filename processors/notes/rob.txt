@@ -1,9 +1,36 @@
 Design: done
 
-RTL TB: TODO
+RTL TB: done
 
-Synthesis: TODO
+Synthesis: done
 
++---------------------------------------------------------------------------------------+
+; Fitter Summary                                                                        ;
++------------------------------------+--------------------------------------------------+
+; Fitter Status                      ; Successful - Sat Jan 20 02:46:25 2024            ;
+; Quartus II 64-Bit Version          ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version ;
+; Revision Name                      ; rob                                              ;
+; Top-level Entity Name              ; rob                                              ;
+; Family                             ; Cyclone IV E                                     ;
+; Device                             ; EP4CE115F29C8                                    ;
+; Timing Models                      ; Final                                            ;
+; Total logic elements               ; 1,478 / 114,480 ( 1 % )                          ;
+;     Total combinational functions  ; 1,202 / 114,480 ( 1 % )                          ;
+;     Dedicated logic registers      ; 633 / 114,480 ( < 1 % )                          ;
+; Total registers                    ; 700                                              ;
+; Total pins                         ; 208 / 529 ( 39 % )                               ;
+; Total virtual pins                 ; 0                                                ;
+; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                            ;
+; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                  ;
+; Total PLLs                         ; 0 / 4 ( 0 % )                                    ;
++------------------------------------+--------------------------------------------------+
 
++-------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary              ;
++-----------+-----------------+------------+------+
+; Fmax      ; Restricted Fmax ; Clock Name ; Note ;
++-----------+-----------------+------------+------+
+; 90.79 MHz ; 90.79 MHz       ; CLK        ;      ;
++-----------+-----------------+------------+------+
 
-Synthesized TB: TODO
+Synthesized TB: done
