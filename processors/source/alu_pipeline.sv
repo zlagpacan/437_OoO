@@ -242,7 +242,7 @@ module alu_pipeline (
         //////////////////////
 
         // no DUT error
-        next_DUT_error = 1'b1;
+        next_DUT_error = 1'b0;
 
         // RS not full
         ALU_RS_full = 1'b0;
@@ -307,7 +307,7 @@ module alu_pipeline (
             // sign extend
             ALU_ADD, ALU_SUB, ALU_SLT:
                 RS_stage_operand_1_imm32 = {
-                    16{RS_stage_task_struct.imm16}, 
+                    {16{RS_stage_task_struct.imm16}}, 
                     RS_stage_task_struct.imm16
                 };
 
