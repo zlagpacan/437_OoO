@@ -2,8 +2,10 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/CLK
 add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/nRST
-add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/test_num
-add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/num_errors
+add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/test_case
+add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/sub_test_case
+add wave -noupdate -expand -group {TB Signals} -radix unsigned /alu_pipeline_tb/test_num
+add wave -noupdate -expand -group {TB Signals} -radix unsigned /alu_pipeline_tb/num_errors
 add wave -noupdate -expand -group {TB Signals} /alu_pipeline_tb/tb_error
 add wave -noupdate -expand -group {Top Level Signals} /alu_pipeline_tb/DUT_DUT_error
 add wave -noupdate -expand -group {Top Level Signals} /alu_pipeline_tb/expected_DUT_error
@@ -76,7 +78,7 @@ add wave -noupdate -expand -group {Internal Signals} /alu_pipeline_tb/DUT/RS_sta
 add wave -noupdate -expand -group {Internal Signals} /alu_pipeline_tb/DUT/EX_stage_A
 add wave -noupdate -expand -group {Internal Signals} /alu_pipeline_tb/DUT/EX_stage_B
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {39600 ps} 0}
+WaveRestoreCursors {{Cursor 1} {154300 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 291
 configure wave -valuecolwidth 100
@@ -92,4 +94,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {45600 ps}
+WaveRestoreZoom {0 ps} {178500 ps}

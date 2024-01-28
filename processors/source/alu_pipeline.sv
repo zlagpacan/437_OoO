@@ -306,14 +306,14 @@ module alu_pipeline (
         casez (RS_stage_task_struct.op)
 
             // sign extend
-            ALU_ADD, ALU_SUB, ALU_SLT:
+            ALU_ADD, ALU_SUB, ALU_SLT, ALU_SLTU, ALU_SLLV, ALU_SRLV, ALU_LUI, ALU_LINK:
                 RS_stage_operand_1_imm32 = {
-                    {16{RS_stage_task_struct.imm16}}, 
+                    {16{RS_stage_task_struct.imm16[15]}}, 
                     RS_stage_task_struct.imm16
                 };
 
             // zero extend
-            ALU_AND, ALU_OR, ALU_NOR, ALU_XOR, ALU_SLTU, ALU_SLLV, ALU_SRLV, ALU_LUI, ALU_LINK:
+            ALU_AND, ALU_OR, ALU_NOR, ALU_XOR:
             begin
                 RS_stage_operand_1_imm32 = {
                     16'h0, 
@@ -321,11 +321,11 @@ module alu_pipeline (
                 };
             end
                 
-            // default: zero extend
+            // default: sign extend
             default:
             begin
                 RS_stage_operand_1_imm32 = {
-                    16'h0, 
+                    {16{RS_stage_task_struct.imm16[15]}},  
                     RS_stage_task_struct.imm16
                 };
             end
@@ -432,6 +432,9 @@ module alu_pipeline (
                         else begin
                             // full
                             ALU_RS_full = 1'b1;
+
+                            // mark operand 1 ready
+                            next_RS_stage_task_struct.source_1.ready = 1'b1;
                         end
                     end
 
@@ -479,6 +482,9 @@ module alu_pipeline (
                         else begin
                             // full
                             ALU_RS_full = 1'b1;
+
+                            // mark operand 0 ready
+                            next_RS_stage_task_struct.source_0.ready = 1'b1;
                         end
                     end
 
