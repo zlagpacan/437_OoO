@@ -1,0 +1,40 @@
+ROB_index
+00: ADDU r1->p1/p32, r2->p2, r3->p3          
+01: ADD r2->p2/p33, r2->p2, r5->p5           
+02: AND r30->p30/p34, r5->p5, r2->p33        
+03: JR r30->p34 (goto 36)                    
+04: NOR r13-p13/p35, r6->p6, r19->p19        
+05: OR r14->p14/p36, r0->p0, r21->p21        
+06: SLT r15->p15/p37, r25->p25, r1->p32      
+07: SLTU r16->p16/p38, r22->p22, r13->p35    
+08: SLLV r17->p17/p39, r2->p33, r16->p38     
+09: SRLV r18->p18/p40, r1->p32, r29->p29     
+10: SUBU r19->p19/p41, r15->p37, r17->p39    
+11: SUB r20->p20/p42, r23->p23, r19->p41     
+12: XOR r21->p21/p43, r0->p0, r0->p0         
+13: ADDIU r22->p22/p44, r13->p35, 0x5        
+14: ADDI r23->p23/p45, r1->p32, 0x201        
+15: ANDI r24->p24/p46, r23->p45, 0x71A7      
+16: BEQ r24->p46, r23->p45 (goto 81)         
+17: BNE r22->p44, r0->p0 (don't goto +0123)  
+18: LUI r25->p25/p47, 0xFEDC                 
+19: LW r26->p26/p48, 0x9D4(r19->p41)         
+20: ORI r27->p27/p49, r25->p47, 0x98         
+21: SLTI r28->p28/p50, r30->p34, 0x7F        
+22: SLTIU r29->p29/p51, r9->p9, 0x4BE9       
+23: SW r3->p3, 0x10D(r13->p3)                
+24: XORI r30->p34/p52, r30->p34, 0x1C9       
+25: J (goto 26)                              
+26: JAL (goto 99) (r31->p31/p53 <= PC+1)     
+27: HALT                                     
+28: invalid opcode                          
+29: XORI r30->p52/p54, r30->p52, 0x55       
+30: ADDU r1->p1/p32, r2->p2, r3->p3         
+31: ADD r2->p2/p33, r2->p2, r5->p5          
+
+17: ALU 0 reg write r25->p25/p47
+18: ALU 1 reg write r25->p47/p48
+19: dead instr
+20: LQ write r25->p48/p49
+21: SQ
+22: ALU 0 write r25->p49/p50

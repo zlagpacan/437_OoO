@@ -254,8 +254,9 @@ module alu_pipeline (
         reg_file_read_req_1_tag = RS_stage_task_struct.source_1.phys_reg_tag;
 
         // complete bus output
-        this_complete_bus_tag_valid = 1'b0;
+        this_complete_bus_tag_valid = EX_stage_task_valid;
             // will depend on if not getting killed
+            // no it won't, got rid of this functionality
         this_complete_bus_tag = EX_stage_tag;
         this_complete_bus_ROB_index = EX_stage_ROB_index;
         this_complete_bus_data_valid = DATA_stage_task_valid; 
@@ -344,7 +345,7 @@ module alu_pipeline (
                 // not full
                 ALU_RS_full = 1'b0;
 
-                // invalidate RS task
+                // invalidate RS and EX task
                 next_RS_stage_task_valid = 1'b0;
                 next_EX_stage_task_valid = 1'b0;
             end
@@ -377,6 +378,9 @@ module alu_pipeline (
 
                             // not full
                             ALU_RS_full = 1'b0;
+
+                            // invalidate RS task
+                            next_RS_stage_task_valid = 1'b0;
                         end
                         else begin
                             // full
@@ -421,6 +425,9 @@ module alu_pipeline (
 
                             // not full
                             ALU_RS_full = 1'b0;
+
+                            // invalidate RS task
+                            next_RS_stage_task_valid = 1'b0;
                         end
                         else begin
                             // full
@@ -465,6 +472,9 @@ module alu_pipeline (
 
                             // not full
                             ALU_RS_full = 1'b0;
+
+                            // invalidate RS task
+                            next_RS_stage_task_valid = 1'b0;
                         end
                         else begin
                             // full
@@ -525,6 +535,9 @@ module alu_pipeline (
 
                         // not full
                         ALU_RS_full = 1'b0;
+
+                        // invalidate RS task
+                        next_RS_stage_task_valid = 1'b0;
                     end
 
                     // otherwise, can't move to EX, but can mark single ready
@@ -583,6 +596,9 @@ module alu_pipeline (
 
                             // not full
                             ALU_RS_full = 1'b0;
+
+                            // invalidate RS task
+                            next_RS_stage_task_valid = 1'b0;
                         end
                         else begin
                             // full
@@ -626,6 +642,9 @@ module alu_pipeline (
 
                         // not full
                         ALU_RS_full = 1'b0;
+
+                        // invalidate RS task
+                        next_RS_stage_task_valid = 1'b0;
                     end
 
                     // otherwise, can't move to EX
@@ -661,6 +680,9 @@ module alu_pipeline (
 
                     // not full
                     ALU_RS_full = 1'b0;
+
+                    // invalidate RS task
+                    next_RS_stage_task_valid = 1'b0;
                 end
 
                 // otherwise, bad case where only need operand 1
@@ -680,7 +702,7 @@ module alu_pipeline (
             
             // assert not full
             if (ALU_RS_full) begin
-                $dislpay("alu_pipeline: ERROR: dispatch_unit_task_valid while ALU_RS_full");
+                $display("alu_pipeline: ERROR: dispatch_unit_task_valid while ALU_RS_full");
                 next_DUT_error = 1'b1;
             end
         end
