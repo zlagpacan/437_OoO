@@ -15,15 +15,21 @@ ROB_index
 13: ADDIU r22->p22/p44, r13->p35, 0x5        
 14: ADDI r23->p23/p45, r1->p32, 0x201        
 15: ANDI r24->p24/p46, r23->p45, 0x71A7      
-16: BEQ r24->p46, r23->p45 (goto 81)         
+16: BEQ r24->p46, r23->p45 (goto 81)        
+
+17: ADDU r1->p1/p32, r2->p2, r3->p3
+18: ADD r2->p2/p33, r2->p2, r5->p5
+19: AND r30->p30/p34, r5->p5, r2->p33
+20: NOR r13-p13/p35, r6->p6, r19->p19
+
 17: BNE r22->p44, r0->p0 (don't goto +0123)  
 18: LUI r25->p25/p47, 0xFEDC                 
 19: LW r26->p26/p48, 0x9D4(r19->p41)         
-20: ORI r27->p27/p49, r25->p47, 0x98         
-21: SLTI r28->p28/p50, r30->p34, 0x7F        
-22: SLTIU r29->p29/p51, r9->p9, 0x4BE9       
+20: ORI r27->p27/p49, r25->p47, 0x5353         
+21: SLTI r28->p28/p50, r30->p34, 0x8000        
+22: SLTIU r29->p29/p51, r9->p9, 0x8000       
 23: SW r3->p3, 0x10D(r13->p3)                
-24: XORI r30->p34/p52, r30->p34, 0x1C9       
+24: XORI r30->p34/p52, r30->p34, 0x5353       
 25: J (goto 26)                              
 26: JAL (goto 99) (r31->p31/p53 <= PC+1)     
 27: HALT                                     
@@ -31,10 +37,3 @@ ROB_index
 29: XORI r30->p52/p54, r30->p52, 0x55       
 30: ADDU r1->p1/p32, r2->p2, r3->p3         
 31: ADD r2->p2/p33, r2->p2, r5->p5          
-
-17: ALU 0 reg write r25->p25/p47
-18: ALU 1 reg write r25->p47/p48
-19: dead instr
-20: LQ write r25->p48/p49
-21: SQ
-22: ALU 0 write r25->p49/p50
