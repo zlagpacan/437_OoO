@@ -97,11 +97,11 @@ module alu_pipeline_tb ();
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT instantiation:
 
+	`ifndef MAPPED
 	alu_pipeline DUT (
 		// seq
 		.CLK(CLK),
 		.nRST(nRST),
-
 
 	    // DUT error
 		.DUT_error(DUT_DUT_error),
@@ -162,6 +162,86 @@ module alu_pipeline_tb ();
 		.this_complete_bus_data_valid(DUT_this_complete_bus_data_valid),
 		.this_complete_bus_data(DUT_this_complete_bus_data)
 	);
+
+	`else
+
+	alu_pipeline DUT (
+		// seq
+		.CLK(CLK),
+		.nRST(nRST),
+
+	    // DUT error
+		.DUT_error(DUT_DUT_error),
+
+	    // full
+		.ALU_RS_full(DUT_ALU_RS_full),
+
+	    // dispatch unit interface
+		.dispatch_unit_task_valid(tb_dispatch_unit_task_valid),
+		// .dispatch_unit_task_struct(tb_dispatch_unit_task_struct),
+	        // typedef struct packed {
+	        //     // ALU needs
+	        //     ALU_op_t op;
+	        //     logic itype;
+	        //     source_reg_status_t source_0;
+	        //     source_reg_status_t source_1;
+	        //     phys_reg_tag_t dest_phys_reg_tag;
+	        //     imm16_t imm16;
+	        //     // ROB needs
+	        //     ROB_index_t ROB_index;
+	        // } ALU_RS_input_struct_t;
+		.\dispatch_unit_task_struct.op (tb_dispatch_unit_task_struct.op),
+		.\dispatch_unit_task_struct.itype (tb_dispatch_unit_task_struct.itype),
+		.\dispatch_unit_task_struct.source_0.needed (tb_dispatch_unit_task_struct.source_0.needed),
+		.\dispatch_unit_task_struct.source_0.ready (tb_dispatch_unit_task_struct.source_0.ready),
+		.\dispatch_unit_task_struct.source_0.phys_reg_tag (tb_dispatch_unit_task_struct.source_0.phys_reg_tag),
+		.\dispatch_unit_task_struct.source_1.needed (tb_dispatch_unit_task_struct.source_1.needed),
+		.\dispatch_unit_task_struct.source_1.ready (tb_dispatch_unit_task_struct.source_1.ready),
+		.\dispatch_unit_task_struct.source_1.phys_reg_tag (tb_dispatch_unit_task_struct.source_1.phys_reg_tag),
+		.\dispatch_unit_task_struct.dest_phys_reg_tag (tb_dispatch_unit_task_struct.dest_phys_reg_tag),
+		.\dispatch_unit_task_struct.imm16 (tb_dispatch_unit_task_struct.imm16),
+		.\dispatch_unit_task_struct.ROB_index (tb_dispatch_unit_task_struct.ROB_index),
+
+	    // reg file read req interface
+		.reg_file_read_req_valid(DUT_reg_file_read_req_valid),
+		.reg_file_read_req_0_tag(DUT_reg_file_read_req_0_tag),
+		.reg_file_read_req_1_tag(DUT_reg_file_read_req_1_tag),
+		.reg_file_read_req_serviced(tb_reg_file_read_req_serviced),
+		.reg_file_read_bus_0_data(tb_reg_file_read_bus_0_data),
+		.reg_file_read_bus_1_data(tb_reg_file_read_bus_1_data),
+
+	    // kill bus interface
+		.kill_bus_valid(tb_kill_bus_valid),
+		.kill_bus_ROB_index(tb_kill_bus_ROB_index),
+
+	    // complete bus interface:
+
+	    // input side (take from any 3 buses):
+
+	    // complete bus 0 (ALU 0)
+		.complete_bus_0_tag_valid(tb_complete_bus_0_tag_valid),
+		.complete_bus_0_tag(tb_complete_bus_0_tag),
+		.complete_bus_0_data(tb_complete_bus_0_data),
+
+	    // complete bus 1 (ALU 1)
+		.complete_bus_1_tag_valid(tb_complete_bus_1_tag_valid),
+		.complete_bus_1_tag(tb_complete_bus_1_tag),
+		.complete_bus_1_data(tb_complete_bus_1_data),
+
+	    // complete bus 2 (LQ)
+		.complete_bus_2_tag_valid(tb_complete_bus_2_tag_valid),
+		.complete_bus_2_tag(tb_complete_bus_2_tag),
+		.complete_bus_2_data(tb_complete_bus_2_data),
+
+	    // output side (output to this ALU Pipeline's associated bus)
+		.this_complete_bus_tag_valid(DUT_this_complete_bus_tag_valid),
+		.this_complete_bus_tag(DUT_this_complete_bus_tag),
+		.this_complete_bus_ROB_index(DUT_this_complete_bus_ROB_index),
+		.this_complete_bus_data_valid(DUT_this_complete_bus_data_valid),
+		.this_complete_bus_data(DUT_this_complete_bus_data)
+	);
+
+	`endif
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // tasks:
@@ -3566,6 +3646,322 @@ module alu_pipeline_tb ();
 		expected_this_complete_bus_ROB_index = ROB_index_t'(24);
 		expected_this_complete_bus_data_valid = 1'b1;
 		expected_this_complete_bus_data = 32'h1;
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | RS: 26: JAL (goto 99) (r31->p31/p53 <= PC+1) (0x0104)", "\n\t\t",
+			" | EX: nop", "\n\t\t",
+			" | DATA: 24: XORI r30->p34/p52, r30->p34, 0x5353 (0x35353535 ^ 0x00005353)"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // full
+	    // dispatch unit interface
+		tb_dispatch_unit_task_valid = 1'b0;
+		tb_dispatch_unit_task_struct.op = ALU_op_t'(ALU_LINK);
+        tb_dispatch_unit_task_struct.itype = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.source_1.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        tb_dispatch_unit_task_struct.imm16 = 16'h0104;
+        tb_dispatch_unit_task_struct.ROB_index = ROB_index_t'(26);
+	    // reg file read req interface
+		tb_reg_file_read_req_serviced = 1'b0;
+		tb_reg_file_read_bus_0_data = 32'hdeadbeef;
+		tb_reg_file_read_bus_1_data = 32'hdeadbeef;
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_0_data = 32'hdeadbeef;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'hdeadbeef;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'hdeadbeef;
+	    // output side (output to this ALU Pipeline's associated bus)
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // full
+		expected_ALU_RS_full = 1'b0;
+	    // dispatch unit interface
+	    // reg file read req interface
+		expected_reg_file_read_req_valid = 1'b0;
+		expected_reg_file_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_reg_file_read_req_1_tag = phys_reg_tag_t'(0);
+	    // kill bus interface
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+	    // output side (output to this ALU Pipeline's associated bus)
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(52);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(24);
+		expected_this_complete_bus_data_valid = 1'b1;
+		expected_this_complete_bus_data = 32'h35356666;
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | RS: nop", "\n\t\t",
+			" | EX: 26: JAL (goto 99) (r31->p31/p53 <= PC+1) (0x0104)", "\n\t\t",
+			" | DATA: nop"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // full
+	    // dispatch unit interface
+		tb_dispatch_unit_task_valid = 1'b0;
+		tb_dispatch_unit_task_struct.op = ALU_op_t'(ALU_LINK);
+        tb_dispatch_unit_task_struct.itype = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.source_1.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        tb_dispatch_unit_task_struct.imm16 = 16'h0104;
+        tb_dispatch_unit_task_struct.ROB_index = ROB_index_t'(26);
+	    // reg file read req interface
+		tb_reg_file_read_req_serviced = 1'b0;
+		tb_reg_file_read_bus_0_data = 32'hdeadbeef;
+		tb_reg_file_read_bus_1_data = 32'hdeadbeef;
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_0_data = 32'hdeadbeef;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'hdeadbeef;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'hdeadbeef;
+	    // output side (output to this ALU Pipeline's associated bus)
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // full
+		expected_ALU_RS_full = 1'b0;
+	    // dispatch unit interface
+	    // reg file read req interface
+		expected_reg_file_read_req_valid = 1'b0;
+		expected_reg_file_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_reg_file_read_req_1_tag = phys_reg_tag_t'(0);
+	    // kill bus interface
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+	    // output side (output to this ALU Pipeline's associated bus)
+		expected_this_complete_bus_tag_valid = 1'b1;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(53);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(26);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0; // residual
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | RS: nop", "\n\t\t",
+			" | EX: nop", "\n\t\t",
+			" | DATA: 26: JAL (goto 99) (r31->p31/p53 <= PC+1) (0x0104)"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // full
+	    // dispatch unit interface
+		tb_dispatch_unit_task_valid = 1'b0;
+		tb_dispatch_unit_task_struct.op = ALU_op_t'(ALU_LINK);
+        tb_dispatch_unit_task_struct.itype = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.source_1.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        tb_dispatch_unit_task_struct.imm16 = 16'h0104;
+        tb_dispatch_unit_task_struct.ROB_index = ROB_index_t'(26);
+	    // reg file read req interface
+		tb_reg_file_read_req_serviced = 1'b0;
+		tb_reg_file_read_bus_0_data = 32'hdeadbeef;
+		tb_reg_file_read_bus_1_data = 32'hdeadbeef;
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_0_data = 32'hdeadbeef;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'hdeadbeef;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'hdeadbeef;
+	    // output side (output to this ALU Pipeline's associated bus)
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // full
+		expected_ALU_RS_full = 1'b0;
+	    // dispatch unit interface
+	    // reg file read req interface
+		expected_reg_file_read_req_valid = 1'b0;
+		expected_reg_file_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_reg_file_read_req_1_tag = phys_reg_tag_t'(0);
+	    // kill bus interface
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+	    // output side (output to this ALU Pipeline's associated bus)
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(53);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(26);
+		expected_this_complete_bus_data_valid = 1'b1;
+		expected_this_complete_bus_data = 32'h0108;
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | RS: nop", "\n\t\t",
+			" | EX: nop", "\n\t\t",
+			" | DATA: nop"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // full
+	    // dispatch unit interface
+		tb_dispatch_unit_task_valid = 1'b0;
+		tb_dispatch_unit_task_struct.op = ALU_op_t'(ALU_LINK);
+        tb_dispatch_unit_task_struct.itype = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.source_1.needed = 1'b0;
+        tb_dispatch_unit_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
+        tb_dispatch_unit_task_struct.imm16 = 16'h0104;
+        tb_dispatch_unit_task_struct.ROB_index = ROB_index_t'(26);
+	    // reg file read req interface
+		tb_reg_file_read_req_serviced = 1'b0;
+		tb_reg_file_read_bus_0_data = 32'hdeadbeef;
+		tb_reg_file_read_bus_1_data = 32'hdeadbeef;
+	    // kill bus interface
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_0_data = 32'hdeadbeef;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'hdeadbeef;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'hdeadbeef;
+	    // output side (output to this ALU Pipeline's associated bus)
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // full
+		expected_ALU_RS_full = 1'b0;
+	    // dispatch unit interface
+	    // reg file read req interface
+		expected_reg_file_read_req_valid = 1'b0;
+		expected_reg_file_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_reg_file_read_req_1_tag = phys_reg_tag_t'(0);
+	    // kill bus interface
+	    // complete bus interface:
+	    // input side (take from any 3 buses):
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+	    // output side (output to this ALU Pipeline's associated bus)
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(53);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(26);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0000bef0; // residual
 
 		check_outputs();
 
