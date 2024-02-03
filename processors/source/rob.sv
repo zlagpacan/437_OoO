@@ -2,7 +2,7 @@
     Repo: https://github.com/zlagpacan/437_OoO.git
     Author: zlagpacan
 
-    File Name: phys_reg_file.sv
+    File Name: rob.sv
     Instantiation Hierarchy: system -> core -> rob
     Description: 
         The Reorder Buffer tracks dispatched instructions in a FIFO, checking for their completion so they
