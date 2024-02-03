@@ -761,7 +761,7 @@ module dispatch_unit (
         BRU_RS_task_struct.source_1.needed = 1'b1;
         BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-        BRU_RS_task_struct.imm14 = instr_imm16[15:2];
+        BRU_RS_task_struct.imm16 = instr_imm16[15:0];
         BRU_RS_task_struct.PC = dispatch_unit_PC;
         BRU_RS_task_struct.nPC = dispatch_unit_nPC;
         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -979,7 +979,7 @@ module dispatch_unit (
                             BRU_RS_task_struct.source_1.needed = 1'b0;
                             BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                             BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                            BRU_RS_task_struct.imm14 = instr_imm16[15:2];
+                            BRU_RS_task_struct.imm16 = instr_imm16[15:0];
                             BRU_RS_task_struct.PC = dispatch_unit_PC;
                             BRU_RS_task_struct.nPC = dispatch_unit_nPC;
                             BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -1297,7 +1297,7 @@ module dispatch_unit (
                         BRU_RS_task_struct.source_1.needed = 1'b1;
                         BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                        BRU_RS_task_struct.imm14 = instr_imm16[15:2];
+                        BRU_RS_task_struct.imm16 = instr_imm16[15:0];
                         BRU_RS_task_struct.PC = dispatch_unit_PC;
                         BRU_RS_task_struct.nPC = dispatch_unit_nPC;
                         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
@@ -1354,7 +1354,7 @@ module dispatch_unit (
                         BRU_RS_task_struct.source_1.needed = 1'b1;
                         BRU_RS_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         BRU_RS_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
-                        BRU_RS_task_struct.imm14 = instr_imm16[15:2];
+                        BRU_RS_task_struct.imm16 = instr_imm16[15:0];
                         BRU_RS_task_struct.PC = dispatch_unit_PC;
                         BRU_RS_task_struct.nPC = dispatch_unit_nPC;
                         BRU_RS_task_struct.checkpoint_safe_column = prmt_save_checkpoint_safe_column;
