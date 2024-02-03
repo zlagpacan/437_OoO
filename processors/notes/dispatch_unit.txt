@@ -7,18 +7,18 @@ Synthesis: done
 +---------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                        ;
 +------------------------------------+--------------------------------------------------+
-; Fitter Status                      ; Successful - Wed Jan 17 14:20:27 2024            ;
+; Fitter Status                      ; Successful - Fri Feb  2 21:22:47 2024            ;
 ; Quartus II 64-Bit Version          ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version ;
 ; Revision Name                      ; dispatch_unit                                    ;
 ; Top-level Entity Name              ; dispatch_unit                                    ;
 ; Family                             ; Cyclone IV E                                     ;
 ; Device                             ; EP4CE115F29C8                                    ;
 ; Timing Models                      ; Final                                            ;
-; Total logic elements               ; 3,444 / 114,480 ( 3 % )                          ;
+; Total logic elements               ; 3,430 / 114,480 ( 3 % )                          ;
 ;     Total combinational functions  ; 2,847 / 114,480 ( 2 % )                          ;
 ;     Dedicated logic registers      ; 1,153 / 114,480 ( 1 % )                          ;
-; Total registers                    ; 1251                                             ;
-; Total pins                         ; 434 / 529 ( 82 % )                               ;
+; Total registers                    ; 1253                                             ;
+; Total pins                         ; 436 / 529 ( 82 % )                               ;
 ; Total virtual pins                 ; 0                                                ;
 ; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                            ;
 ; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                  ;
@@ -30,7 +30,7 @@ Synthesis: done
 +------------+-----------------+------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name ; Note ;
 +------------+-----------------+------------+------+
-; 102.94 MHz ; 102.94 MHz      ; CLK        ;      ;
+; 108.98 MHz ; 108.98 MHz      ; CLK        ;      ;
 +------------+-----------------+------------+------+
 
 Synthesized TB: done
