@@ -1,0 +1,66 @@
+instr stream:
+
+- BEQ:
+
+0|0: BEQ 0 ready, 1 ready [taken, should take] (0, 1, 0x0123)
+1|0123: BEQ 0 ready, 1 on bus [taken, should not take] (1, 2, 0x1234)
+-- nop
+-- 3|1234: JR 0 stall then on bus [correct addr] (40, 0xffffffff)
+-- nop
+-- next in, complete 40, kill 3
+2|0124: BEQ 0 ready, 1 stall then on bus [not taken, should take] (2, 3, 0x2345)
+-- 3|0125: JR 0 on bus [incorrect addr] (20, 0xa5a55a5a)
+-- nop, kill 3
+3|2345: BEQ 0 on bus, 1 ready [not taken, should not take] (3, 4, 0x3456)
+nop
+5|2346: BEQ 0 stall then on bus, 1 ready [taken, should take] (4, 5, 0x4567)
+6|4567: BEQ 0 on bus, 1 on bus [taken, should not take] (5, 6, 0x5678)
+-- 7|5678: JR 0 ready [correct addr] (0, 0x0000)
+-- nop
+-- next in, kill 7 (too late)
+7|4568: BEQ 0 on bus, 1 stall then on bus [not taken, should take] (6, 7, 0x6789)
+-- 8|4569: BNE 0 stall then on bus, 1 stall then on bus [taken, should take] (17, 18, 0x1234)
+-- nop
+-- nop, kill 8
+nop
+nop
+10|6789: BEQ 0 stall then on bus, 1 on bus [not taken, should not take] (7, 8, 0x789A)
+11|678A: BEQ 0 stall then on bus, 1 stall then on bus [taken, should take] (8, 9, 0x89AB)
+
+- BNE:
+
+12|89AB: BNE 0 ready, 1 ready [taken, should take] (9, 10, 0x9ABC)
+13|9ABC: BNE 0 ready, 1 on bus [taken, should not take] (10, 11, 0xABCD)
+-- 14|: BNE 0 stall then on bus, 1 on bus [not taken, should not take] (16, 17, 0x0123)
+-- nop
+-- nop, kill 14
+14|9ABD: BNE 0 ready, 1 stall then on bus [not taken, should take] (11, 12, 0xBCDE)
+-- 15|: BEQ 0 ready, 1 ready [taken, should take] (0, 1, 0x0123)
+-- next in, kill 15
+15|BCDE: BNE 0 on bus, 1 ready [not taken, should not take] (12, 13, 0xCDEF)
+nop
+nop
+18|BCDF: BNE 0 stall then on bus, 1 ready [take, should take] (13, 14, 0xDEF0)
+nop
+20|DEF0: BNE 0 on bus, 1 on bus [taken, should not take] (14, 15, 0xEF01)
+-- nop
+-- 22|EF01: BEQ 0 ready, 1 on bus [taken, should not take] (1, 2, 0x1234)
+-- nop, kill 22
+nop
+nop
+23|DEF1: BNE 0 on bus, 1 stall then on bus [not taken, should take] (15, 16, 0xF012)
+-- nop
+-- 24|DEF2: BEQ 0 ready, 1 stall then on bus [not taken, should take] (2, 3, 0x2345)
+-- nop
+-- next in, kill 24
+24|F012: BNE 0 stall then on bus, 1 on bus [not taken, should not take] (16, 17, 0x0123)
+25|F013: BNE 0 stall then on bus, 1 stall then on bus [taken, should take] (17, 18, 0x1234)
+
+- JR:
+
+26|1234: JR 0 ready [correct addr] (0, 0x0000)
+nop
+28|0001: JR 0 on bus [incorrect addr] (20, 0xa5a55a5a)
+-- 29|2222: BEQ 0 on bus, 1 ready [not taken, should not take] (3, 4, 0x3456)
+-- next in, kill 29
+29|5a5a: JR 0 stall then on bus [correct addr] (40, 0xffffffff)
