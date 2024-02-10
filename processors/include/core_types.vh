@@ -343,7 +343,7 @@ package core_types_pkg;
         BRU_op_t op;
         source_reg_status_t source_0;
         source_reg_status_t source_1;
-        pc_t imm14;
+        logic [15:0] imm16;
         pc_t PC;    // will use to grab PC bits for BTB/DIRP index and do branch add ((PC + 4) + imm16)
         pc_t nPC;   // PC taken to check against
         // save/restore info
