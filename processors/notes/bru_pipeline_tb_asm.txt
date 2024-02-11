@@ -21,9 +21,8 @@ nop
 7|4568: BEQ 0 on bus, 1 stall then on bus [not taken, should take] (6, 7, 0x6789)
 -- 8|4569: BNE 0 stall then on bus, 1 stall then on bus [taken, should take] (17, 18, 0x1234)
 -- nop
--- nop, kill 8
-nop
-nop
+-- nop
+-- nop, kill 8 (too late)
 10|6789: BEQ 0 stall then on bus, 1 on bus [not taken, should not take] (7, 8, 0x789A)
 11|678A: BEQ 0 stall then on bus, 1 stall then on bus [taken, should take] (8, 9, 0x89AB)
 
@@ -31,14 +30,12 @@ nop
 
 12|89AB: BNE 0 ready, 1 ready [taken, should take] (9, 10, 0x9ABC)
 13|9ABC: BNE 0 ready, 1 on bus [taken, should not take] (10, 11, 0xABCD)
--- 14|: BNE 0 stall then on bus, 1 on bus [not taken, should not take] (16, 17, 0x0123)
--- nop
--- nop, kill 14
+-- 14|ABCD: BNE 0 stall then on bus, 1 on bus [not taken, should not take] (16, 17, 0x0123)
+-- next in, kill 14
 14|9ABD: BNE 0 ready, 1 stall then on bus [not taken, should take] (11, 12, 0xBCDE)
--- 15|: BEQ 0 ready, 1 ready [taken, should take] (0, 1, 0x0123)
--- next in, kill 15
+-- 15|9ABE: BEQ 0 ready, 1 ready [taken, should take] (0, 1, 0x0123)
+-- nop, kill 15
 15|BCDE: BNE 0 on bus, 1 ready [not taken, should not take] (12, 13, 0xCDEF)
-nop
 nop
 18|BCDF: BNE 0 stall then on bus, 1 ready [take, should take] (13, 14, 0xDEF0)
 nop
@@ -49,7 +46,6 @@ nop
 nop
 nop
 23|DEF1: BNE 0 on bus, 1 stall then on bus [not taken, should take] (15, 16, 0xF012)
--- nop
 -- 24|DEF2: BEQ 0 ready, 1 stall then on bus [not taken, should take] (2, 3, 0x2345)
 -- nop
 -- next in, kill 24
