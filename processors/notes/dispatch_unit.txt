@@ -4,34 +4,34 @@ RTL TB: done
 
 Synthesis: done
 
-+---------------------------------------------------------------------------------------+
-; Fitter Summary                                                                        ;
-+------------------------------------+--------------------------------------------------+
-; Fitter Status                      ; Successful - Fri Feb  2 21:22:47 2024            ;
-; Quartus II 64-Bit Version          ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version ;
-; Revision Name                      ; dispatch_unit                                    ;
-; Top-level Entity Name              ; dispatch_unit                                    ;
-; Family                             ; Cyclone IV E                                     ;
-; Device                             ; EP4CE115F29C8                                    ;
-; Timing Models                      ; Final                                            ;
-; Total logic elements               ; 3,430 / 114,480 ( 3 % )                          ;
-;     Total combinational functions  ; 2,847 / 114,480 ( 2 % )                          ;
-;     Dedicated logic registers      ; 1,153 / 114,480 ( 1 % )                          ;
-; Total registers                    ; 1253                                             ;
-; Total pins                         ; 436 / 529 ( 82 % )                               ;
-; Total virtual pins                 ; 0                                                ;
-; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                            ;
-; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                  ;
-; Total PLLs                         ; 0 / 4 ( 0 % )                                    ;
-+------------------------------------+--------------------------------------------------+
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Sun Mar 31 13:12:27 2024           ;
+; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+; Revision Name                      ; dispatch_unit                                   ;
+; Top-level Entity Name              ; dispatch_unit                                   ;
+; Family                             ; Cyclone IV E                                    ;
+; Device                             ; EP4CE115F29C8                                   ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 3,183 / 114,480 ( 3 % )                         ;
+;     Total combinational functions  ; 3,006 / 114,480 ( 3 % )                         ;
+;     Dedicated logic registers      ; 1,153 / 114,480 ( 1 % )                         ;
+; Total registers                    ; 1253                                            ;
+; Total pins                         ; 436 / 529 ( 82 % )                              ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                           ;
+; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
++------------------------------------+-------------------------------------------------+
 
-+--------------------------------------------------+
-; Slow 1200mV 85C Model Fmax Summary               ;
-+------------+-----------------+------------+------+
-; Fmax       ; Restricted Fmax ; Clock Name ; Note ;
-+------------+-----------------+------------+------+
-; 108.98 MHz ; 108.98 MHz      ; CLK        ;      ;
-+------------+-----------------+------------+------+
++-------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary              ;
++-----------+-----------------+------------+------+
+; Fmax      ; Restricted Fmax ; Clock Name ; Note ;
++-----------+-----------------+------------+------+
+; 91.51 MHz ; 91.51 MHz       ; CLK        ;      ;
++-----------+-----------------+------------+------+
 
 Synthesized TB: done
     - needed to support top level signals synthesized for mapped/dispatch_unit.sv

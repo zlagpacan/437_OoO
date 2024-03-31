@@ -992,7 +992,7 @@ module dispatch_unit (
 
                         // check for dead instr -> write to rd = $0
                         if (instr_rd == 5'd0) begin
-                            $display("dispatch_unit: dead instr, instr_rd == 5'd0");
+                            $display("dispatch_unit: dead instr, RTYPE instr_rd == 5'd0");
                             
                             // immediately complete
                             // dispatched unit is DEAD
@@ -1369,7 +1369,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, ADDI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1456,7 +1456,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, ADDIU instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1543,7 +1543,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, SLTI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1630,7 +1630,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, SLTIU instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1717,7 +1717,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, ANDI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1804,7 +1804,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, ORI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1891,7 +1891,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, XORI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1978,7 +1978,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, LUI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -2068,7 +2068,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, instr_rt == 5'd0");
+                        $display("dispatch_unit: dead instr, LW instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -2203,14 +2203,201 @@ module dispatch_unit (
 
                 LL:
                 begin
-                    $display("dispatch_unit: ERROR: LL not handled yet");
-                    next_DUT_error = 1'b1;
+                    // check for dead LL instr -> write to rt = $0
+                        // could be possible if only want to set link reg
+                            // although why would do this when LL is for atomic RMW -> don't care abt R?
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: dead LL instr, instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
+                    // fail if LQ full
+                    else if (LQ_full) begin
+                        
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
+
+                        $display("dispatch_unit: FAIL: LQ_full");
+                    end
+
+                    // otherwise, can dispatch to LQ
+                    else begin
+                        // incomplete
+                        // need rs
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.DU_LQ = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send LQ task
+                        LQ_task_valid = 1'b1;
+                        // fill in LQ struct
+                        LQ_task_struct.op = LQ_LL;
+                        LQ_task_struct.source.needed = 1'b1;
+                        LQ_task_struct.source.ready = prrt_dispatch_source_0_ready;
+                        LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        LQ_task_struct.imm14 = instr_imm16[15:2];
+                        LQ_task_struct.SQ_index = SQ_tail_index;
+                        LQ_task_struct.ROB_index = ROB_tail_index;
+                    end
                 end
 
                 SC:
                 begin
-                    $display("dispatch_unit: ERROR: SC not handled yet");
-                    next_DUT_error = 1'b1;
+                    // check for dead SC instr -> write to rt = $0
+                        // could be possible if blindly store 0 with condition and
+                        // don't care about seeing condition
+                            // although why would do this?
+                            // should want to use SC to see if atomic RMW successful
+                                // else no atomic RMW
+                                // else why use SC?
+                    if (instr_rt == 5'd0) begin
+                        $display("dispatch_unit: dead SC instr, instr_rt == 5'd0");
+                            
+                        // immediately complete
+                        // dispatched unit is DEAD
+
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_DEAD = 1'b1;
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b0;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rd;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                    end
+
+                    // fail if free list empty 
+                    else if (prfl_empty) begin
+
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
+
+                        $display("dispatch_unit: FAIL: free list empty");
+                    end
+
+                    // fail if LQ full
+                        // also need to enqueue to LQ
+                    else if (LQ_full) begin
+
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
+
+                        $display("dispatch_unit: FAIL: LQ_full");
+                    end
+
+                    // fail if SQ full
+                    else if (SQ_full) begin
+
+                        // FAIL: explicitly give dispatch fail
+                        core_control_dispatch_failed = 1'b1;
+
+                        $display("dispatch_unit: FAIL: SQ_full");
+                    end
+
+                    // otherwise, can dispatch to SQ
+                    else begin
+                        // incomplete
+                        // need rs and rt
+                        // writing instr
+
+                        // internal module control
+                        prmt_old_dest_arch_reg_tag = instr_rt;
+                        prmt_rename_valid = 1'b1;
+                        prmt_rename_dest_arch_reg_tag = instr_rt;
+                        prmt_save_checkpoint_valid = 1'b0;
+                        prfl_dequeue_valid = 1'b1;
+                        prfl_save_checkpoint_valid = 1'b0;
+                        prrt_dispatch_dest_write = 1'b1;
+                        // no dispatch fail
+                        core_control_dispatch_failed = 1'b0;
+                        // enqueue ROB
+                        ROB_enqueue_valid = 1'b1;
+                        // fill in ROB struct
+                        ROB_struct_out.valid = 1'b1;
+                        ROB_struct_out.complete = 1'b0;
+                        ROB_struct_out.dispatched_unit.DU_SQ = 1'b1;
+                        ROB_struct_out.dispatched_unit.DU_LQ = 1'b1;
+                            // also need to enqueue to LQ
+                        ROB_struct_out.restart_PC = dispatch_unit_PC;
+                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.dest_arch_reg_tag = instr_rt;
+                        ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
+                        ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        // send SQ task
+                        SQ_task_valid = 1'b1;
+                        // fill in SQ struct
+                        SQ_task_struct.op = SQ_SC;
+                        SQ_task_struct.source_0.needed = 1'b1;
+                        SQ_task_struct.source_0.ready = prrt_dispatch_source_0_ready;
+                        SQ_task_struct.source_0.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        SQ_task_struct.source_1.needed = 1'b1;
+                        SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
+                        SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
+                        SQ_task_struct.imm14 = instr_imm16[15:2];
+                        SQ_task_struct.LQ_index = LQ_tail_index;
+                        SQ_task_struct.ROB_index = ROB_tail_index;
+                        // send LQ task
+                        LQ_task_valid = 1'b1;
+                        // fill in LQ struct
+                        LQ_task_struct.op = LQ_SC;
+                        LQ_task_struct.source.needed = 1'b0;
+                        LQ_task_struct.source.ready = prrt_dispatch_source_0_ready;
+                        LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
+                        LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+                        LQ_task_struct.imm14 = instr_imm16[15:2];
+                        LQ_task_struct.SQ_index = SQ_tail_index;
+                        LQ_task_struct.ROB_index = ROB_tail_index;
+                    end
                 end
 
                 ///////////////////////////////////////////////////////////////////////////////////////////
