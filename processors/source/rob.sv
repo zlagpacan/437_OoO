@@ -135,6 +135,7 @@ module rob (
     // retire
     output logic SQ_retire_valid,
     output ROB_index_t SQ_retire_ROB_index,
+    input logic SQ_retire_blocked,
 
     // restore interface
         // send restore command and check for success
@@ -541,6 +542,9 @@ module rob (
                         // invalidate entry
                     next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b0;
 
+                    // decrement head
+                    next_head_index_ptr = head_index_ptr + ROB_ptr_t'(1);
+
                     // send retire to applicable units:
 
                     // if uses new tag, send retired tag to dispatch unit
@@ -555,19 +559,36 @@ module rob (
                         LQ_retire_ROB_index = head_index_ptr;
                     end
 
-                    // if in SQ, send retire
+                    // if in SQ and SQ not blocked, send retire
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ) begin
-                        SQ_retire_valid = 1'b1;
-                        SQ_retire_ROB_index = head_index_ptr;
+                        
+                        // if SQ not blocked, send retire to SQ
+                        if (~SQ_retire_blocked) begin
+
+                            SQ_retire_valid = 1'b1;
+                            SQ_retire_ROB_index = head_index_ptr;
+                        end
+
+                        // otherwise, SQ blocked, undo retire
+                        else begin
+
+                            $display("got here");
+
+                            // don't send out retire
+                            SQ_retire_valid = 1'b0;
+
+                            // keep entry valid
+                            next_ROB_array_by_entry[head_index_ptr.index].valid = ROB_array_by_entry[head_index_ptr.index].valid;
+
+                            // stall head
+                            next_head_index_ptr = head_index_ptr;
+                        end 
                     end
 
                     // if halt, goto ROB_HALT state
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_HALT) begin
                         next_ROB_state = ROB_HALT;
                     end
-
-                    // decrement head
-                    next_head_index_ptr = head_index_ptr + ROB_ptr_t'(1);
                 end
 
                 // restart req for ROB_IDLE:

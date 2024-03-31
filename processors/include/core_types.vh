@@ -123,6 +123,7 @@ package core_types_pkg;
     parameter ADDR_SPACE_WIDTH = 16;
     parameter WORD_ADDR_SPACE_WIDTH = ADDR_SPACE_WIDTH - 2;
     parameter PC_WIDTH = WORD_ADDR_SPACE_WIDTH;
+    parameter BLOCK_ADDR_SPACE_WIDTH = WORD_ADDR_SPACE_WIDTH - 1;
     parameter NUM_PHYS_REGS = 64;
     parameter PHYS_REG_WIDTH = $clog2(NUM_PHYS_REGS);
 
@@ -131,6 +132,8 @@ package core_types_pkg;
     typedef logic [PC_WIDTH-1:0] pc_t;
 
     typedef logic [WORD_ADDR_SPACE_WIDTH-1:0] daddr_t;
+
+    typedef logic [BLOCK_ADDR_SPACE_WIDTH-1:0] block_addr_t;
 
     typedef struct packed {
         logic needed;
