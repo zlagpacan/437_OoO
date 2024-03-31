@@ -35,7 +35,6 @@ add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_complete_bus_2_
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_complete_bus_2_dest_phys_reg_tag
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_complete_bus_2_ROB_index
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_BRU_complete_valid
-add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_BRU_complete_ROB_index
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_BRU_restart_valid
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_BRU_restart_ROB_index
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_BRU_restart_PC
@@ -52,6 +51,7 @@ add wave -noupdate -expand -group {Top Level Signals} /rob_tb/DUT_SQ_retire_vali
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/expected_SQ_retire_valid
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/DUT_SQ_retire_ROB_index
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/expected_SQ_retire_ROB_index
+add wave -noupdate -expand -group {Top Level Signals} /rob_tb/tb_SQ_retire_blocked
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/DUT_restore_checkpoint_valid
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/expected_restore_checkpoint_valid
 add wave -noupdate -expand -group {Top Level Signals} /rob_tb/DUT_restore_checkpoint_speculate_failed
@@ -91,7 +91,7 @@ add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/next_DUT_error
 add wave -noupdate -expand -group {Internal Signals} -expand /rob_tb/DUT/ROB_array_by_entry
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/next_ROB_array_by_entry
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/head_index_ptr
-add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/next_head_index_ptr
+add wave -noupdate -expand -group {Internal Signals} -expand /rob_tb/DUT/next_head_index_ptr
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/tail_index_ptr
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/next_tail_index_ptr
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/restart_ROB_index_ptr
@@ -107,7 +107,7 @@ add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/next_empty
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/ROB_state
 add wave -noupdate -expand -group {Internal Signals} /rob_tb/DUT/next_ROB_state
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {113700 ps} 0}
+WaveRestoreCursors {{Cursor 1} {753000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 275
 configure wave -valuecolwidth 100
@@ -123,4 +123,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {89900 ps} {130900 ps}
+WaveRestoreZoom {0 ps} {861 ns}
