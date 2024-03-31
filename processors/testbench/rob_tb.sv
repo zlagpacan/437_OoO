@@ -93,6 +93,7 @@ module rob_tb ();
     // retire
 	logic DUT_SQ_retire_valid, expected_SQ_retire_valid;
 	ROB_index_t DUT_SQ_retire_ROB_index, expected_SQ_retire_ROB_index;
+	logic tb_SQ_retire_blocked;
 
     // restore interface
         // send restore command and check for success
@@ -200,6 +201,7 @@ module rob_tb ();
 	    // retire
 		.SQ_retire_valid(DUT_SQ_retire_valid),
 		.SQ_retire_ROB_index(DUT_SQ_retire_ROB_index),
+		.SQ_retire_blocked(tb_SQ_retire_blocked),
 
 	    // restore interface
 	        // send restore command and check for success
@@ -651,6 +653,7 @@ module rob_tb ();
 		tb_SQ_complete_valid = 1'b0;
 		tb_SQ_complete_ROB_index = ROB_index_t'(0);
 	    // retire
+		tb_SQ_retire_blocked = 1'b0;
 	    // restore interface
 		tb_restore_checkpoint_success = 1'b0;
 	    // revert interface
@@ -9635,7 +9638,7 @@ module rob_tb ();
 		@(posedge CLK);
 
 		// inputs
-		sub_test_case = "fail enqueue: 33|105: ADD r2->p2/p33, r2->p2, r5->p5 + 23|87: SW r3->p3, 0x10D(r13->p3) retire + 24|88: XORI r30->p34/p52, r30->p34, 0x1C9 complete";
+		sub_test_case = "fail enqueue: 33|105: ADD r2->p2/p33, r2->p2, r5->p5 + 23|87: SW r3->p3, 0x10D(r13->p3) fail retire (blocked) + 24|88: XORI r30->p34/p52, r30->p34, 0x1C9 complete";
 		$display("\t- sub_test: %s", sub_test_case);
 
 		// reset
@@ -9691,6 +9694,137 @@ module rob_tb ();
 		tb_SQ_complete_valid = 1'b0;
 		tb_SQ_complete_ROB_index = ROB_index_t'(0);
 	    // retire
+		tb_SQ_retire_blocked = 1'b1;
+	    // restore interface
+		tb_restore_checkpoint_success = 1'b0;
+	    // revert interface
+	    // kill bus interface
+	    // core control interface
+	    // optional outputs:
+	    // ROB state
+	    // if complete is invalid
+	    // current ROB capacity
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    // full/empty
+		expected_full = 1'b0;
+		expected_empty = 1'b0;
+	    // fetch unit interface
+		expected_fetch_unit_take_resolved = 1'b0;
+		expected_fetch_unit_resolved_PC = pc_t'(0);
+	    // dispatch unit interface
+	    // dispatch @ tail
+		expected_dispatch_unit_ROB_tail_index = ROB_index_t'(33); // tail
+	    // retire from head
+		expected_dispatch_unit_retire_valid = 1'b0;
+		expected_dispatch_unit_retire_phys_reg_tag = phys_reg_tag_t'(0); // head's tag
+	    // complete bus interfaces
+	    // BRU interface
+	    // complete
+	    // restart info
+	    // LQ interface
+	    // retire
+		expected_LQ_retire_valid = 1'b0;
+		expected_LQ_retire_ROB_index = ROB_index_t'(23); // head
+	    // restart info
+	    // SQ interface
+	    // complete
+	    // retire
+		expected_SQ_retire_valid = 1'b0;
+		expected_SQ_retire_ROB_index = ROB_index_t'(23); // head
+	    // restore interface
+		expected_restore_checkpoint_valid = 1'b0;
+		expected_restore_checkpoint_speculate_failed = 1'b0;
+		expected_restore_checkpoint_ROB_index = ROB_index_t'(19); // last restart index
+		expected_restore_checkpoint_safe_column = checkpoint_column_t'(0); // BRU restart column
+	    // revert interface
+		expected_revert_valid = 1'b0;
+		expected_revert_ROB_index = ROB_index_t'(33); // tail
+		expected_revert_arch_reg_tag = arch_reg_tag_t'(0); // from bad speculate or reset or old @ tail
+		expected_revert_safe_phys_reg_tag = phys_reg_tag_t'(0);
+		expected_revert_speculated_phys_reg_tag = phys_reg_tag_t'(0);
+	    // kill bus interface
+		expected_kill_bus_valid = 1'b0;
+		expected_kill_bus_ROB_index = ROB_index_t'(33); // tail or end of inorder kill
+	    // core control interface
+		expected_core_control_restore_flush = 1'b0;
+		expected_core_control_revert_stall = 1'b0;
+		expected_core_control_halt_assert = 1'b0;
+	    // optional outputs:
+	    // ROB state
+		expected_ROB_state_out = ROB_state_t'(ROB_IDLE);
+	    // if complete is invalid
+		expected_invalid_complete = 1'b0;
+	    // current ROB capacity
+		expected_ROB_capacity = 5'd10;
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = "fail enqueue: 33|105: ADD r2->p2/p33, r2->p2, r5->p5 + 23|87: SW r3->p3, 0x10D(r13->p3) retire";
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    // full/empty
+	    // fetch unit interface
+	    // dispatch unit interface
+	    // dispatch @ tail
+		tb_dispatch_unit_enqueue_valid = 1'b0;
+		tb_dispatch_unit_enqueue_struct.valid = 1'b1;
+        tb_dispatch_unit_enqueue_struct.complete = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_ALU_0 = 1'b1;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_ALU_1 = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_LQ = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_SQ = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_BRU = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_J = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_DEAD = 1'b0;
+        tb_dispatch_unit_enqueue_struct.dispatched_unit.DU_HALT = 1'b0;
+        tb_dispatch_unit_enqueue_struct.restart_PC = pc_t'(105);
+        tb_dispatch_unit_enqueue_struct.reg_write = 1'b1;
+        tb_dispatch_unit_enqueue_struct.dest_arch_reg_tag = arch_reg_tag_t'(2);
+        tb_dispatch_unit_enqueue_struct.safe_dest_phys_reg_tag = phys_reg_tag_t'(2);
+        tb_dispatch_unit_enqueue_struct.speculated_dest_phys_reg_tag = phys_reg_tag_t'(33);
+	    // retire from head
+	    // complete bus interfaces
+		tb_complete_bus_0_valid = 1'b0;
+		tb_complete_bus_0_dest_phys_reg_tag = phys_reg_tag_t'(999);
+		tb_complete_bus_0_ROB_index = ROB_index_t'(999);
+		tb_complete_bus_1_valid = 1'b0;
+		tb_complete_bus_1_dest_phys_reg_tag = phys_reg_tag_t'(999);
+		tb_complete_bus_1_ROB_index = ROB_index_t'(999);
+		tb_complete_bus_2_valid = 1'b0;
+		tb_complete_bus_2_dest_phys_reg_tag = phys_reg_tag_t'(999);
+		tb_complete_bus_2_ROB_index = ROB_index_t'(999);
+	    // BRU interface
+	    // complete
+		tb_BRU_complete_valid = 1'b0;
+		// tb_BRU_complete_ROB_index = ROB_index_t'(17);
+	    // restart info
+		tb_BRU_restart_valid = 1'b0;
+		tb_BRU_restart_ROB_index = ROB_index_t'(0);
+		tb_BRU_restart_PC = pc_t'(0);
+		tb_BRU_restart_safe_column = checkpoint_column_t'(0);
+	    // LQ interface
+	    // retire
+	    // restart info
+		tb_LQ_restart_valid = 1'b0;
+		tb_LQ_restart_ROB_index = ROB_index_t'(0);
+	    // SQ interface
+	    // complete
+		tb_SQ_complete_valid = 1'b0;
+		tb_SQ_complete_ROB_index = ROB_index_t'(0);
+	    // retire
+		tb_SQ_retire_blocked = 1'b0;
 	    // restore interface
 		tb_restore_checkpoint_success = 1'b0;
 	    // revert interface

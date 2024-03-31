@@ -81,19 +81,19 @@ module phys_reg_file (
     input phys_reg_tag_t ALU_0_read_req_1_tag,
     output logic ALU_0_read_req_serviced,
 
-    // ALU 1 read req 0
+    // ALU 1 read req
     input logic ALU_1_read_req_valid,
     input phys_reg_tag_t ALU_1_read_req_0_tag,
     input phys_reg_tag_t ALU_1_read_req_1_tag,
     output logic ALU_1_read_req_serviced,
 
-    // BRU read req 0
+    // BRU read req
     input logic BRU_read_req_valid,
     input phys_reg_tag_t BRU_read_req_0_tag,
     input phys_reg_tag_t BRU_read_req_1_tag,
     output logic BRU_read_req_serviced,
 
-    // SQ read req 0
+    // SQ read req
     input logic SQ_read_req_valid,
     input phys_reg_tag_t SQ_read_req_0_tag,
     input phys_reg_tag_t SQ_read_req_1_tag,
