@@ -542,7 +542,7 @@ module rob (
                         // invalidate entry
                     next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b0;
 
-                    // decrement head
+                    // increment head
                     next_head_index_ptr = head_index_ptr + ROB_ptr_t'(1);
 
                     // send retire to applicable units:
@@ -559,26 +559,18 @@ module rob (
                         LQ_retire_ROB_index = head_index_ptr;
                     end
 
-                    // if in SQ and SQ not blocked, send retire
+                    // if in SQ, send retire, only move on if not blocked
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ) begin
                         
-                        // if SQ not blocked, send retire to SQ
-                        if (~SQ_retire_blocked) begin
+                        // send retire
+                        SQ_retire_valid = 1'b1;
+                        SQ_retire_ROB_index = head_index_ptr;
 
-                            SQ_retire_valid = 1'b1;
-                            SQ_retire_ROB_index = head_index_ptr;
-                        end
-
-                        // otherwise, SQ blocked, undo retire
-                        else begin
-
-                            $display("got here");
-
-                            // don't send out retire
-                            SQ_retire_valid = 1'b0;
+                        // if SQ blocked, don't move on
+                        if (SQ_retire_blocked) begin
 
                             // keep entry valid
-                            next_ROB_array_by_entry[head_index_ptr.index].valid = ROB_array_by_entry[head_index_ptr.index].valid;
+                            next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b1;
 
                             // stall head
                             next_head_index_ptr = head_index_ptr;

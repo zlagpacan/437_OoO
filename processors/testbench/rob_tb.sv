@@ -329,6 +329,7 @@ module rob_tb ();
 	    // retire
 		.SQ_retire_valid(DUT_SQ_retire_valid),
 		.SQ_retire_ROB_index(DUT_SQ_retire_ROB_index),
+		.SQ_retire_blocked(tb_SQ_retire_blocked),
 
 	    // restore interface
 	        // send restore command and check for success
@@ -9735,7 +9736,7 @@ module rob_tb ();
 	    // SQ interface
 	    // complete
 	    // retire
-		expected_SQ_retire_valid = 1'b0;
+		expected_SQ_retire_valid = 1'b1; // still retiring, but blocked
 		expected_SQ_retire_ROB_index = ROB_index_t'(23); // head
 	    // restore interface
 		expected_restore_checkpoint_valid = 1'b0;
