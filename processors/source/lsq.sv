@@ -235,14 +235,6 @@ module lsq (
     input LQ_index_t dcache_read_resp_LQ_index,
     input daddr_t dcache_read_resp_data,
 
-    // read kill interface:
-    //      - valid
-    //      - LQ index
-        // just means cancel response so don't mix up with later request at same LQ index
-
-    output logic dcache_read_kill_valid,
-    output LQ_index_t dcache_read_kill_LQ_index,
-
     // write req interface:
     //      - valid
     //      - addr
@@ -255,6 +247,21 @@ module lsq (
     output word_t dcache_write_req_data,
     output logic dcache_write_req_conditional,
     input logic dcache_write_req_blocked,
+
+    // read kill interface:
+    //      - valid
+    //      - LQ index
+        // just means cancel response so don't mix up with later request at same LQ index
+
+    output logic dcache_read_kill_valid,
+    output LQ_index_t dcache_read_kill_LQ_index,
+
+    // invalidation interface:
+    //      - valid
+    //      - inv address
+
+    input logic dcache_inv_valid,
+    input block_addr_t dcache_inv_block_addr,
 
     ///////////////////
     // shared buses: //
@@ -334,7 +341,7 @@ module lsq (
     SQ_index_t SQ_operand_task_SQ_index;
     ROB_index_t SQ_operand_task_ROB_index;
 
-    // SQ reg read side:
+    // SQ reg read stage side:
 
     logic SQ_reg_read_stage_valid;
     logic next_SQ_reg_read_stage_valid;
@@ -363,14 +370,10 @@ module lsq (
     ///////////////////////////////////////////////////////////
     // SQ Reg Read Stage -> | Latch | -> SQ Addr Calc Stage:
 
-    // SQ reg read side:
+    // SQ reg read stage side:
 
     daddr_t SQ_reg_read_stage_reg_file_write_base_addr;
     word_t SQ_reg_read_stage_reg_file_write_data;
-    // daddr_t SQ_reg_read_stage_imm14;
-        // pass through for reg read stage
-    // SQ_index_t SQ_reg_read_stage_SQ_index;
-        // pass through for reg read stage
     logic SQ_reg_read_stage_operand_0_complete_bus_0_VTM;
     logic SQ_reg_read_stage_operand_0_complete_bus_1_VTM;
     logic SQ_reg_read_stage_operand_0_complete_bus_2_VTM;
@@ -378,7 +381,7 @@ module lsq (
     logic SQ_reg_read_stage_operand_1_complete_bus_1_VTM;
     logic SQ_reg_read_stage_operand_1_complete_bus_2_VTM;
 
-    // SQ addr calc side:
+    // SQ addr calc stage side:
 
     logic SQ_addr_calc_stage_valid;
     logic next_SQ_addr_calc_stage_valid;
@@ -804,7 +807,7 @@ module lsq (
         SQ_operand_task_source_1_ready = SQ_task_struct.source_1.ready;
         SQ_operand_task_source_1_phys_reg_tag = SQ_task_struct.source_1.phys_reg_tag;
         SQ_operand_task_imm14 = SQ_task_struct.imm14;
-        SQ_operand_task_SQ_index = LQ_tail_ptr.index;
+        SQ_operand_task_SQ_index = SQ_tail_ptr.index;
         SQ_operand_task_ROB_index = SQ_task_struct.ROB_index;
 
         // take in operand task if valid
@@ -829,10 +832,10 @@ module lsq (
         // operand 0 complete bus data mux
             // for forwarded write base addr
         casez (SQ_addr_calc_stage_operand_0_bus_select) 
-            2'd0:   SQ_addr_calc_stage_forwarded_write_base_addr = complete_bus_0_data;
-            2'd1:   SQ_addr_calc_stage_forwarded_write_base_addr = complete_bus_1_data;
-            2'd2:   SQ_addr_calc_stage_forwarded_write_base_addr = complete_bus_2_data;
-            2'd3:   SQ_addr_calc_stage_forwarded_write_base_addr = SQ_addr_calc_stage_reg_file_write_base_addr;
+            2'd0:   SQ_addr_calc_stage_forwarded_write_base_addr = complete_bus_0_data[15:2];
+            2'd1:   SQ_addr_calc_stage_forwarded_write_base_addr = complete_bus_1_data[15:2];
+            2'd2:   SQ_addr_calc_stage_forwarded_write_base_addr = complete_bus_2_data[15:2];
+            2'd3:   SQ_addr_calc_stage_forwarded_write_base_addr = SQ_addr_calc_stage_reg_file_write_base_addr[15:2];
         endcase
 
         // operand 1 complete bus data mux
@@ -848,7 +851,399 @@ module lsq (
         SQ_addr_calc_stage_write_addr = 
             SQ_addr_calc_stage_forwarded_write_base_addr 
             + 
-            SQ_addr_calc_stage_imm14;
+            SQ_addr_calc_stage_imm14
+        ;
+    end
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // LQ Operand Pipeline:
+
+    logic LQ_reg_read_busy;
+
+    /////////////////////////////////////////////////////////
+    // Dispatch Stage -> | Latched | -> LQ Reg Read Stage: 
+
+    // LQ dispatch stage side:
+
+    logic LQ_operand_task_valid;
+    logic LQ_operand_task_linked;
+    logic LQ_operand_task_conditional;
+    logic LQ_operand_task_source_ready;
+    phys_reg_tag_t LQ_operand_task_source_phys_reg_tag;
+    daddr_t LQ_operand_task_imm14;
+    LQ_index_t LQ_operand_task_LQ_index;
+    ROB_index_t LQ_operand_task_ROB_index;
+
+    // LQ reg read stage side:
+
+    logic LQ_reg_read_stage_valid;
+    logic next_LQ_reg_read_stage_valid;
+
+    logic LQ_reg_read_stage_linked;
+    logic next_LQ_reg_read_stage_linked;
+
+    logic LQ_reg_read_stage_conditional;
+    logic next_LQ_reg_read_stage_conditional;
+
+    logic LQ_reg_read_stage_source_ready;
+    logic next_LQ_reg_read_stage_source_ready;
+
+    phys_reg_tag_t LQ_reg_read_stage_source_phys_reg_tag;
+    phys_reg_tag_t next_LQ_reg_read_stage_source_phys_reg_tag;
+
+    daddr_t LQ_reg_read_stage_imm14;
+    daddr_t next_LQ_reg_read_stage_imm14;
+
+    LQ_index_t LQ_reg_read_stage_LQ_index;
+    LQ_index_t next_LQ_reg_read_stage_LQ_index;
+
+    ROB_index_t LQ_reg_read_stage_ROB_index;
+    ROB_index_t next_LQ_reg_read_stage_ROB_index;
+
+    ///////////////////////////////////////////////////////////
+    // LQ Reg Read Stage -> | Latch | -> LQ Addr Calc Stage: 
+
+    // LQ reg read stage side:
+
+    daddr_t LQ_reg_read_stage_reg_file_read_base_addr;
+    logic LQ_reg_read_stage_operand_complete_bus_0_VTM;
+    logic LQ_reg_read_stage_operand_complete_bus_1_VTM;
+    logic LQ_reg_read_stage_operand_complete_bus_2_VTM;
+
+    // LQ addr calc stage side:
+
+    logic LQ_addr_calc_stage_valid;
+    logic next_LQ_addr_calc_stage_valid;
+
+    logic LQ_addr_calc_stage_linked;
+    logic next_LQ_addr_calc_stage_linked;
+
+    logic LQ_addr_calc_stage_conditional;
+    logic next_LQ_addr_calc_stage_conditional;
+
+    daddr_t LQ_addr_calc_stage_reg_file_read_base_addr;
+    daddr_t next_LQ_addr_calc_stage_reg_file_read_base_addr;
+
+    daddr_t LQ_addr_calc_stage_imm14;
+    daddr_t next_LQ_addr_calc_stage_imm14;
+
+    LQ_index_t LQ_addr_calc_stage_LQ_index;
+    LQ_index_t next_LQ_addr_calc_stage_LQ_index;
+
+    logic [1:0] LQ_addr_calc_stage_operand_bus_select;
+    logic [1:0] next_LQ_addr_calc_stage_operand_bus_select;
+
+    /////////////////////////////////////////////////////////////////
+    // LQ Addr Calc Stage -> | Latch | -> LQ Operand Update Stage: 
+
+    // LQ addr calc side:
+
+    daddr_t LQ_addr_calc_stage_forwarded_read_base_addr;
+    daddr_t LQ_addr_calc_stage_read_addr;
+
+    // LQ operand update stage side:
+
+    logic LQ_operand_update_stage_valid;
+    logic next_LQ_operand_update_stage_valid;
+    
+    logic LQ_operand_update_stage_linked;
+    logic next_LQ_operand_update_stage_linked;
+
+    logic LQ_operand_update_stage_conditional;
+    logic next_LQ_operand_update_stage_conditional;
+
+    daddr_t LQ_operand_update_stage_read_addr;
+    daddr_t next_LQ_operand_update_stage_read_addr;
+
+    LQ_index_t LQ_operand_update_stage_LQ_index;
+    LQ_index_t next_LQ_operand_update_stage_LQ_index;
+
+    ////////////
+    // logic: 
+
+    // seq
+    always_ff @ (posedge CLK, negedge nRST) begin
+
+        if (~nRST) begin
+
+            // LQ dispatch stage -> LQ reg read stage
+            LQ_reg_read_stage_valid <= 1'b0;
+            LQ_reg_read_stage_linked <= 1'b0;
+            LQ_reg_read_stage_conditional <= 1'b0;
+            LQ_reg_read_stage_source_ready <= 1'b0;
+            LQ_reg_read_stage_source_phys_reg_tag <= phys_reg_tag_t'(0);
+            LQ_reg_read_stage_imm14 <= 14'h0;
+            LQ_reg_read_stage_LQ_index <= LQ_index_t'(0);
+            LQ_reg_read_stage_ROB_index <= ROB_index_t'(0);
+
+            // LQ reg read stage -> LQ addr calc stage
+            LQ_addr_calc_stage_valid <= 1'b0;
+            LQ_addr_calc_stage_linked <= 1'b0;
+            LQ_addr_calc_stage_conditional <= 1'b0;
+            LQ_addr_calc_stage_reg_file_read_base_addr <= daddr_t'(0);
+            LQ_addr_calc_stage_imm14 <= 14'h0;
+            LQ_addr_calc_stage_LQ_index <= LQ_index_t'(0);
+            LQ_addr_calc_stage_operand_bus_select <= 2'd3;
+
+            // LQ addr calc stage -> LQ operand update stage
+            LQ_operand_update_stage_valid <= 1'b0;
+            LQ_operand_update_stage_linked <= 1'b0;
+            LQ_operand_update_stage_conditional <= 1'b0;
+            LQ_operand_update_stage_read_addr <= daddr_t'(0);
+            LQ_operand_update_stage_LQ_index <= LQ_index_t'(0);
+        end
+
+        else begin
+
+            // LQ dispatch stage -> LQ reg read stage
+            LQ_reg_read_stage_valid <= next_LQ_reg_read_stage_valid;
+            LQ_reg_read_stage_linked <= next_LQ_reg_read_stage_linked;
+            LQ_reg_read_stage_conditional <= next_LQ_reg_read_stage_conditional;
+            LQ_reg_read_stage_source_ready <= next_LQ_reg_read_stage_source_ready;
+            LQ_reg_read_stage_source_phys_reg_tag <= next_LQ_reg_read_stage_source_phys_reg_tag;
+            LQ_reg_read_stage_imm14 <= next_LQ_reg_read_stage_imm14;
+            LQ_reg_read_stage_LQ_index <= next_LQ_reg_read_stage_LQ_index;
+            LQ_reg_read_stage_ROB_index <= next_LQ_reg_read_stage_ROB_index;
+
+            // LQ reg read stage -> LQ addr calc stage
+            LQ_addr_calc_stage_valid <= next_LQ_addr_calc_stage_valid;
+            LQ_addr_calc_stage_linked <= next_LQ_addr_calc_stage_linked;
+            LQ_addr_calc_stage_conditional <= next_LQ_addr_calc_stage_conditional;
+            LQ_addr_calc_stage_reg_file_read_base_addr <= next_LQ_addr_calc_stage_reg_file_read_base_addr;
+            LQ_addr_calc_stage_imm14 <= next_LQ_addr_calc_stage_imm14;
+            LQ_addr_calc_stage_LQ_index <= next_LQ_addr_calc_stage_LQ_index;
+            LQ_addr_calc_stage_operand_bus_select <= next_LQ_addr_calc_stage_operand_bus_select;
+
+            // LQ addr calc stage -> LQ operand update stage
+            LQ_operand_update_stage_valid <= next_LQ_operand_update_stage_valid;
+            LQ_operand_update_stage_linked <= next_LQ_operand_update_stage_linked;
+            LQ_operand_update_stage_conditional <= next_LQ_operand_update_stage_conditional;
+            LQ_operand_update_stage_read_addr <= next_LQ_operand_update_stage_read_addr;
+            LQ_operand_update_stage_LQ_index <= next_LQ_operand_update_stage_LQ_index;
+        end
+    end
+
+    // comb logic
+    always_comb begin
+
+        //////////////////////
+        // default outputs: //
+        //////////////////////
+
+        // no DUT error
+        LQ_DUT_error = 1'b0;
+
+        // not busy
+        LQ_reg_read_busy = 1'b0;
+
+        // reg file read req invalid
+        LQ_reg_read_req_valid = 1'b0;
+            // will depend on if 1 or more operands ready in reg file and not getting killed
+        LQ_reg_read_req_tag = LQ_reg_read_stage_source_phys_reg_tag;
+
+        // hold latch state for reg read stage
+        next_LQ_reg_read_stage_valid = LQ_reg_read_stage_valid;
+        next_LQ_reg_read_stage_linked = LQ_reg_read_stage_linked;
+        next_LQ_reg_read_stage_conditional = LQ_reg_read_stage_conditional;
+        next_LQ_reg_read_stage_source_ready = LQ_reg_read_stage_source_ready;
+        next_LQ_reg_read_stage_source_phys_reg_tag = LQ_reg_read_stage_source_phys_reg_tag;
+        next_LQ_reg_read_stage_imm14 = LQ_reg_read_stage_imm14;
+        next_LQ_reg_read_stage_LQ_index = LQ_reg_read_stage_LQ_index;
+        next_LQ_reg_read_stage_ROB_index = LQ_reg_read_stage_ROB_index;
+
+        // invalid addr calc stage taking from reg read stage
+        next_LQ_addr_calc_stage_valid = 1'b0;
+        next_LQ_addr_calc_stage_linked = LQ_reg_read_stage_linked;
+        next_LQ_addr_calc_stage_conditional = LQ_reg_read_stage_conditional;
+        next_LQ_addr_calc_stage_reg_file_read_base_addr = LQ_reg_read_stage_reg_file_read_base_addr;
+        next_LQ_addr_calc_stage_imm14 = LQ_reg_read_stage_imm14;
+        next_LQ_addr_calc_stage_LQ_index = LQ_reg_read_stage_LQ_index;
+        next_LQ_addr_calc_stage_operand_bus_select = 2'd3;  // default reg file val
+
+        // operand update stage taking from addr calc stage
+        next_LQ_operand_update_stage_valid = LQ_addr_calc_stage_valid;
+        next_LQ_operand_update_stage_linked = LQ_addr_calc_stage_linked;
+        next_LQ_operand_update_stage_conditional = LQ_addr_calc_stage_conditional;
+        next_LQ_operand_update_stage_read_addr = LQ_addr_calc_stage_read_addr;
+        next_LQ_operand_update_stage_LQ_index = LQ_addr_calc_stage_LQ_index;
+
+        ///////////////////////
+        // reg file outputs: //
+        ///////////////////////
+
+        LQ_reg_read_stage_reg_file_read_base_addr = LQ_reg_read_bus_0_data;
+
+        ///////////////////////////////////
+        // complete bus tag match logic: //
+        ///////////////////////////////////
+
+        LQ_reg_read_stage_operand_complete_bus_0_VTM = complete_bus_0_tag_valid & (
+            LQ_reg_read_stage_source_phys_reg_tag == complete_bus_0_tag);
+        LQ_reg_read_stage_operand_complete_bus_1_VTM = complete_bus_1_tag_valid & (
+            LQ_reg_read_stage_source_phys_reg_tag == complete_bus_1_tag);
+        LQ_reg_read_stage_operand_complete_bus_2_VTM = complete_bus_2_tag_valid & (
+            LQ_reg_read_stage_source_phys_reg_tag == complete_bus_2_tag);
+
+        ///////////////////////////
+        // reg read stage logic: //
+        ///////////////////////////
+
+        // valid task in reg read stage
+        if (LQ_reg_read_stage_valid) begin
+
+            // check for kill
+            if (kill_bus_valid & LQ_reg_read_stage_ROB_index == kill_bus_ROB_index) begin
+
+                // not busy
+                LQ_reg_read_busy = 1'b0;
+
+                // invalidate reg read stage and addr calc stage
+                next_LQ_reg_read_stage_valid = 1'b0;
+                next_LQ_addr_calc_stage_valid = 1'b0;
+            end
+
+            // otherwise, try to move to addr calc stage
+            else begin
+
+                // check don't need operand (conditional)
+                if (LQ_reg_read_stage_conditional) begin
+
+                    // move to addr calc stage
+                    next_LQ_addr_calc_stage_valid = 1'b1;
+
+                    // not busy
+                    LQ_reg_read_busy = 1'b0;
+
+                    // invalidate reg read stage task
+                    next_LQ_reg_read_stage_valid = 1'b0;
+                end
+
+                // otherwise, need operand
+                else begin
+
+                    // operand ready
+                    if (LQ_reg_read_stage_source_ready) begin
+
+                        // give read req
+                        LQ_reg_read_req_valid = 1'b1;
+
+                        // succeed if reg read req succeeds
+                        if (LQ_reg_read_req_serviced) begin
+
+                            // move to addr calc stage with raw operand
+                            next_LQ_addr_calc_stage_valid = 1'b1;
+                            next_LQ_addr_calc_stage_operand_bus_select = 2'd3;
+
+                            // not busy
+                            LQ_reg_read_busy = 1'b0;
+
+                            // invalidate reg read stage task
+                            next_LQ_reg_read_stage_valid = 1'b0;
+                        end
+
+                        // otherwise, fail, stay in reg read stage
+                        else begin
+
+                            // busy
+                            LQ_reg_read_busy = 1'b1;
+                        end
+                    end
+
+                    // operand VTM
+                    else if (
+                        LQ_reg_read_stage_operand_complete_bus_0_VTM |
+                        LQ_reg_read_stage_operand_complete_bus_1_VTM |
+                        LQ_reg_read_stage_operand_complete_bus_2_VTM
+                    ) begin
+
+                        // don't need read req
+
+                        // move to addr calc stage
+                        next_LQ_addr_calc_stage_valid = 1'b1;
+
+                        // select corresponding bus for operand
+                        if (LQ_reg_read_stage_operand_complete_bus_0_VTM) begin
+                            next_LQ_addr_calc_stage_operand_bus_select = 2'd0;
+                        end 
+                        else if (LQ_reg_read_stage_operand_complete_bus_1_VTM) begin
+                            next_LQ_addr_calc_stage_operand_bus_select = 2'd1;
+                        end
+                        else if (LQ_reg_read_stage_operand_complete_bus_2_VTM) begin
+                            next_LQ_addr_calc_stage_operand_bus_select = 2'd2;
+                        end
+                        else begin
+                            $display("lsq: LQ Operand Pipeline: ERROR: operand VTM but no individual VTM");
+                            LQ_operand_pipeline_DUT_error = 1'b1;
+                        end
+
+                        // not busy
+                        LQ_reg_read_busy = 1'b0;
+
+                        // invalidate reg read stage task
+                        next_LQ_reg_read_stage_valid = 1'b0;
+                    end
+
+                    // otherwise, can't move to addr calc stage
+                    else begin
+
+                        // busy 
+                        LQ_reg_read_busy = 1'b1;
+                    end
+                end
+
+            end
+        end
+
+        /////////////////////////
+        // operand task logic: //
+        /////////////////////////
+
+        // translate top level inputs into operand task
+        LQ_operand_task_valid = LQ_task_valid;
+        LQ_operand_task_linked = (LQ_task_struct.op == LQ_LL);
+        LQ_operand_task_conditional = (LQ_task_struct.op == LQ_SC);
+        LQ_operand_task_source_ready = LQ_task_struct.source.ready;
+        LQ_operand_task_source_phys_reg_tag = LQ_task_struct.source.phys_reg_tag;
+        LQ_operand_task_imm14 = LQ_task_struct.imm14;
+        LQ_operand_task_LQ_index = LQ_tail_ptr.index;
+        LQ_operand_task_ROB_index = LQ_task_struct.ROB_index;
+
+        // take in operand task if valid
+            // put this after reg read state logic so that can take in new task after kill detected
+        if (LQ_operand_task_valid) begin
+
+            // pass in values
+            next_LQ_reg_read_stage_valid = 1'b1;
+            next_LQ_reg_read_stage_linked = LQ_operand_task_linked;
+            next_LQ_reg_read_stage_conditional = LQ_operand_task_conditional;
+            next_LQ_reg_read_stage_source_ready = LQ_operand_task_source_ready;
+            next_LQ_reg_read_stage_source_phys_reg_tag = LQ_operand_task_source_phys_reg_tag;
+            next_LQ_reg_read_stage_imm14 = LQ_operand_task_imm14;
+            next_LQ_reg_read_stage_LQ_index = LQ_operand_task_LQ_index;
+            next_LQ_reg_read_stage_ROB_index = LQ_operand_task_ROB_index;
+        end
+
+        ////////////////////////////
+        // addr calc stage logic: //
+        ////////////////////////////
+
+        // operand complete bus data mux
+            // for forwarded read base addr
+        casez (LQ_addr_calc_stage_operand_bus_select)
+            2'd0:   LQ_addr_calc_stage_forwarded_read_base_addr = complete_bus_0_data[15:2];
+            2'd1:   LQ_addr_calc_stage_forwarded_read_base_addr = complete_bus_1_data[15:2];
+            2'd2:   LQ_addr_calc_stage_forwarded_read_base_addr = complete_bus_2_data[15:2];
+            2'd3:   LQ_addr_calc_stage_forwarded_read_base_addr = LQ_addr_calc_stage_reg_file_read_base_addr[15:2];
+        endcase
+
+        // adder
+        LQ_addr_calc_stage_read_addr = 
+            LQ_addr_calc_stage_forwarded_read_base_addr
+            +
+            LQ_addr_calc_stage_imm14
+        ;
+
+        
     end
 
 endmodule
