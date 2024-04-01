@@ -318,7 +318,7 @@ package core_types_pkg;
         ROB_index_t ROB_index;
         SQ_index_t SQ_index;
         daddr_t read_addr;
-        phys_reg_tag_t phys_reg_tag;
+        phys_reg_tag_t dest_phys_reg_tag;
     } LQ_entry_t;
 
     // SQ structs
