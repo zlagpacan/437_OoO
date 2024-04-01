@@ -275,9 +275,9 @@ package core_types_pkg;
     // LSQ: //
     //////////
 
-    parameter LQ_DEPTH = 8;
+    parameter LQ_DEPTH = 4;
     parameter LOG_LQ_DEPTH = $clog2(LQ_DEPTH);
-    parameter SQ_DEPTH = 8;
+    parameter SQ_DEPTH = 4;
     parameter LOG_SQ_DEPTH = $clog2(SQ_DEPTH);
 
     typedef logic [LOG_LQ_DEPTH-1:0] LQ_index_t;
@@ -308,9 +308,18 @@ package core_types_pkg;
         ROB_index_t ROB_index;
     } LQ_enqueue_struct_t;
 
-    // typedef struct packed {
-
-    // } LQ_entry_t;
+    typedef struct packed {
+        logic valid;
+        logic ready;
+        logic linked;
+        logic conditional;
+        logic SQ_loaded;
+        logic dcache_loaded;
+        ROB_index_t ROB_index;
+        SQ_index_t SQ_index;
+        daddr_t read_addr;
+        phys_reg_tag_t phys_reg_tag;
+    } LQ_entry_t;
 
     // SQ structs
     typedef struct packed {
@@ -326,9 +335,14 @@ package core_types_pkg;
         ROB_index_t ROB_index;
     } SQ_enqueue_struct_t;
 
-    // typedef struct packed {
-
-    // } SQ_entry_t;
+    typedef struct packed {
+        logic valid;
+        logic ready;
+        logic conditional;
+        ROB_index_t ROB_index;
+        daddr_t write_addr;
+        word_t write_data;
+    } SQ_entry_t;
 
     //////////
     // BRU: //
