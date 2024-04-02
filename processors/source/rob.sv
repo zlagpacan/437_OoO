@@ -121,12 +121,13 @@ module rob (
     input checkpoint_column_t BRU_restart_safe_column,
 
     // LQ interface
-    // retire
-    output logic LQ_retire_valid,
-    output ROB_index_t LQ_retire_ROB_index,
     // restart info
     input logic LQ_restart_valid,
     input ROB_index_t LQ_restart_ROB_index,
+    // retire
+    output logic LQ_retire_valid,
+    output ROB_index_t LQ_retire_ROB_index,
+    input logic LQ_retire_blocked,
 
     // SQ interface
     // complete
@@ -555,8 +556,20 @@ module rob (
 
                     // if in LQ, send retire
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ) begin
+
+                        // send retire
                         LQ_retire_valid = 1'b1;
                         LQ_retire_ROB_index = head_index_ptr;
+
+                        // if LQ blocked, don't move on
+                        if (LQ_retire_blocked) begin
+
+                            // keep entry valid
+                            next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b1;
+
+                            // stall head
+                            next_head_index_ptr = head_index_ptr;
+                        end
                     end
 
                     // if in SQ, send retire, only move on if not blocked

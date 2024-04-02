@@ -204,6 +204,10 @@ package core_types_pkg;
     parameter LOG_ROB_DEPTH = $clog2(ROB_DEPTH);
 
     typedef logic [LOG_ROB_DEPTH:0] ROB_index_t;
+        // has extra pointer msb bit
+            // forget why need it
+            // fails without it
+            // small overhead so whatever, keep
 
     typedef struct packed {
         logic DU_ALU_0;
@@ -281,7 +285,9 @@ package core_types_pkg;
     parameter LOG_SQ_DEPTH = $clog2(SQ_DEPTH);
 
     typedef logic [LOG_LQ_DEPTH-1:0] LQ_index_t;
+        // doesn't have extra pointer msb bit
     typedef logic [LOG_SQ_DEPTH-1:0] SQ_index_t;
+        // doesn't have extra pointer msb bit
 
     typedef enum logic [1:0] {
         LQ_LW,
