@@ -4,7 +4,7 @@
 
     File Name: <design_name>_tb.sv
     Description: 
-       Testbench for <design_name> module. 
+        Testbench for <design_name> module. 
 */
 
 `timescale 1ns/100ps
