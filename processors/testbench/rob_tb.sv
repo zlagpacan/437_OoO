@@ -4,7 +4,10 @@
 
     File Name: rob_tb.sv
     Description: 
-       Testbench for rob module. 
+       	Testbench for rob module. 
+
+	   	This testbench relies on ROB_DEPTH = 16
+		In theory, design should still work for different power of 2 ROB_DEPTH
 */
 
 `timescale 1ns/100ps
