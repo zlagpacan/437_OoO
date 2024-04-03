@@ -2569,8 +2569,6 @@ module lsq (
         // SQ interface
         dispatch_unit_SQ_tail_index = SQ_tail_ptr.index;
 
-        // 
-
     end
 
 endmodule
