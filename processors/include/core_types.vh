@@ -307,10 +307,10 @@ package core_types_pkg;
         source_reg_status_t source;
         phys_reg_tag_t dest_phys_reg_tag;
         daddr_t imm14;
-        SQ_index_t SQ_index;   // for SC, doubles as SQ index for store part of SC to track
-            // may want separate counter tag to link the store and load parts of SC
-                // or ROB_index serves this role
-        // admin
+        // SQ_index_t SQ_index;   // for SC, doubles as SQ index for store part of SC to track
+        //     // may want separate counter tag to link the store and load parts of SC
+        //         // or ROB_index serves this role
+            // just grab local value
         ROB_index_t ROB_index;
     } LQ_enqueue_struct_t;
 
@@ -319,6 +319,7 @@ package core_types_pkg;
         logic ready;
         logic linked;
         logic conditional;
+        logic SQ_searched;
         logic SQ_loaded;
         logic dcache_loaded;
         ROB_index_t ROB_index;
