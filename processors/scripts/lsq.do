@@ -290,8 +290,8 @@ add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_operand_upda
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_LQ_operand_update_stage_read_addr
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_operand_update_stage_LQ_index
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_LQ_operand_update_stage_LQ_index
-add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_array
-add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_LQ_array
+add wave -noupdate -expand -group {Internal Signals} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/LQ_array[3]} {-color Gold} {/lsq_tb/DUT/LQ_array[2]} {-color Gold} {/lsq_tb/DUT/LQ_array[1]} {-color Gold} {/lsq_tb/DUT/LQ_array[0]} {-color Gold}} /lsq_tb/DUT/LQ_array
+add wave -noupdate -expand -group {Internal Signals} -color Gold -subitemconfig {{/lsq_tb/DUT/next_LQ_array[3]} {-color Gold} {/lsq_tb/DUT/next_LQ_array[2]} {-color Gold} {/lsq_tb/DUT/next_LQ_array[1]} {-color Gold} {/lsq_tb/DUT/next_LQ_array[0]} {-color Gold}} /lsq_tb/DUT/next_LQ_array
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_LQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_tail_ptr
@@ -302,8 +302,8 @@ add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_full
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_LQ_full
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_empty
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_LQ_empty
-add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/SQ_array
-add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_SQ_array
+add wave -noupdate -expand -group {Internal Signals} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/SQ_array[3]} {-color Gold} {/lsq_tb/DUT/SQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[2]} {-color Gold} {/lsq_tb/DUT/SQ_array[2].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[2].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[1]} {-color Gold} {/lsq_tb/DUT/SQ_array[0]} {-color Gold}} /lsq_tb/DUT/SQ_array
+add wave -noupdate -expand -group {Internal Signals} -color Gold /lsq_tb/DUT/next_SQ_array
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/SQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/next_SQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/SQ_tail_ptr
@@ -336,7 +336,7 @@ add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_restart_miss
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_restart_dcache_inv_valid
 add wave -noupdate -expand -group {Internal Signals} /lsq_tb/DUT/LQ_restart_dcache_inv_ROB_index
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {30800 ps} 0}
+WaveRestoreCursors {{Cursor 1} {36200 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 300
 configure wave -valuecolwidth 100
@@ -352,4 +352,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {57100 ps}
+WaveRestoreZoom {0 ps} {94 ns}
