@@ -1320,7 +1320,7 @@ module lsq (
     ////////////////////
 
     // array
-    LQ_entry_t [LOG_LQ_DEPTH-1:0] LQ_array, next_LQ_array;
+    LQ_entry_t [LQ_DEPTH-1:0] LQ_array, next_LQ_array;
 
     // array pointers
     typedef struct packed {
@@ -1413,7 +1413,7 @@ module lsq (
     ////////////////////
 
     // array
-    SQ_entry_t [LOG_SQ_DEPTH-1:0] SQ_array, next_SQ_array;
+    SQ_entry_t [SQ_DEPTH-1:0] SQ_array, next_SQ_array;
 
     // array pointers
     typedef struct packed {
