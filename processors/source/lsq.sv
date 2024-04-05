@@ -904,6 +904,7 @@ module lsq (
     logic LQ_operand_task_linked;
     logic LQ_operand_task_conditional;
     logic LQ_operand_task_source_ready;
+    phys_reg_tag_t LQ_operand_task_source_phys_reg_tag;
     daddr_t LQ_operand_task_imm14;
     LQ_index_t LQ_operand_task_LQ_index;
     ROB_index_t LQ_operand_task_ROB_index;
@@ -1238,6 +1239,7 @@ module lsq (
         LQ_operand_task_linked = (dispatch_unit_LQ_task_struct.op == LQ_LL);
         LQ_operand_task_conditional = (dispatch_unit_LQ_task_struct.op == LQ_SC);
         LQ_operand_task_source_ready = dispatch_unit_LQ_task_struct.source.ready;
+        LQ_operand_task_source_phys_reg_tag = dispatch_unit_LQ_task_struct.source.phys_reg_tag;
         LQ_operand_task_imm14 = dispatch_unit_LQ_task_struct.imm14;
         LQ_operand_task_LQ_index = LQ_tail_ptr.index;
         LQ_operand_task_ROB_index = dispatch_unit_LQ_task_struct.ROB_index;
@@ -1251,6 +1253,7 @@ module lsq (
             next_LQ_reg_read_stage_linked = LQ_operand_task_linked;
             next_LQ_reg_read_stage_conditional = LQ_operand_task_conditional;
             next_LQ_reg_read_stage_source_ready = LQ_operand_task_source_ready;
+            next_LQ_reg_read_stage_source_phys_reg_tag = LQ_operand_task_source_phys_reg_tag;
             next_LQ_reg_read_stage_imm14 = LQ_operand_task_imm14;
             next_LQ_reg_read_stage_LQ_index = LQ_operand_task_LQ_index;
             next_LQ_reg_read_stage_ROB_index = LQ_operand_task_ROB_index;
@@ -1823,6 +1826,12 @@ module lsq (
 
             // increment tail
             next_LQ_tail_ptr = LQ_tail_ptr + LQ_ptr_t'(1);
+
+            // assert dispatch unit not asserting when shouldn't:
+            if (dispatch_unit_LQ_full) begin
+                $display("lsq: ERROR: dispatch unit enQing task when LQ busy");
+                central_LSQ_DUT_error = 1'b1;
+            end
         end
 
         ////////////////////////
@@ -2056,20 +2065,21 @@ module lsq (
             end
         end
 
-        // otherwise if invalid, increment search pointer if not empty
-        else if (~LQ_empty) begin
+        // otherwise if invalid, not tail, increment search pointer
+        else if (LQ_SQ_search_ptr != LQ_tail_ptr) begin
             next_LQ_SQ_search_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);
         end 
 
-        // otherwise, invalid, LQ empty, so hold search pointer (should == head == tail)
-        else begin
-            next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
+        // // otherwise, invalid, LQ empty, so hold search pointer (should == head == tail)
+        // else begin
+        //     next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
 
-            if (LQ_SQ_search_ptr != LQ_head_ptr) begin
-                $display("lsq: Central LSQ: ERROR: LQ empty but LQ_SQ_search_ptr != LQ_head_ptr");
-                central_LSQ_DUT_error = 1'b1;
-            end
-        end
+        //     if (LQ_SQ_search_ptr != LQ_head_ptr) begin
+        //         $display("lsq: Central LSQ: ERROR: LQ empty but LQ_SQ_search_ptr != LQ_head_ptr");
+        //         central_LSQ_DUT_error = 1'b1;
+        //     end
+        // end
+            // just don't want LQ_SQ_search_ptr to pass tail
 
         // try to service request with CAM search
         SQ_search_CAM_ambiguous = 1'b0;
@@ -2177,6 +2187,12 @@ module lsq (
             // naively update array entry saying dcache loaded
                 // may have been recently killed
             next_LQ_array[dcache_read_resp_LQ_index].dcache_loaded = 1'b1;
+
+            // error if already loaded 
+            if (LQ_array[dcache_read_resp_LQ_index].dcache_loaded) begin
+                $display("lsq: ERROR: d$ read resp when already d$ loaded");
+                central_LSQ_DUT_error = 1'b1;
+            end
         end
 
         // SQ search resp array updates
@@ -2185,6 +2201,12 @@ module lsq (
             // naively update array entry saying SQ searched and SQ was loaded if it was present
             next_LQ_array[LQ_SQ_search_ptr.index].SQ_searched = 1'b1;
             next_LQ_array[LQ_SQ_search_ptr.index].SQ_loaded = SQ_search_resp_present;
+
+            // error if already SQ searched
+            if (LQ_array[dcache_read_resp_LQ_index].SQ_searched) begin
+                $display("lsq: ERROR: SQ search resp when already SQ searched");
+                central_LSQ_DUT_error = 1'b1;
+            end
         end
 
         //////////////////////
@@ -2323,7 +2345,7 @@ module lsq (
             end
 
             // otherwise, if SQ search present, broadcast SQ value, kill d$ read
-            if (SQ_search_resp_present) begin
+            else if (SQ_search_resp_present) begin
 
                 // valid complete bus broadcast from SQ
                 this_complete_bus_tag_valid = 1'b1;
