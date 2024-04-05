@@ -1,0 +1,23 @@
+ROB_index
+19: LW r26->p26/p48, 0x9D4(r19->p41)         {6'b100011, 5'd19, 5'd26, 16'h9d4}
+23: SW r3->p3, 0x10D(r13->p3)                {6'b101011, 5'd13, 5'd3, 16'h10d}
+
+03: LL r0->p0/-, 0x7E4(r30->p34)             {6'b110000, 5'd30, 5'd0, 16'h7e4}
+04: SC r0->p0/-, 0x7E8(r30->p34)             {6'b111000, 5'd30, 5'd0, 16'h7e8}
+
+05: LL r1->p32/p44, 0x36D0(r25->p25)         {6'b110000, 5'd25, 5'd1, 16'h36d0}
+06: LL r2->p33/p45, 0x005C(r1->p44)          {6'b110000, 5'd1, 5'd2, 16'h005c}
+07: SC r2->p45/p46, 0x1234(r2->p45)          {6'b111000, 5'd2, 5'd2, 16'h1234}
+08: SC r4->p4/p47, 0x3210(r3->p3)            {6'b111000, 5'd3, 5'd4, 16'h3210}
+
+--: 
+    - offset addr is 14-bit word offset
+
+00: LW p33, 0x001(p1 (0x4)) (LQ0, ready, d$ hit, search after d$)
+01: LW p34, 0x002(p2 (0x8)) (LQ1, ready reg read fail, d$ miss, search before d$)
+02: LW p35, 0x003(p3 (0xC)) (LQ2, ready next, d$ miss, search before d$)
+03: LW p36, 0x004(p4 (0x10)) (LQ3, not ready, d$ miss, search before d$)
+04: LW p37, 0x005(p5 (0x14)) (LQ0, not ready, d$ miss, search before d$)
+05: LW p38, 0x006(p6 (0x18)) (LQ1, ready, d$ hit, search after d$)
+06: LW p39, 0x007(p7 (0x1C))
+07: LW p40, 0x008(p8 (0x20))
