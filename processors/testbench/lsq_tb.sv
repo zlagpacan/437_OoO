@@ -4242,7 +4242,7 @@ module lsq_tb ();
 			" | 		operand update: nop", "\n\t\t",
 			" | \n\t\t",
 			" | 	LQ entries:", "\n\t\t",
-			" | 		0: 00: nop", "\n\t\t",
+			" | 		0: nop", "\n\t\t",
 			" | 		1: nop <- tail, SQ search, head", "\n\t\t",
 			" | 		2: nop", "\n\t\t",
 			" | 		3: nop", "\n\t\t",
@@ -4563,7 +4563,7 @@ module lsq_tb ();
 			" | \n\t\t",
 			" | 	LQ entries:", "\n\t\t",
 			" | 		0: (i) nop", "\n\t\t",
-			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
+			" | 		1: (n) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
 			" | 		2: (i) nop <- tail", "\n\t\t",
 			" | 		3: (i) nop", "\n\t\t",
 			" | \n\t\t",
@@ -4883,7 +4883,7 @@ module lsq_tb ();
 			" | \n\t\t",
 			" | 	LQ entries:", "\n\t\t",
 			" | 		0: (i) nop", "\n\t\t",
-			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
+			" | 		1: (n) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
 			" | 		2: (i) nop <- tail", "\n\t\t",
 			" | 		3: (i) nop", "\n\t\t",
 			" | \n\t\t",
@@ -4979,7 +4979,7 @@ module lsq_tb ();
 	    // input phys_reg_tag_t LQ_read_req_tag,
 	    // output logic LQ_read_req_serviced,
 		tb_LQ_reg_read_req_serviced = 1'b1;
-		tb_LQ_reg_read_bus_0_data = 32'h2;
+		tb_LQ_reg_read_bus_0_data = 32'h8;
 	    // // SQ read req
 	    // input logic SQ_read_req_valid,
 	    // input phys_reg_tag_t SQ_read_req_0_tag,
@@ -5172,6 +5172,2566 @@ module lsq_tb ();
 		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
 		expected_dcache_read_kill_valid_1 = 1'b0;
 		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(1);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: 03: LW p36, 0x004(p4 (0x10)) (LQ3, not ready, d$ miss, search before d$)", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: p3 complete tag", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: 02: LW p35, 0x003(p3 (0xC)) (success)", "\n\t\t",
+			" | 		addr calc: 01: LW p34, 0x002(p2 (0x8))", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (i) nop", "\n\t\t",
+			" | 		1: (n) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
+			" | 		2: (n) 02: LW p35, 0x003(p3 (0xC))", "\n\t\t",
+			" | 		3: (i) nop <- tail", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b1;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(3);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h2;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b0;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(0);
+		tb_dcache_read_resp_data = 32'h0;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b1;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(3);
+		tb_complete_bus_0_data = 32'h0;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		expected_dispatch_unit_LQ_full = 1'b0;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(3);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(34);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(1);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b0;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(1);
+		expected_dcache_read_req_addr = 14'h2;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(1);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: p3 complete data", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: 03: LW p36, 0x004(p4 (0x10)) (not ready)", "\n\t\t",
+			" | 		addr calc: 02: LW p35, 0x003(p3 (0xC))", "\n\t\t",
+			" | 		operand update: 01: LW p34, 0x002(p2 (0x8))", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (i) <- tail", "\n\t\t",
+			" | 		1: (n) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
+			" | 		2: (n) 02: LW p35, 0x003(p3 (0xC))", "\n\t\t",
+			" | 		3: (n) 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b0;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(3);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h2;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b0;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(0);
+		tb_dcache_read_resp_data = 32'h0;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(3);
+		tb_complete_bus_0_data = 32'hC;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		expected_dispatch_unit_LQ_full = 1'b1;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(4);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(34);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(1);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b1;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(1);
+		expected_dcache_read_req_addr = 14'h4;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(1);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: 04: LW p37, 0x005(p5 (0x14)) (LQ0, ready, d$ miss, search before d$)", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: p4 complete tag", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: 03: LW p36, 0x004(p4 (0x10)) (success)", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: 02: LW p35, 0x003(p3 (0xC))", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (i) <- tail", "\n\t\t",
+			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- SQ search, head", "\n\t\t",
+			" | 		2: (n) 02: LW p35, 0x003(p3 (0xC))", "\n\t\t",
+			" | 		3: (n) 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b1;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(5);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(37);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h5;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(4);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h2;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b0;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(0);
+		tb_dcache_read_resp_data = 32'h0;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b1;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(4);
+		tb_complete_bus_0_data = 32'hC;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		expected_dispatch_unit_LQ_full = 1'b0;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(4);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(34);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(1);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b1;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(2);
+		expected_dcache_read_req_addr = 14'h6;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(1);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: p4 complete data", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: 04: LW p37, 0x005(p5 (0x14)) (read success)", "\n\t\t",
+			" | 		addr calc: 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (n) 04: LW p37, 0x005(p5 (0x14))", "\n\t\t",
+			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- head, tail", "\n\t\t",
+			" | 		2: (r) 02: LW p35, 0x003(p3 (0xC)) <- SQ search", "\n\t\t",
+			" | 		3: (n) 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b0;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(4);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b1;
+		tb_LQ_reg_read_bus_0_data = 32'h14;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b0;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(0);
+		tb_dcache_read_resp_data = 32'h0;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(4);
+		tb_complete_bus_0_data = 32'h10;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		expected_dispatch_unit_LQ_full = 1'b1;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b1;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(5);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(34);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(1);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b0;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(3);
+		expected_dcache_read_req_addr = 14'h4;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(1);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity:", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: 04: LW p37, 0x005(p5 (0x14)) (read success)", "\n\t\t",
+			" | 		operand update: 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (n) 04: LW p37, 0x005(p5 (0x14))", "\n\t\t",
+			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- head, tail", "\n\t\t",
+			" | 		2: (r) 02: LW p35, 0x003(p3 (0xC)) <- SQ search", "\n\t\t",
+			" | 		3: (n) 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b0;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(4);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h14;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b0;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(0);
+		tb_dcache_read_resp_data = 32'h0;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(4);
+		tb_complete_bus_0_data = 32'h10;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		expected_dispatch_unit_LQ_full = 1'b1;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(5);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b0;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(35);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(2);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b1;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(3);
+		expected_dcache_read_req_addr = 14'h8;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(2);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: LQ3 d$ resp, 03 tag", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: 04: LW p37, 0x005(p5 (0x14))", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (n) 04: LW p37, 0x005(p5 (0x14))", "\n\t\t",
+			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- head, tail", "\n\t\t",
+			" | 		2: (r) 02: LW p35, 0x003(p3 (0xC)) ", "\n\t\t",
+			" | 		3: (r) 03: LW p36, 0x004(p4 (0x10)) <- SQ search (req)", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b0;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(4);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h14;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b1;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(3);
+		tb_dcache_read_resp_data = 32'h00080008;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(4);
+		tb_complete_bus_0_data = 32'h10;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		expected_dispatch_unit_LQ_full = 1'b1;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(5);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b1;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(36);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(3);
+		expected_this_complete_bus_data_valid = 1'b0;
+		expected_this_complete_bus_data = 32'h0;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b1;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(0);
+		expected_dcache_read_req_addr = 14'ha;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(2);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: LQ1 d$ resp, 01 tag, 03 data", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (r) 04: LW p37, 0x005(p5 (0x14))", "\n\t\t",
+			" | 		1: (r) 01: LW p34, 0x002(p2 (0x8)) <- head, tail", "\n\t\t",
+			" | 		2: (r) 02: LW p35, 0x003(p3 (0xC)) ", "\n\t\t",
+			" | 		3: (c) 03: LW p36, 0x004(p4 (0x10)) <- SQ search (resp)", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b0;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(4);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b0;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(0);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h14;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b1;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(1);
+		tb_dcache_read_resp_data = 32'h00040004;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(4);
+		tb_complete_bus_0_data = 32'h10;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		expected_dispatch_unit_LQ_full = 1'b1;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(5);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b1;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(34);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(1);
+		expected_this_complete_bus_data_valid = 1'b1;
+		expected_this_complete_bus_data = 32'h00080008;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b0;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(0);
+		expected_dcache_read_req_addr = 14'ha;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(2);
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+	    // halt interface:
+	    //      - halt
+		expected_dcache_halt = 1'b0;
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+	    // complete bus 1 (ALU 1)
+	    // complete bus 2 (LQ)
+
+		check_outputs();
+
+		@(posedge CLK);
+
+		// inputs
+		sub_test_case = {"\n\t\t",
+			" T ", "\n\t\t",
+			" | dispatch: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	external activity: LQ1 retire, LQ2 d$ resp, 02 tag, 01 data", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	LQ entries:", "\n\t\t",
+			" | 		0: (r) 04: LW p37, 0x005(p5 (0x14)) <- SQ search (req)", "\n\t\t",
+			" | 		1: (c) 01: LW p34, 0x002(p2 (0x8)) <- head, tail", "\n\t\t",
+			" | 		2: (r) 02: LW p35, 0x003(p3 (0xC)) ", "\n\t\t",
+			" | 		3: (c) 03: LW p36, 0x004(p4 (0x10))", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ operand pipeline:", "\n\t\t",
+			" | 		reg read: nop", "\n\t\t",
+			" | 		addr calc: nop", "\n\t\t",
+			" | 		operand update: nop", "\n\t\t",
+			" | \n\t\t",
+			" | 	SQ entries:", "\n\t\t",
+			" | 		0: (i) nop <- head, tail", "\n\t\t",
+			" | 		1: (i) nop", "\n\t\t",
+			" | 		2: (i) nop", "\n\t\t",
+			" | 		3: (i) nop", "\n\t\t",
+			" L", "\n\t\t"
+		};
+		$display("\t- sub_test: %s", sub_test_case);
+
+		// reset
+		nRST = 1'b1;
+	    // DUT error
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		tb_dispatch_unit_LQ_task_valid = 1'b0;
+		tb_dispatch_unit_LQ_task_struct.op = LQ_LW;
+        tb_dispatch_unit_LQ_task_struct.source.needed = 1'b1;
+        tb_dispatch_unit_LQ_task_struct.source.ready = 1'b0;
+        tb_dispatch_unit_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(4);
+        tb_dispatch_unit_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
+        tb_dispatch_unit_LQ_task_struct.imm14 = 14'h4;
+        tb_dispatch_unit_LQ_task_struct.ROB_index = ROB_index_t'(4);
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		tb_dispatch_unit_SQ_task_valid = 1'b0;
+        tb_dispatch_unit_SQ_task_struct.op = SQ_SW;
+		tb_dispatch_unit_SQ_task_struct.source_0.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_0.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.source_1.needed = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
+        tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
+        tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
+        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+		tb_kill_bus_valid = 1'b0;
+		tb_kill_bus_ROB_index = ROB_index_t'(0);
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+		tb_core_control_halt = 1'b0;
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		tb_ROB_LQ_retire_valid = 1'b1;
+		tb_ROB_LQ_retire_ROB_index = ROB_index_t'(1);
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		tb_ROB_SQ_retire_valid = 1'b0;
+		tb_ROB_SQ_retire_ROB_index = ROB_index_t'(0);
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		tb_LQ_reg_read_req_serviced = 1'b0;
+		tb_LQ_reg_read_bus_0_data = 32'h14;
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		tb_SQ_reg_read_req_serviced = 1'b0;
+		tb_SQ_reg_read_bus_0_data = 32'h0;
+		tb_SQ_reg_read_bus_1_data = 32'h0;
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_read_req_blocked = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+		tb_dcache_read_resp_valid = 1'b1;
+		tb_dcache_read_resp_LQ_index = LQ_index_t'(2);
+		tb_dcache_read_resp_data = 32'h00060006;
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		tb_dcache_write_req_blocked = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+	    // invalidation interface:
+	    //      - valid
+	    //      - inv address
+		tb_dcache_inv_valid = 1'b0;
+		tb_dcache_inv_block_addr = 13'h0;
+	    // halt interface:
+	    //      - halt
+	    ///////////////////
+	    // shared buses: //
+	    ///////////////////
+	    // complete bus 0 (ALU 0)
+		tb_complete_bus_0_tag_valid = 1'b0;
+		tb_complete_bus_0_tag = phys_reg_tag_t'(4);
+		tb_complete_bus_0_data = 32'h10;
+	    // complete bus 1 (ALU 1)
+		tb_complete_bus_1_tag_valid = 1'b0;
+		tb_complete_bus_1_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_1_data = 32'h0;
+	    // complete bus 2 (LQ)
+		tb_complete_bus_2_tag_valid = 1'b0;
+		tb_complete_bus_2_tag = phys_reg_tag_t'(0);
+		tb_complete_bus_2_data = 32'h0;
+
+		@(negedge CLK);
+
+		// outputs:
+
+	    // DUT error
+		expected_DUT_error = 1'b0;
+	    ////////////////////
+	    // dispatch unit: //
+	    ////////////////////
+	    // // LQ interface
+	    // input LQ_index_t dispatch_unit_LQ_tail_index,
+	    // input logic dispatch_unit_LQ_full,
+	    // output logic dispatch_unit_LQ_task_valid,
+	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
+		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		expected_dispatch_unit_LQ_full = 1'b1;
+	    // // SQ interface
+	    // input SQ_index_t dispatch_unit_SQ_tail_index,
+	    // input logic dispatch_unit_SQ_full,
+	    // output logic dispatch_unit_SQ_task_valid,
+	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
+		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		expected_dispatch_unit_SQ_full = 1'b0;
+	    //////////
+	    // ROB: //
+	    //////////
+	    // // kill bus interface
+	    //     // send kill command to execution units
+	    // output logic kill_bus_valid,
+	    // output ROB_index_t kill_bus_ROB_index,
+	    // // core control interface
+	    // output logic core_control_restore_flush,
+	    // output logic core_control_revert_stall,
+	    // output logic core_control_halt_assert,
+	    //     // for when halt instr retires
+	    // // LQ interface
+	    // // restart info
+	    // input logic ROB_LQ_restart_valid,
+	    // input ROB_index_t ROB_LQ_restart_ROB_index,
+	    // // retire
+	    // output logic ROB_LQ_retire_valid,
+	    // output ROB_index_t ROB_LQ_retire_ROB_index,
+	    // input logic ROB_LQ_retire_blocked,
+		expected_ROB_LQ_restart_valid = 1'b0;
+		expected_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+		expected_ROB_LQ_retire_blocked = 1'b0;
+	    // // SQ interface
+	    // // complete
+	    // input logic ROB_SQ_complete_valid,
+	    // input ROB_index_t ROB_SQ_complete_ROB_index,
+	    // // retire
+	    // output logic ROB_SQ_retire_valid,
+	    // output ROB_index_t ROB_SQ_retire_ROB_index,
+	    // input logic ROB_SQ_retire_blocked,
+		expected_ROB_SQ_complete_valid = 1'b0;
+		expected_ROB_SQ_complete_ROB_index = ROB_index_t'(0);
+		expected_ROB_SQ_retire_blocked = 1'b0;
+	    ////////////////////
+	    // phys reg file: //
+	    ////////////////////
+	    // // LQ read req
+	    // input logic LQ_read_req_valid,
+	    // input phys_reg_tag_t LQ_read_req_tag,
+	    // output logic LQ_read_req_serviced,
+		expected_LQ_reg_read_req_valid = 1'b0;
+		expected_LQ_reg_read_req_tag = phys_reg_tag_t'(5);
+	    // // SQ read req
+	    // input logic SQ_read_req_valid,
+	    // input phys_reg_tag_t SQ_read_req_0_tag,
+	    // input phys_reg_tag_t SQ_read_req_1_tag,
+	    // output logic SQ_read_req_serviced,
+		expected_SQ_reg_read_req_valid = 1'b0;
+		expected_SQ_reg_read_req_0_tag = phys_reg_tag_t'(0);
+		expected_SQ_reg_read_req_1_tag = phys_reg_tag_t'(0);
+	    ///////////////////
+	    // complete bus: //
+	    ///////////////////
+	    // // output side (output to this ALU Pipeline's associated bus)
+	    // output logic this_complete_bus_tag_valid,
+	    // output phys_reg_tag_t this_complete_bus_tag,
+	    // output ROB_index_t this_complete_bus_ROB_index,
+	    // output logic this_complete_bus_data_valid, // only needs to go to reg file
+	    // output word_t this_complete_bus_data
+		expected_this_complete_bus_tag_valid = 1'b1;
+		expected_this_complete_bus_tag = phys_reg_tag_t'(35);
+		expected_this_complete_bus_ROB_index = ROB_index_t'(2);
+		expected_this_complete_bus_data_valid = 1'b1;
+		expected_this_complete_bus_data = 32'h00040004;
+	    /////////////
+	    // dcache: //
+	    /////////////
+	    // read req interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - addr
+	    //      - linked
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_read_req_valid = 1'b0;
+		expected_dcache_read_req_LQ_index = LQ_index_t'(0);
+		expected_dcache_read_req_addr = 14'ha;
+		expected_dcache_read_req_linked = 1'b0;
+		expected_dcache_read_req_conditional = 1'b0;
+	    // read resp interface:
+	    //      - valid
+	    //      - LQ index
+	    //      - read data
+	    // write req interface:
+	    //      - valid
+	    //      - addr
+	    //      - write data
+	    //      - conditional
+	    //      - blocked
+		expected_dcache_write_req_valid = 1'b0;
+		expected_dcache_write_req_addr = 14'h0;
+		expected_dcache_write_req_data = 32'h0;
+		expected_dcache_write_req_conditional = 1'b0;
+	    // read kill interface x2:
+	    //      - valid
+	    //      - LQ index
+		expected_dcache_read_kill_valid_0 = 1'b0;
+		expected_dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+		expected_dcache_read_kill_valid_1 = 1'b0;
+		expected_dcache_read_kill_LQ_index_1 = LQ_index_t'(2);
 	    // invalidation interface:
 	    //      - valid
 	    //      - inv address

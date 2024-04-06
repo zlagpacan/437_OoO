@@ -1751,7 +1751,7 @@ module lsq (
         this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
         this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
         next_this_complete_bus_data_valid = 1'b0;
-        next_this_complete_bus_data = dcache_read_resp_data;
+        next_this_complete_bus_data = SQ_search_resp_data;
 
         /////////////////////////////////
         // LQ dcache invalidation CAM: //
@@ -2193,6 +2193,18 @@ module lsq (
                 $display("lsq: ERROR: d$ read resp when already d$ loaded");
                 central_LSQ_DUT_error = 1'b1;
             end
+
+            // response when invalid
+                // can happen if read req not killed soon enough
+            if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
+                $display("lsq: INFO: d$ read resp on invalid LQ entry");
+            end
+
+            // response when not ready
+                // can happen if read req not killed soon enough
+            if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
+                $display("lsq: INFO: d$ read resp on not ready LQ entry");
+            end
         end
 
         // SQ search resp array updates
@@ -2248,8 +2260,8 @@ module lsq (
 
                     // valid complete bus broadcast from d$
                     this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
                     next_this_complete_bus_data_valid = 1'b1;
                     next_this_complete_bus_data = dcache_read_resp_data;
                 end
@@ -2297,8 +2309,8 @@ module lsq (
 
                     // valid complete bus broadcast from d$
                     this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
                     next_this_complete_bus_data_valid = 1'b1;
                     next_this_complete_bus_data = dcache_read_resp_data;
 
@@ -2319,8 +2331,8 @@ module lsq (
 
                 // valid complete bus broadcast from d$
                 this_complete_bus_tag_valid = 1'b1;
-                this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
                 next_this_complete_bus_data_valid = 1'b1;
                 next_this_complete_bus_data = dcache_read_resp_data;
             end
@@ -2386,9 +2398,9 @@ module lsq (
                 ) begin
 
                     // only restart if this entry grabbed value from d$ load
-                        // NOT SQ loaded, YES d$ loaded
-                            // just d$ loaded only means got d$ response, could have already forwarded val
-                            //  from SQ, so didn't use dcache val
+                        // NOT SQ loaded, YES ready
+                            // don't care if forwarding SQ value
+                            // if ready, means that will take or have taken d$ value, which is now invalid
 
                         // TODO: verify
                             // this behavior may have tricky edge case bugs which don't guarantee SeqC
@@ -2399,7 +2411,7 @@ module lsq (
                                 //  inv Y
                                     // although here, would restart at invalidated LW Y, so
                                     //  LW X would get another try, potentially forward or not from SW X 
-                    if (~LQ_array[i].SQ_loaded & LQ_array[i].dcache_loaded) begin
+                    if (~LQ_array[i].SQ_loaded & LQ_array[i].ready) begin
 
                         // have dcache inv restart
                         LQ_restart_dcache_inv_valid = 1'b1;
@@ -2495,24 +2507,26 @@ module lsq (
             end
         end
 
-        ////////////////////
-        // LQ full logic: //
-        ////////////////////
+        // ////////////////////
+        // // LQ full logic: //
+        // ////////////////////
 
-        // LQ full for dispatch if any of:
-            // LQ full 
-            // LQ reg read busy
-            // d$ req blocked (shouldn't ever happen)
-        dispatch_unit_LQ_full = LQ_full | LQ_reg_read_busy | dcache_read_req_blocked;
+        // // LQ full for dispatch if any of:
+        //     // LQ full 
+        //     // LQ reg read busy
+        //     // d$ req blocked (shouldn't ever happen)
+        // dispatch_unit_LQ_full = LQ_full | LQ_reg_read_busy | dcache_read_req_blocked;
+            // needs to be in separate block
 
-        ////////////////////
-        // SQ full logic: //
-        ////////////////////
+        // ////////////////////
+        // // SQ full logic: //
+        // ////////////////////
 
-        // SQ full for dispatch if any of:
-            // SQ full
-            // SQ reg read busy
-        dispatch_unit_SQ_full = SQ_full | SQ_reg_read_busy;
+        // // SQ full for dispatch if any of:
+        //     // SQ full
+        //     // SQ reg read busy
+        // dispatch_unit_SQ_full = SQ_full | SQ_reg_read_busy;
+            // needs to be in separate block
 
         ///////////////////////
         // full/empty logic: //
@@ -2592,5 +2606,28 @@ module lsq (
         dispatch_unit_SQ_tail_index = SQ_tail_ptr.index;
 
     end
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // assigns:
+        // these had to be pulled out of main always_comb else would not get correct assignment order
+
+    ////////////////////
+    // LQ full logic: //
+    ////////////////////
+
+    // LQ full for dispatch if any of:
+        // LQ full 
+        // LQ reg read busy
+        // d$ req blocked (shouldn't ever happen)
+    assign dispatch_unit_LQ_full = LQ_full | LQ_reg_read_busy | dcache_read_req_blocked;
+
+    ////////////////////
+    // SQ full logic: //
+    ////////////////////
+
+    // SQ full for dispatch if any of:
+        // SQ full
+        // SQ reg read busy
+    assign dispatch_unit_SQ_full = SQ_full | SQ_reg_read_busy;
 
 endmodule
