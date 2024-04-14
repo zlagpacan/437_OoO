@@ -280,10 +280,10 @@ module lsq (
         // 0: datapath ROB index kill load, kill dcache read req
         // 1: SQ forward, kill unneeded dcache read req
 
-    output logic dcache_read_kill_valid_0,
-    output LQ_index_t dcache_read_kill_LQ_index_0,
-    output logic dcache_read_kill_valid_1,
-    output LQ_index_t dcache_read_kill_LQ_index_1,
+    output logic dcache_read_kill_0_valid,
+    output LQ_index_t dcache_read_kill_0_LQ_index,
+    output logic dcache_read_kill_1_valid,
+    output LQ_index_t dcache_read_kill_1_LQ_index,
 
     // invalidation interface:
     //      - valid
@@ -352,6 +352,35 @@ module lsq (
     // SQ Operand Pipeline: 
 
     logic SQ_reg_read_busy;
+
+    // array pointers
+    typedef struct packed {
+        logic msb;
+        logic [LOG_SQ_DEPTH-1:0] index;
+    } SQ_ptr_t;
+    // head
+    SQ_ptr_t SQ_head_ptr;
+    SQ_ptr_t next_SQ_head_ptr;
+    // tail
+    SQ_ptr_t SQ_tail_ptr;
+    SQ_ptr_t next_SQ_tail_ptr;
+        // defined up here so SQ operand pipeline can use
+
+    // array pointers
+    typedef struct packed {
+        logic msb;
+        logic [LOG_LQ_DEPTH-1:0] index;
+    } LQ_ptr_t;
+    // head
+    LQ_ptr_t LQ_head_ptr;
+    LQ_ptr_t next_LQ_head_ptr;
+    // tail
+    LQ_ptr_t LQ_tail_ptr;
+    LQ_ptr_t next_LQ_tail_ptr;
+    // SQ search ptr
+    LQ_ptr_t LQ_SQ_search_ptr;
+    LQ_ptr_t next_LQ_SQ_search_ptr;
+        // defined up here so LQ operand pipeline can use
 
     ///////////////////////////////////////////////////////
     // Dispatch Stage -> | Latch | -> SQ Reg Read Stage: 
@@ -868,7 +897,7 @@ module lsq (
 
         // operand 1 complete bus data mux
             // for forwarded write data
-        casez (SQ_addr_calc_stage_operand_0_bus_select) 
+        casez (SQ_addr_calc_stage_operand_1_bus_select) 
             2'd0:   SQ_addr_calc_stage_forwarded_write_data = complete_bus_0_data;
             2'd1:   SQ_addr_calc_stage_forwarded_write_data = complete_bus_1_data;
             2'd2:   SQ_addr_calc_stage_forwarded_write_data = complete_bus_2_data;
@@ -1325,20 +1354,21 @@ module lsq (
     // array
     LQ_entry_t [LQ_DEPTH-1:0] LQ_array, next_LQ_array;
 
-    // array pointers
-    typedef struct packed {
-        logic msb;
-        logic [LOG_LQ_DEPTH-1:0] index;
-    } LQ_ptr_t;
-    // head
-    LQ_ptr_t LQ_head_ptr;
-    LQ_ptr_t next_LQ_head_ptr;
-    // tail
-    LQ_ptr_t LQ_tail_ptr;
-    LQ_ptr_t next_LQ_tail_ptr;
-    // SQ search ptr
-    LQ_ptr_t LQ_SQ_search_ptr;
-    LQ_ptr_t next_LQ_SQ_search_ptr;
+    // // array pointers
+    // typedef struct packed {
+    //     logic msb;
+    //     logic [LOG_LQ_DEPTH-1:0] index;
+    // } LQ_ptr_t;
+    // // head
+    // LQ_ptr_t LQ_head_ptr;
+    // LQ_ptr_t next_LQ_head_ptr;
+    // // tail
+    // LQ_ptr_t LQ_tail_ptr;
+    // LQ_ptr_t next_LQ_tail_ptr;
+    // // SQ search ptr
+    // LQ_ptr_t LQ_SQ_search_ptr;
+    // LQ_ptr_t next_LQ_SQ_search_ptr;
+        // have to move above so can be used by LQ operand pipeline
 
     // seq:
     always_ff @ (posedge CLK, negedge nRST) begin
@@ -1418,17 +1448,18 @@ module lsq (
     // array
     SQ_entry_t [SQ_DEPTH-1:0] SQ_array, next_SQ_array;
 
-    // array pointers
-    typedef struct packed {
-        logic msb;
-        logic [LOG_SQ_DEPTH-1:0] index;
-    } SQ_ptr_t;
-    // head
-    SQ_ptr_t SQ_head_ptr;
-    SQ_ptr_t next_SQ_head_ptr;
-    // tail
-    SQ_ptr_t SQ_tail_ptr;
-    SQ_ptr_t next_SQ_tail_ptr;
+    // // array pointers
+    // typedef struct packed {
+    //     logic msb;
+    //     logic [LOG_SQ_DEPTH-1:0] index;
+    // } SQ_ptr_t;
+    // // head
+    // SQ_ptr_t SQ_head_ptr;
+    // SQ_ptr_t next_SQ_head_ptr;
+    // // tail
+    // SQ_ptr_t SQ_tail_ptr;
+    // SQ_ptr_t next_SQ_tail_ptr;
+        // needs to be defined above so can be used in SQ operand pipeline
 
     // seq:
     always_ff @ (posedge CLK, negedge nRST) begin
@@ -1887,8 +1918,8 @@ module lsq (
         ////////////////////////////
 
         // default: no datapath kill sent to d$
-        dcache_read_kill_valid_0 = 1'b0;
-        dcache_read_kill_LQ_index_0 = LQ_index_t'(0);
+        dcache_read_kill_0_valid = 1'b0;
+        dcache_read_kill_0_LQ_index = LQ_index_t'(0);
 
         // CAM search for ROB index's for kill ROB index
         if (kill_bus_valid) begin
@@ -1901,8 +1932,8 @@ module lsq (
                     next_LQ_array[i].valid = 1'b0;
 
                     // send kill to d$
-                    dcache_read_kill_valid_0 = 1'b1;
-                    dcache_read_kill_LQ_index_0 = LQ_index_t'(i);
+                    dcache_read_kill_0_valid = 1'b1;
+                    dcache_read_kill_0_LQ_index = LQ_index_t'(i);
                 end
             end
         end
@@ -2018,10 +2049,10 @@ module lsq (
         /////////////
 
         // deQ from head if SQ not empty, entry (going to be) invalid
-        if (~SQ_empty & ~next_LQ_array[SQ_head_ptr.index].valid) begin
+        if (~SQ_empty & ~next_SQ_array[SQ_head_ptr.index].valid) begin
 
             // increment head
-            next_LQ_head_ptr = LQ_head_ptr + LQ_ptr_t'(1);
+            next_SQ_head_ptr = SQ_head_ptr + SQ_ptr_t'(1);
         end
 
         ////////////////////
@@ -2080,6 +2111,298 @@ module lsq (
         //     end
         // end
             // just don't want LQ_SQ_search_ptr to pass tail
+
+        // // try to service request with CAM search
+        // SQ_search_CAM_ambiguous = 1'b0;
+        // SQ_search_CAM_present = 1'b0;
+        // SQ_search_CAM_youngest_older_index = SQ_head_ptr.index;
+        //     // safe init value should be head, which is oldest possible instr
+        //     // don't init this so CAM is simplified?
+        //         // if don't init, need way to find max without comparing to this signal
+        // SQ_search_CAM_youngest_older_data = 32'h0;
+        //     // don't init this so CAM is simplified?
+
+        // if (SQ_search_req_valid) begin
+
+        //     // CAM search through SQ
+        //     for (int i = 0; i < SQ_DEPTH; i++) begin
+
+        //         // check for valid and older
+        //             // older -> less than
+        //             // subtract from current head
+        //             // compare against SQ tail when LQ was dispatched
+        //         if (
+        //             SQ_array[i].valid
+        //             & 
+        //             (
+        //                 SQ_index_t'(i) - SQ_head_ptr.index
+        //                 <
+        //                 SQ_search_req_SQ_index - SQ_head_ptr.index
+        //             )
+        //         ) begin
+
+        //             // potential optimization in here: use next ready and next write addr
+        //                 // will likely be very costly since CAM checking non-reg outputs
+        //                     // next values will be results of combinational logic muxing from 
+        //                     //  SQ array or SQ operand update stage
+        //                     // CAM must wait on this combination delay
+
+        //             // check amgiguous addr (not ready)
+        //             if (~SQ_array[i].ready) begin
+
+        //                 // search is ambiguous
+        //                 SQ_search_CAM_ambiguous = 1'b1;
+        //             end
+
+        //             // otherwise, addr ready, check addr match
+        //             else if (
+        //                 SQ_search_req_read_addr
+        //                 ==
+        //                 SQ_array[i].write_addr
+        //             ) begin
+
+        //                 // forwarding store is present
+        //                 SQ_search_CAM_present = 1'b1;
+
+        //                 // check new youngest
+        //                     // younger -> greater than
+        //                 if (
+        //                     SQ_index_t'(i)
+        //                     >
+        //                     SQ_search_CAM_youngest_older_index
+        //                 ) begin
+
+        //                     // update youngest
+        //                     SQ_search_CAM_youngest_older_index = SQ_index_t'(i);
+
+        //                     // update youngest data
+        //                     SQ_search_CAM_youngest_older_data = SQ_array[i].write_data;
+        //                 end
+        //             end
+        //         end
+        //     end
+
+        //     // check for ambiguous
+        //     if (SQ_search_CAM_ambiguous) begin
+
+        //         // don't give resp
+        //         next_SQ_search_resp_valid = 1'b0;
+        //     end
+
+        //     // otherwise, have successful search
+        //     else begin
+
+        //         // give resp valid
+        //         next_SQ_search_resp_valid = 1'b1;
+
+        //         // give resp present based on search
+        //         next_SQ_search_resp_present = SQ_search_CAM_present;
+
+        //         // give resp data based on search
+        //         next_SQ_search_resp_data = SQ_search_CAM_youngest_older_data;
+        //     end
+        // end
+
+        //////////////////////////////////////
+        // LQ complete bus broadcast logic: //
+        //////////////////////////////////////
+
+        // LQ array updates are independent of what choose to broadcast
+            // not true, if want to delay SQ search resp, don't think want to provide array updates
+                // no, this should be fine as real conflict is when d$ and SQ search doing same load,
+                //  already have logic handling this conflict (same as if on first cycle of SQ search resp)
+
+        // dcache resp array updates
+        if (dcache_read_resp_valid) begin
+
+            // naively update array entry saying dcache loaded
+                // may have been recently killed
+            next_LQ_array[dcache_read_resp_LQ_index].dcache_loaded = 1'b1;
+
+            // error if already loaded 
+            if (LQ_array[dcache_read_resp_LQ_index].dcache_loaded) begin
+                $display("lsq: ERROR: d$ read resp when already d$ loaded");
+                central_LSQ_DUT_error = 1'b1;
+            end
+
+            // response when invalid
+                // can happen if read req not killed soon enough
+            if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
+                $display("lsq: INFO: d$ read resp on invalid LQ entry");
+            end
+
+            // response when not ready
+                // can happen if read req not killed soon enough
+            if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
+                $display("lsq: INFO: d$ read resp on not ready LQ entry");
+            end
+        end
+
+        // SQ search resp array updates
+        if (SQ_search_resp_valid) begin
+
+            // naively update array entry saying SQ searched and SQ was loaded if it was present
+            next_LQ_array[LQ_SQ_search_ptr.index].SQ_searched = 1'b1;
+            next_LQ_array[LQ_SQ_search_ptr.index].SQ_loaded = SQ_search_resp_present;
+
+            // // error if already SQ searched
+            // if (LQ_array[LQ_SQ_search_ptr.index].SQ_searched) begin
+            //     $display("lsq: ERROR: SQ search resp when already SQ searched");
+            //     central_LSQ_DUT_error = 1'b1;
+            // end
+                // actually, this is okay, if ever get d$ read resp at same time, need to retry SQ search
+        end
+
+        //////////////////////
+        // broadcast logic:
+
+        // default: no missed SQ forward restart
+        LQ_restart_missed_SQ_forward_valid = 1'b0;
+        LQ_restart_missed_SQ_forward_ROB_index = ROB_index_t'(0);
+
+        // default: no SQ forward d$ read kill
+        dcache_read_kill_1_valid = 1'b0;
+        dcache_read_kill_1_LQ_index = LQ_SQ_search_ptr.index;
+        
+        // check for simultaneous valid d$ read resp and SQ search resp
+        if (dcache_read_resp_valid & LQ_array[dcache_read_resp_LQ_index].valid & SQ_search_resp_valid) begin
+
+            // check correspond to same load -> == LQ index
+            if (
+                dcache_read_resp_LQ_index
+                ==
+                LQ_SQ_search_ptr.index
+            ) begin
+
+                // if SQ search present, broadcast SQ value
+                if (SQ_search_resp_present) begin
+
+                    // valid complete bus broadcast from SQ
+                    this_complete_bus_tag_valid = 1'b1;
+                    this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+                    this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                    next_this_complete_bus_data_valid = 1'b1;
+                    next_this_complete_bus_data = SQ_search_resp_data;
+
+                    // no need to kill d$ read
+                end
+
+                // otherwise, broadcast d$ value
+                else begin
+
+                    // valid complete bus broadcast from d$
+                    this_complete_bus_tag_valid = 1'b1;
+                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
+                    next_this_complete_bus_data_valid = 1'b1;
+                    next_this_complete_bus_data = dcache_read_resp_data;
+                end
+            end
+
+            // otherwise, different loads, prioritize dcache read resp
+            else begin
+
+                // check if d$ load already loaded from SQ
+                if (LQ_array[dcache_read_resp_LQ_index].SQ_loaded) begin
+
+                    // can service SQ search resp instead:
+                    
+                    // check for present and d$ loaded
+                        // mis-speculated load, should have taken from SQ
+                    if (
+                        SQ_search_resp_present
+                        &
+                        LQ_array[LQ_SQ_search_ptr.index].dcache_loaded
+                    ) begin
+
+                        // send restart
+                        LQ_restart_missed_SQ_forward_valid = 1'b1;
+                        LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                    end
+
+                    // otherwise, forward value to complete bus broadcast, kill d$ read
+                    else begin
+
+                        // valid complete bus broadcast from SQ
+                        this_complete_bus_tag_valid = 1'b1;
+                        this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+                        this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                        next_this_complete_bus_data_valid = 1'b1;
+                        next_this_complete_bus_data = SQ_search_resp_data;
+
+                        // kill d$ read
+                        dcache_read_kill_1_valid = 1'b1;
+                        dcache_read_kill_1_LQ_index = LQ_SQ_search_ptr.index;
+                    end
+                end
+
+                // otherwise, service d$ load:
+                else begin
+
+                    // valid complete bus broadcast from d$
+                    this_complete_bus_tag_valid = 1'b1;
+                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
+                    next_this_complete_bus_data_valid = 1'b1;
+                    next_this_complete_bus_data = dcache_read_resp_data;
+
+                    // don't move SQ search on
+                    SQ_search_req_valid = 1'b1;
+                    next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
+                end
+            end
+        end
+
+        // otherwise, check for lone valid d$ read resp 
+        else if (dcache_read_resp_valid & LQ_array[dcache_read_resp_LQ_index].valid) begin
+
+            // service d$ load:
+
+            // check d$ load entry valid and NOT already loaded from SQ
+            if (~LQ_array[dcache_read_resp_LQ_index].SQ_loaded) begin
+
+                // valid complete bus broadcast from d$
+                this_complete_bus_tag_valid = 1'b1;
+                this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
+                next_this_complete_bus_data_valid = 1'b1;
+                next_this_complete_bus_data = dcache_read_resp_data;
+            end
+        end
+
+        // otherwise, check for lone SQ search resp
+        else if (SQ_search_resp_valid) begin
+
+            // service SQ search load:
+
+            // check for present and d$ loaded
+                // mis-speculated load, should have taken from SQ
+            if (
+                SQ_search_resp_present
+                &
+                LQ_array[LQ_SQ_search_ptr.index].dcache_loaded
+            ) begin
+
+                // send restart
+                LQ_restart_missed_SQ_forward_valid = 1'b1;
+                LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+            end
+
+            // otherwise, if SQ search present, broadcast SQ value, kill d$ read
+            else if (SQ_search_resp_present) begin
+
+                // valid complete bus broadcast from SQ
+                this_complete_bus_tag_valid = 1'b1;
+                this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+                this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                next_this_complete_bus_data_valid = 1'b1;
+                next_this_complete_bus_data = SQ_search_resp_data;
+
+                // kill d$ read
+                dcache_read_kill_1_valid = 1'b1;
+                dcache_read_kill_1_LQ_index = LQ_SQ_search_ptr.index;
+            end
+        end
 
         // try to service request with CAM search
         SQ_search_CAM_ambiguous = 1'b0;
@@ -2172,206 +2495,6 @@ module lsq (
             end
         end
 
-        //////////////////////////////////////
-        // LQ complete bus broadcast logic: //
-        //////////////////////////////////////
-
-        // LQ array updates are independent of what choose to broadcast
-            // not true, if want to delay SQ search resp, don't think want to provide array updates
-                // no, this should be fine as real conflict is when d$ and SQ search doing same load,
-                //  already have logic handling this conflict (same as if on first cycle of SQ search resp)
-
-        // dcache resp array updates
-        if (dcache_read_resp_valid) begin
-
-            // naively update array entry saying dcache loaded
-                // may have been recently killed
-            next_LQ_array[dcache_read_resp_LQ_index].dcache_loaded = 1'b1;
-
-            // error if already loaded 
-            if (LQ_array[dcache_read_resp_LQ_index].dcache_loaded) begin
-                $display("lsq: ERROR: d$ read resp when already d$ loaded");
-                central_LSQ_DUT_error = 1'b1;
-            end
-
-            // response when invalid
-                // can happen if read req not killed soon enough
-            if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
-                $display("lsq: INFO: d$ read resp on invalid LQ entry");
-            end
-
-            // response when not ready
-                // can happen if read req not killed soon enough
-            if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
-                $display("lsq: INFO: d$ read resp on not ready LQ entry");
-            end
-        end
-
-        // SQ search resp array updates
-        if (SQ_search_resp_valid) begin
-
-            // naively update array entry saying SQ searched and SQ was loaded if it was present
-            next_LQ_array[LQ_SQ_search_ptr.index].SQ_searched = 1'b1;
-            next_LQ_array[LQ_SQ_search_ptr.index].SQ_loaded = SQ_search_resp_present;
-
-            // error if already SQ searched
-            if (LQ_array[dcache_read_resp_LQ_index].SQ_searched) begin
-                $display("lsq: ERROR: SQ search resp when already SQ searched");
-                central_LSQ_DUT_error = 1'b1;
-            end
-        end
-
-        //////////////////////
-        // broadcast logic:
-
-        // default: no missed SQ forward restart
-        LQ_restart_missed_SQ_forward_valid = 1'b0;
-        LQ_restart_missed_SQ_forward_ROB_index = ROB_index_t'(0);
-
-        // default: no SQ forward d$ read kill
-        dcache_read_kill_valid_1 = 1'b0;
-        dcache_read_kill_LQ_index_1 = LQ_SQ_search_ptr.index;
-        
-        // check for simultaneous d$ read resp and SQ search resp
-        if (dcache_read_resp_valid & SQ_search_resp_valid) begin
-
-            // check correspond to same load -> == LQ index
-            if (
-                dcache_read_resp_LQ_index
-                ==
-                LQ_SQ_search_ptr.index
-            ) begin
-
-                // if SQ search present, broadcast SQ value
-                if (SQ_search_resp_present) begin
-
-                    // valid complete bus broadcast from SQ
-                    this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                    next_this_complete_bus_data_valid = 1'b1;
-                    next_this_complete_bus_data = SQ_search_resp_data;
-
-                    // no need to kill d$ read
-                end
-
-                // otherwise, broadcast d$ value
-                else begin
-
-                    // valid complete bus broadcast from d$
-                    this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
-                    next_this_complete_bus_data_valid = 1'b1;
-                    next_this_complete_bus_data = dcache_read_resp_data;
-                end
-            end
-
-            // otherwise, different loads, prioritize dcache read resp
-            else begin
-
-                // check if d$ load already loaded from SQ
-                if (LQ_array[dcache_read_resp_LQ_index].SQ_loaded) begin
-
-                    // can service SQ search resp instead:
-                    
-                    // check for present and d$ loaded
-                        // mis-speculated load, should have taken from SQ
-                    if (
-                        SQ_search_resp_present
-                        &
-                        LQ_array[LQ_SQ_search_ptr.index].dcache_loaded
-                    ) begin
-
-                        // send restart
-                        LQ_restart_missed_SQ_forward_valid = 1'b1;
-                        LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                    end
-
-                    // otherwise, forward value to complete bus broadcast, kill d$ read
-                    else begin
-
-                        // valid complete bus broadcast from SQ
-                        this_complete_bus_tag_valid = 1'b1;
-                        this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                        this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                        next_this_complete_bus_data_valid = 1'b1;
-                        next_this_complete_bus_data = SQ_search_resp_data;
-
-                        // kill d$ read
-                        dcache_read_kill_valid_1 = 1'b1;
-                        dcache_read_kill_LQ_index_1 = LQ_SQ_search_ptr.index;
-                    end
-                end
-
-                // otherwise, service d$ load:
-                else begin
-
-                    // valid complete bus broadcast from d$
-                    this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
-                    next_this_complete_bus_data_valid = 1'b1;
-                    next_this_complete_bus_data = dcache_read_resp_data;
-
-                    // don't move SQ search on
-                    SQ_search_req_valid = 1'b1;
-                    next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
-                end
-            end
-        end
-
-        // otherwise, check for lone d$ read resp 
-        else if (dcache_read_resp_valid) begin
-
-            // service d$ load:
-
-            // check d$ load NOT already loaded from SQ
-            if (~LQ_array[dcache_read_resp_LQ_index].SQ_loaded) begin
-
-                // valid complete bus broadcast from d$
-                this_complete_bus_tag_valid = 1'b1;
-                this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
-                this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
-                next_this_complete_bus_data_valid = 1'b1;
-                next_this_complete_bus_data = dcache_read_resp_data;
-            end
-        end
-
-        // otherwise, check for lone SQ search resp
-        else if (SQ_search_resp_valid) begin
-
-            // service SQ search load:
-
-            // check for present and d$ loaded
-                // mis-speculated load, should have taken from SQ
-            if (
-                SQ_search_resp_present
-                &
-                LQ_array[LQ_SQ_search_ptr.index].dcache_loaded
-            ) begin
-
-                // send restart
-                LQ_restart_missed_SQ_forward_valid = 1'b1;
-                LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-            end
-
-            // otherwise, if SQ search present, broadcast SQ value, kill d$ read
-            else if (SQ_search_resp_present) begin
-
-                // valid complete bus broadcast from SQ
-                this_complete_bus_tag_valid = 1'b1;
-                this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                next_this_complete_bus_data_valid = 1'b1;
-                next_this_complete_bus_data = SQ_search_resp_data;
-
-                // kill d$ read
-                dcache_read_kill_valid_1 = 1'b1;
-                dcache_read_kill_LQ_index_1 = LQ_SQ_search_ptr.index;
-            end
-        end
-
         /////////////////////////////////
         // LQ dcache invalidation CAM: //
         /////////////////////////////////
@@ -2398,9 +2521,9 @@ module lsq (
                 ) begin
 
                     // only restart if this entry grabbed value from d$ load
-                        // NOT SQ loaded, YES ready
+                        // NOT SQ loaded, YES dcache loaded
                             // don't care if forwarding SQ value
-                            // if ready, means that will take or have taken d$ value, which is now invalid
+                            // if haven't loaded from dcache yet, means 
 
                         // TODO: verify
                             // this behavior may have tricky edge case bugs which don't guarantee SeqC
@@ -2411,7 +2534,7 @@ module lsq (
                                 //  inv Y
                                     // although here, would restart at invalidated LW Y, so
                                     //  LW X would get another try, potentially forward or not from SW X 
-                    if (~LQ_array[i].SQ_loaded & LQ_array[i].ready) begin
+                    if (~LQ_array[i].SQ_loaded & LQ_array[i].dcache_loaded) begin
 
                         // have dcache inv restart
                         LQ_restart_dcache_inv_valid = 1'b1;
