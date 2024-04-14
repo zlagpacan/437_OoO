@@ -26,3 +26,15 @@ ROB_index
 09: SW p20 (0x100), 0x014(p14 (0x50)) (SQ0, ready/not)
 10: SW p21 (0x108), 0x015(p15 (0x54)) (SQ1, not/ready)
 11: SW p22 (0x110), 0x016(p16 (0x58)) (SQ2, not/not)
+
+12: SW p23 (0x118), 0x017(p17 (0x5C)) (SQ3, ready/ready)
+13: LW p38, 0x018(p6 (0x58)) (LQ1, ready) (d$ read, should've forwarded)
+13: LW p38, 0x018(p6 (0x58)) (LQ1, ready) (forward 0x118)
+    // want to guarantee this will be forwarded the next time
+    // can force the tail to match the lq_sq_search_ptr and invalidate the entry so lq_sq_search_ptr freezes
+    // still need to take care of case where 2x load hits prevent second cycle SQ search resp
+14: LW p39, 0x016(p16 (0x58)) (LQ2, ready) (no forward, d$ read)
+15: SW p24 (0x120), 0x018(p18 (0x58)) (SQ4, ready/ready)
+16: LW p40, 0x020(p7 (0x50)) (LQ3, not ready) (forward 0x120)
+17: SW p25 (0x124), 0x019(p19 (0x54)) (SQ0, ready/ready)
+18: LW p41, 0x021(p8 (0x6C)) (LQ0, ready) (no forward, d$ read) (d$ inv)

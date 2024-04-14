@@ -123,6 +123,7 @@ module rob (
     // LQ interface
     // restart info
     input logic LQ_restart_valid,
+    input logic LQ_restart_after_instr,
     input ROB_index_t LQ_restart_ROB_index,
     // retire
     output logic LQ_retire_valid,
@@ -639,16 +640,38 @@ module rob (
                         else begin
                             next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
                         end
-                        
-                        // save ROB index restarting to
-                            // need to restart load itself
-                                // without anything fancy, can just fetch and dispatch load again
-                        next_restart_ROB_index_ptr = LQ_restart_ROB_index;
 
-                        // route LQ ROB entry restart PC to fetch unit
-                            // fetch at load instr again
-                        fetch_unit_take_resolved = 1'b1;
-                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        // tricky: forwarded load value from SQ can be handled by LQ itself, it just 
+                            // does another write to the reg file
+                        // do want to restart load itself if due to invalidation
+                            // want new signal to differentiate restart at load or after load
+
+                        // check restart after this load (SQ forward handles)
+                        if (LQ_restart_after_instr) begin
+
+                            // save ROB index restarting to (instr after LW)
+                            next_restart_ROB_index_ptr = LQ_restart_ROB_index + ROB_index_t'(1);
+
+                            // route LQ ROB entry restart PC+4 to fetch unit
+                                // fetch instr after load again
+                                // guaranteed to be PC+4 after load
+                            fetch_unit_take_resolved = 1'b1;
+                            fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC + pc_t'(1);
+                        end
+                        
+                        // otherwise, restart this load (need to do load again)
+                        else begin
+                        
+                            // save ROB index restarting to
+                                // need to restart load itself
+                                    // without anything fancy, can just fetch and dispatch load again
+                            next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                                
+                            // route LQ ROB entry restart PC to fetch unit
+                                // fetch at load instr again
+                            fetch_unit_take_resolved = 1'b1;
+                            fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        end 
                     end
                 end
 
@@ -687,15 +710,32 @@ module rob (
                         next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
                     end
 
-                    // save ROB index restarting to
-                        // need to restart load itself
-                            // without anything fancy, can just fetch and dispatch load again
-                    next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                    // check restart after this load (SQ forward handles)
+                    if (LQ_restart_after_instr) begin
 
-                    // route LQ ROB entry restart PC to fetch unit
-                        // fetch at load instr again
-                    fetch_unit_take_resolved = 1'b1;
-                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        // save ROB index restarting to (instr after LW)
+                        next_restart_ROB_index_ptr = LQ_restart_ROB_index + ROB_index_t'(1);
+
+                        // route LQ ROB entry restart PC+4 to fetch unit
+                            // fetch instr after load again
+                            // guaranteed to be PC+4 after load
+                        fetch_unit_take_resolved = 1'b1;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC + pc_t'(1);
+                    end
+                    
+                    // otherwise, restart this load (need to do load again)
+                    else begin
+                    
+                        // save ROB index restarting to
+                            // need to restart load itself
+                                // without anything fancy, can just fetch and dispatch load again
+                        next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                            
+                        // route LQ ROB entry restart PC to fetch unit
+                            // fetch at load instr again
+                        fetch_unit_take_resolved = 1'b1;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                    end 
                 end
                 
             end
@@ -769,15 +809,32 @@ module rob (
                             next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
                         end
 
-                        // save ROB index restarting to
-                            // need to restart load itself
-                                // without anything fancy, can just fetch and dispatch load again
-                        next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                        // check restart after this load (SQ forward handles)
+                        if (LQ_restart_after_instr) begin
 
-                        // route LQ ROB entry restart PC to fetch unit
-                            // fetch at load instr again
-                        fetch_unit_take_resolved = 1'b1;
-                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                            // save ROB index restarting to (instr after LW)
+                            next_restart_ROB_index_ptr = LQ_restart_ROB_index + ROB_index_t'(1);
+
+                            // route LQ ROB entry restart PC+4 to fetch unit
+                                // fetch instr after load again
+                                // guaranteed to be PC+4 after load
+                            fetch_unit_take_resolved = 1'b1;
+                            fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC + pc_t'(1);
+                        end
+                        
+                        // otherwise, restart this load (need to do load again)
+                        else begin
+                        
+                            // save ROB index restarting to
+                                // need to restart load itself
+                                    // without anything fancy, can just fetch and dispatch load again
+                            next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                                
+                            // route LQ ROB entry restart PC to fetch unit
+                                // fetch at load instr again
+                            fetch_unit_take_resolved = 1'b1;
+                            fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        end 
                     end
 
                     // otherwise, restart BRU
@@ -818,15 +875,32 @@ module rob (
                         next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
                     end
 
-                    // save ROB index restarting to
-                        // need to restart load itself
-                            // without anything fancy, can just fetch and dispatch load again
-                    next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                    // check restart after this load (SQ forward handles)
+                    if (LQ_restart_after_instr) begin
 
-                    // route LQ ROB entry restart PC to fetch unit
-                        // fetch at load instr again
-                    fetch_unit_take_resolved = 1'b1;
-                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        // save ROB index restarting to (instr after LW)
+                        next_restart_ROB_index_ptr = LQ_restart_ROB_index + ROB_index_t'(1);
+
+                        // route LQ ROB entry restart PC+4 to fetch unit
+                            // fetch instr after load again
+                            // guaranteed to be PC+4 after load
+                        fetch_unit_take_resolved = 1'b1;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC + pc_t'(1);
+                    end
+                    
+                    // otherwise, restart this load (need to do load again)
+                    else begin
+                    
+                        // save ROB index restarting to
+                            // need to restart load itself
+                                // without anything fancy, can just fetch and dispatch load again
+                        next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                            
+                        // route LQ ROB entry restart PC to fetch unit
+                            // fetch at load instr again
+                        fetch_unit_take_resolved = 1'b1;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                    end 
                 end
 
             end
@@ -904,15 +978,32 @@ module rob (
                         // decrement the tail so points to youngest dispatched instr
                         next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
 
-                        // save ROB index restarting to
-                            // need to restart load itself
-                                // without anything fancy, can just fetch and dispatch load again
-                        next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                        // check restart after this load (SQ forward handles)
+                        if (LQ_restart_after_instr) begin
 
-                        // route LQ ROB entry restart PC to fetch unit
-                            // fetch at load instr again
-                        fetch_unit_take_resolved = 1'b1;
-                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                            // save ROB index restarting to (instr after LW)
+                            next_restart_ROB_index_ptr = LQ_restart_ROB_index + ROB_index_t'(1);
+
+                            // route LQ ROB entry restart PC+4 to fetch unit
+                                // fetch instr after load again
+                                // guaranteed to be PC+4 after load
+                            fetch_unit_take_resolved = 1'b1;
+                            fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC + pc_t'(1);
+                        end
+                        
+                        // otherwise, restart this load (need to do load again)
+                        else begin
+                        
+                            // save ROB index restarting to
+                                // need to restart load itself
+                                    // without anything fancy, can just fetch and dispatch load again
+                            next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                                
+                            // route LQ ROB entry restart PC to fetch unit
+                                // fetch at load instr again
+                            fetch_unit_take_resolved = 1'b1;
+                            fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        end 
                     end
 
                     // otherwise, restart BRU
@@ -946,15 +1037,32 @@ module rob (
                     // decrement the tail so points to youngest dispatched instr
                     next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
 
-                    // save ROB index restarting to
-                        // need to restart load itself
-                            // without anything fancy, can just fetch and dispatch load again
-                    next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                    // check restart after this load (SQ forward handles)
+                    if (LQ_restart_after_instr) begin
 
-                    // route LQ ROB entry restart PC to fetch unit
-                        // fetch at load instr again
-                    fetch_unit_take_resolved = 1'b1;
-                    fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                        // save ROB index restarting to (instr after LW)
+                        next_restart_ROB_index_ptr = LQ_restart_ROB_index + ROB_index_t'(1);
+
+                        // route LQ ROB entry restart PC+4 to fetch unit
+                            // fetch instr after load again
+                            // guaranteed to be PC+4 after load
+                        fetch_unit_take_resolved = 1'b1;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC + pc_t'(1);
+                    end
+                    
+                    // otherwise, restart this load (need to do load again)
+                    else begin
+                    
+                        // save ROB index restarting to
+                            // need to restart load itself
+                                // without anything fancy, can just fetch and dispatch load again
+                        next_restart_ROB_index_ptr = LQ_restart_ROB_index;
+                            
+                        // route LQ ROB entry restart PC to fetch unit
+                            // fetch at load instr again
+                        fetch_unit_take_resolved = 1'b1;
+                        fetch_unit_resolved_PC = ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].restart_PC;
+                    end 
                 end
             end
 
