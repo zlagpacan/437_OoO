@@ -84,6 +84,7 @@ module rob_tb ();
     // LQ interface
     // restart info
 	logic tb_LQ_restart_valid;
+	logic tb_LQ_restart_after_instr;
 	ROB_index_t tb_LQ_restart_ROB_index;
     // retire
 	logic DUT_LQ_retire_valid, expected_LQ_retire_valid;
@@ -193,6 +194,7 @@ module rob_tb ();
 	    // LQ interface
 	    // restart info
 		.LQ_restart_valid(tb_LQ_restart_valid),
+		.LQ_restart_after_instr(tb_LQ_restart_after_instr),
 		.LQ_restart_ROB_index(tb_LQ_restart_ROB_index),
 	    // retire
 		.LQ_retire_valid(DUT_LQ_retire_valid),
@@ -322,6 +324,7 @@ module rob_tb ();
 	    // LQ interface
 	    // restart info
 		.LQ_restart_valid(tb_LQ_restart_valid),
+		.LQ_restart_after_instr(tb_LQ_restart_after_instr),
 		.LQ_restart_ROB_index(tb_LQ_restart_ROB_index),
 	    // retire
 		.LQ_retire_valid(DUT_LQ_retire_valid),
@@ -653,6 +656,7 @@ module rob_tb ();
 	    // LQ interface
 	    // restart info
 		tb_LQ_restart_valid = 1'b0;
+		tb_LQ_restart_after_instr = 1'b0;	// new input
 		tb_LQ_restart_ROB_index = ROB_index_t'(0);
 	    // retire
 		tb_LQ_retire_blocked = 1'b0;

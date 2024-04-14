@@ -156,6 +156,7 @@ module lsq (
     // // LQ interface
     // // restart info
     // input logic ROB_LQ_restart_valid,
+    // input logic ROB_LQ_restart_after_instr,
     // input ROB_index_t ROB_LQ_restart_ROB_index,
     // // retire
     // output logic ROB_LQ_retire_valid,
@@ -163,6 +164,7 @@ module lsq (
     // input logic ROB_LQ_retire_blocked,
 
     output logic ROB_LQ_restart_valid,
+    output logic ROB_LQ_restart_after_instr,
     output ROB_index_t ROB_LQ_restart_ROB_index,
 
     input logic ROB_LQ_retire_valid,
@@ -1623,6 +1625,7 @@ module lsq (
     logic LQ_restart_missed_SQ_forward_valid;
     ROB_index_t LQ_restart_missed_SQ_forward_ROB_index;
     logic LQ_restart_dcache_inv_valid;
+    LQ_index_t LQ_restart_dcache_inv_LQ_index;
     ROB_index_t LQ_restart_dcache_inv_ROB_index;
 
     /////////////////////////
@@ -1926,9 +1929,11 @@ module lsq (
 
             for (int i = 0; i < LQ_DEPTH; i++) begin
 
-                if (ROB_LQ_retire_ROB_index == LQ_array[i].ROB_index) begin
+                // could already be invalid, don't check valid since need to cancel still
+                if (kill_bus_ROB_index == LQ_array[i].ROB_index) begin
 
                     // invalidate entry
+                        // could already be invalid
                     next_LQ_array[i].valid = 1'b0;
 
                     // send kill to d$
@@ -2036,7 +2041,7 @@ module lsq (
 
             for (int i = 0; i < SQ_DEPTH; i++) begin
 
-                if (ROB_SQ_retire_ROB_index == SQ_array[i].ROB_index) begin
+                if (kill_bus_ROB_index == SQ_array[i].ROB_index) begin
 
                     // invalidate entry
                     next_SQ_array[i].valid = 1'b0;
@@ -2258,7 +2263,7 @@ module lsq (
 
         // default: no missed SQ forward restart
         LQ_restart_missed_SQ_forward_valid = 1'b0;
-        LQ_restart_missed_SQ_forward_ROB_index = ROB_index_t'(0);
+        LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
 
         // default: no SQ forward d$ read kill
         dcache_read_kill_1_valid = 1'b0;
@@ -2318,6 +2323,13 @@ module lsq (
                         // send restart
                         LQ_restart_missed_SQ_forward_valid = 1'b1;
                         LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+
+                        // invalidate entry
+                        next_LQ_array[LQ_SQ_search_ptr.index].valid = 1'b0;
+
+                        // freeze LQ_SQ_search_ptr
+                            // if ends up being oldest restart, will freeze so restart load gets immediate search
+                        next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
                     end
 
                     // otherwise, forward value to complete bus broadcast, kill d$ read
@@ -2386,6 +2398,13 @@ module lsq (
                 // send restart
                 LQ_restart_missed_SQ_forward_valid = 1'b1;
                 LQ_restart_missed_SQ_forward_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+
+                // invalidate entry
+                next_LQ_array[LQ_SQ_search_ptr.index].valid = 1'b0;
+
+                // freeze LQ_SQ_search_ptr
+                    // if ends up being oldest restart, will freeze so restart load gets immediate search
+                next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
             end
 
             // otherwise, if SQ search present, broadcast SQ value, kill d$ read
@@ -2501,6 +2520,7 @@ module lsq (
 
         // default: no dcache inv restart
         LQ_restart_dcache_inv_valid = 1'b0;
+        LQ_restart_dcache_inv_LQ_index = LQ_index_t'(0);
         LQ_restart_dcache_inv_ROB_index = ROB_index_t'(0);
 
         // check for invalidation due to dcache inv
@@ -2538,6 +2558,10 @@ module lsq (
 
                         // have dcache inv restart
                         LQ_restart_dcache_inv_valid = 1'b1;
+                        LQ_restart_dcache_inv_LQ_index = LQ_index_t'(i);
+
+                        // invalidate entry
+                        next_LQ_array[i].valid = 1'b0;
                     end
                 end
             end
@@ -2547,8 +2571,9 @@ module lsq (
         ROB_LQ_restart_valid = 1'b0;
         ROB_LQ_restart_ROB_index = ROB_index_t'(0);
 
-        // need to select b/w potential invalidation due to dcache inv vs. missed SQ forward
+        // need to select b/w potential invalidation due to d$ inv vs. missed SQ forward
             // if both valid, pick older instr
+            // set LQ tail to restarting instr
         if (LQ_restart_dcache_inv_valid & LQ_restart_missed_SQ_forward_valid) begin
 
             // definitely valid
@@ -2558,33 +2583,73 @@ module lsq (
                 // they can be same instr
                 // older -> less than
 
-            // check dcache inv older
+            // check d$ inv older
             if (
                 LQ_restart_dcache_inv_ROB_index - ROB_LQ_retire_ROB_index
                 <
                 LQ_restart_missed_SQ_forward_ROB_index - ROB_LQ_retire_ROB_index
             ) begin
 
-                // dcache inv older
+                // restart d$ inv
                 ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
+
+                // tail follows d$ inv
+                    // adjust msb still greater than head as expect
+                    // if new tail index >= old tail index, then need to flip msb to undo wraparound
+                next_LQ_tail_ptr = {
+                    (LQ_restart_dcache_inv_LQ_index >= LQ_tail_ptr.index) ? 
+                        ~LQ_tail_ptr.msb
+                        :    
+                        LQ_tail_ptr.msb
+                    , 
+                    LQ_restart_dcache_inv_LQ_index
+                };
             end
 
             // otherwise, missed SQ forward older or same instr
             else begin
+
+                // restart missed SQ forward
                 ROB_LQ_restart_ROB_index = LQ_restart_missed_SQ_forward_ROB_index;
+
+                // tail follows LS SQ search ptr
+                next_LQ_tail_ptr = LQ_SQ_search_ptr;
             end
         end
 
         // otherwise, follow lone dcache inv
         else if (LQ_restart_dcache_inv_valid) begin
+
+            // still valid (really just OR)
             ROB_LQ_restart_valid = 1'b1;
+
+            // restart d$ inv
             ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
+
+            // tail follows d$ inv
+                // adjust msb still greater than head as expect
+                // if new tail index >= old tail index, then need to flip msb to undo wraparound
+            next_LQ_tail_ptr = {
+                (LQ_restart_dcache_inv_LQ_index >= LQ_tail_ptr.index) ? 
+                    ~LQ_tail_ptr.msb
+                    :    
+                    LQ_tail_ptr.msb
+                , 
+                LQ_restart_dcache_inv_LQ_index
+            };
         end
 
         // otherwise, follow lone missed SQ forward
         else if (LQ_restart_missed_SQ_forward_valid) begin
+
+            // still valid (really just OR)
             ROB_LQ_restart_valid = 1'b1;
+
+            // restart missed SQ forward
             ROB_LQ_restart_ROB_index = LQ_restart_missed_SQ_forward_ROB_index;
+
+            // tail follows LQ SQ search ptr
+            next_LQ_tail_ptr = LQ_SQ_search_ptr;
         end
 
         /////////////////////////

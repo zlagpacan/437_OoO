@@ -7,18 +7,18 @@ Synthesis: done
 +--------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                       ;
 +------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Tue Apr  2 18:37:09 2024           ;
+; Fitter Status                      ; Successful - Sun Apr 14 16:24:00 2024           ;
 ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
 ; Revision Name                      ; rob                                             ;
 ; Top-level Entity Name              ; rob                                             ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29C8                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 1,390 / 114,480 ( 1 % )                         ;
-;     Total combinational functions  ; 1,177 / 114,480 ( 1 % )                         ;
+; Total logic elements               ; 1,405 / 114,480 ( 1 % )                         ;
+;     Total combinational functions  ; 1,185 / 114,480 ( 1 % )                         ;
 ;     Dedicated logic registers      ; 633 / 114,480 ( < 1 % )                         ;
 ; Total registers                    ; 700                                             ;
-; Total pins                         ; 210 / 529 ( 40 % )                              ;
+; Total pins                         ; 211 / 529 ( 40 % )                              ;
 ; Total virtual pins                 ; 0                                               ;
 ; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                           ;
 ; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
@@ -30,7 +30,7 @@ Synthesis: done
 +-----------+-----------------+------------+------+
 ; Fmax      ; Restricted Fmax ; Clock Name ; Note ;
 +-----------+-----------------+------------+------+
-; 90.16 MHz ; 90.16 MHz       ; CLK        ;      ;
+; 95.12 MHz ; 95.12 MHz       ; CLK        ;      ;
 +-----------+-----------------+------------+------+
 
 Synthesized TB: done
