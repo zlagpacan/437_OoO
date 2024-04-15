@@ -31,10 +31,12 @@ ROB_index
 13: LW p38, 0x018(p6 (0x58)) (LQ1, ready) (d$ read, should've forwarded)
 13: LW p38, 0x018(p6 (0x58)) (LQ1, ready) (forward 0x118)
     // want to guarantee this will be forwarded the next time
-    // can force the tail to match the lq_sq_search_ptr and invalidate the entry so lq_sq_search_ptr freezes
-    // still need to take care of case where 2x load hits prevent second cycle SQ search resp
+        // can force the tail to match the lq_sq_search_ptr and invalidate the entry so lq_sq_search_ptr freezes
+        // still need to take care of case where 2x load hits prevent second cycle SQ search resp
+    // SOLUTION: just restart at the instr after the load, let the load write (again) with the SQ forwarded value
+        // dependent instr's after will be killed, on next issue will read the new update SQ forwarded load value
 14: LW p39, 0x016(p16 (0x58)) (LQ2, ready) (no forward, d$ read)
-15: SW p24 (0x120), 0x018(p18 (0x58)) (SQ4, ready/ready)
-16: LW p40, 0x020(p7 (0x50)) (LQ3, not ready) (forward 0x120)
-17: SW p25 (0x124), 0x019(p19 (0x54)) (SQ0, ready/ready)
-18: LW p41, 0x021(p8 (0x6C)) (LQ0, ready) (no forward, d$ read) (d$ inv)
+15: SW p24 (0x120), 0x018(p18 (0x58)) (SQ0, ready/ready)
+16: LW p40, 0x01A(p7 (0x50)) (LQ3, not ready) (forward 0x120)
+17: SW p25 (0x124), 0x019(p19 (0x54)) (SQ1, ready/ready)
+18: LW p41, 0x3ff(p8 (0xAC)) (LQ0, ready) (no forward, d$ read) (d$ inv)

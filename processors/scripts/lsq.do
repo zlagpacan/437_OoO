@@ -117,48 +117,48 @@ add wave -noupdate -expand -group {Internal Signals} -group {SQ operand task} /l
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand task} /lsq_tb/DUT/SQ_operand_task_imm14
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand task} /lsq_tb/DUT/SQ_operand_task_SQ_index
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand task} /lsq_tb/DUT/SQ_operand_task_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_busy
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_valid
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_valid
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_0_ready
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_0_ready
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_0_phys_reg_tag
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_0_phys_reg_tag
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_1_ready
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_1_ready
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_1_phys_reg_tag
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_1_phys_reg_tag
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_imm14
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_imm14
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_SQ_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_SQ_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_reg_file_write_base_addr
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_reg_file_write_data
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_0_complete_bus_0_VTM
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_0_complete_bus_1_VTM
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_0_complete_bus_2_VTM
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_1_complete_bus_0_VTM
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_1_complete_bus_1_VTM
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_1_complete_bus_2_VTM
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_valid
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_valid
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_reg_file_write_base_addr
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_reg_file_write_base_addr
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_reg_file_write_data
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_reg_file_write_data
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_imm14
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_imm14
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_SQ_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_SQ_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_operand_0_bus_select
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_operand_0_bus_select
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_operand_1_bus_select
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_operand_1_bus_select
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_forwarded_write_base_addr
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_write_addr
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_forwarded_write_data
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_busy
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_valid
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_valid
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_0_ready
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_0_ready
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_0_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_0_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_1_ready
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_1_ready
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_source_1_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_source_1_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_imm14
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_imm14
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_SQ_index
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_SQ_index
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/next_SQ_reg_read_stage_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_reg_file_write_base_addr
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_reg_file_write_data
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_0_complete_bus_0_VTM
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_0_complete_bus_1_VTM
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_0_complete_bus_2_VTM
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_1_complete_bus_0_VTM
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_1_complete_bus_1_VTM
+add wave -noupdate -expand -group {Internal Signals} -group {SQ reg read stage} /lsq_tb/DUT/SQ_reg_read_stage_operand_1_complete_bus_2_VTM
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_valid
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_valid
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_reg_file_write_base_addr
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_reg_file_write_base_addr
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_reg_file_write_data
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_reg_file_write_data
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_imm14
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_imm14
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_SQ_index
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_SQ_index
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_operand_0_bus_select
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_operand_0_bus_select
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_operand_1_bus_select
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/next_SQ_addr_calc_stage_operand_1_bus_select
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_forwarded_write_base_addr
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_write_addr
+add wave -noupdate -expand -group {Internal Signals} -group {SQ addr calc stage} /lsq_tb/DUT/SQ_addr_calc_stage_forwarded_write_data
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update stage} /lsq_tb/DUT/SQ_operand_update_stage_valid
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update stage} /lsq_tb/DUT/next_SQ_operand_update_stage_valid
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update stage} /lsq_tb/DUT/SQ_operand_update_stage_write_addr
@@ -167,34 +167,35 @@ add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update s
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update stage} /lsq_tb/DUT/next_SQ_operand_update_stage_write_data
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update stage} /lsq_tb/DUT/SQ_operand_update_stage_SQ_index
 add wave -noupdate -expand -group {Internal Signals} -group {SQ operand update stage} /lsq_tb/DUT/next_SQ_operand_update_stage_SQ_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_valid
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_linked
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_conditional
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_source_ready
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_imm14
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_LQ_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_busy
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_valid
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_valid
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_linked
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_linked
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_conditional
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_conditional
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_source_ready
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_source_ready
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_source_phys_reg_tag
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_source_phys_reg_tag
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_imm14
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_imm14
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_LQ_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_LQ_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_reg_file_read_base_addr
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_operand_complete_bus_0_VTM
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_operand_complete_bus_1_VTM
-add wave -noupdate -expand -group {Internal Signals} -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_operand_complete_bus_2_VTM
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_linked
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_conditional
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_source_ready
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_source_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_imm14
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ operand task} /lsq_tb/DUT/LQ_operand_task_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_busy
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_linked
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_linked
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_conditional
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_conditional
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_source_ready
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_source_ready
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_source_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_source_phys_reg_tag
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_imm14
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_imm14
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/next_LQ_reg_read_stage_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_reg_file_read_base_addr
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_operand_complete_bus_0_VTM
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_operand_complete_bus_1_VTM
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ reg read stage} /lsq_tb/DUT/LQ_reg_read_stage_operand_complete_bus_2_VTM
 add wave -noupdate -expand -group {Internal Signals} -group {LQ addr calc stage} /lsq_tb/DUT/LQ_addr_calc_stage_valid
 add wave -noupdate -expand -group {Internal Signals} -group {LQ addr calc stage} /lsq_tb/DUT/next_LQ_addr_calc_stage_valid
 add wave -noupdate -expand -group {Internal Signals} -group {LQ addr calc stage} /lsq_tb/DUT/LQ_addr_calc_stage_linked
@@ -221,7 +222,7 @@ add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update s
 add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update stage} /lsq_tb/DUT/next_LQ_operand_update_stage_read_addr
 add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update stage} /lsq_tb/DUT/LQ_operand_update_stage_LQ_index
 add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update stage} /lsq_tb/DUT/next_LQ_operand_update_stage_LQ_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/LQ_array[3]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[2]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[1]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[0]} {-color Gold -height 16}} /lsq_tb/DUT/LQ_array
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/LQ_array[3]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/LQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/LQ_array[3].linked} {-color Gold} {/lsq_tb/DUT/LQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/LQ_array[3].SQ_searched} {-color Gold} {/lsq_tb/DUT/LQ_array[3].SQ_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[3].dcache_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/LQ_array[3].SQ_index} {-color Gold} {/lsq_tb/DUT/LQ_array[3].read_addr} {-color Gold} {/lsq_tb/DUT/LQ_array[3].dest_phys_reg_tag} {-color Gold} {/lsq_tb/DUT/LQ_array[2]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[1]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[0]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[0].valid} {-color Gold} {/lsq_tb/DUT/LQ_array[0].ready} {-color Gold} {/lsq_tb/DUT/LQ_array[0].linked} {-color Gold} {/lsq_tb/DUT/LQ_array[0].conditional} {-color Gold} {/lsq_tb/DUT/LQ_array[0].SQ_searched} {-color Gold} {/lsq_tb/DUT/LQ_array[0].SQ_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[0].dcache_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[0].ROB_index} {-color Gold} {/lsq_tb/DUT/LQ_array[0].SQ_index} {-color Gold} {/lsq_tb/DUT/LQ_array[0].read_addr} {-color Gold} {/lsq_tb/DUT/LQ_array[0].dest_phys_reg_tag} {-color Gold}} /lsq_tb/DUT/LQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ array} -color Gold /lsq_tb/DUT/next_LQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/LQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/next_LQ_head_ptr
@@ -233,7 +234,7 @@ add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/next_LQ_full
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/LQ_empty
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/next_LQ_empty
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/SQ_array[3]} {-color Gold -height 16} {/lsq_tb/DUT/SQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[2]} {-color Gold -height 16} {/lsq_tb/DUT/SQ_array[1]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[1].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[1].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[0]} {-color Gold -height 16}} /lsq_tb/DUT/SQ_array
+add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/SQ_array[3]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[2]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[2].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[2].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[1]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[1].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[1].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[0]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[0].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[0].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[0].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[0].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[0].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[0].write_data} {-color Gold}} /lsq_tb/DUT/SQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} -color Gold /lsq_tb/DUT/next_SQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ pointers} /lsq_tb/DUT/SQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ pointers} /lsq_tb/DUT/next_SQ_head_ptr
@@ -267,7 +268,7 @@ add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb
 add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_valid
 add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_ROB_index
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {314200 ps} 0}
+WaveRestoreCursors {{Cursor 1} {578800 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 370
 configure wave -valuecolwidth 100
@@ -283,4 +284,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {130600 ps} {378900 ps}
+WaveRestoreZoom {474200 ps} {722500 ps}
