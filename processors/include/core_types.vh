@@ -145,7 +145,7 @@ package core_types_pkg;
     // fetch unit: //
     /////////////////
 
-    parameter BTB_FRAMES = 256;
+    parameter BTB_FRAMES = 32;
     parameter LOG_BTB_FRAMES = $clog2(BTB_FRAMES);
     parameter RAS_DEPTH = 8;
     parameter LOG_RAS_DEPTH = $clog2(RAS_DEPTH);
