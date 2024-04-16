@@ -48,7 +48,7 @@ module lsq_tb ();
     // output logic dispatch_unit_LQ_task_valid,
     // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
 
-	LQ_index_t DUT_dispatch_unit_LQ_tail_index, expected_dispatch_unit_LQ_tail_index;
+	// LQ_index_t DUT_dispatch_unit_LQ_tail_index, expected_dispatch_unit_LQ_tail_index;
 	logic DUT_dispatch_unit_LQ_full, expected_dispatch_unit_LQ_full;
 	logic tb_dispatch_unit_LQ_task_valid;
 	LQ_enqueue_struct_t tb_dispatch_unit_LQ_task_struct;
@@ -71,7 +71,7 @@ module lsq_tb ();
     // output logic dispatch_unit_SQ_task_valid,
     // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
 
-	SQ_index_t DUT_dispatch_unit_SQ_tail_index, expected_dispatch_unit_SQ_tail_index;
+	// SQ_index_t DUT_dispatch_unit_SQ_tail_index, expected_dispatch_unit_SQ_tail_index;
 	logic DUT_dispatch_unit_SQ_full, expected_dispatch_unit_SQ_full;
 	logic tb_dispatch_unit_SQ_task_valid;
 	SQ_enqueue_struct_t tb_dispatch_unit_SQ_task_struct;
@@ -295,7 +295,7 @@ module lsq_tb ();
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
 
-		.dispatch_unit_LQ_tail_index(DUT_dispatch_unit_LQ_tail_index),
+		// .dispatch_unit_LQ_tail_index(DUT_dispatch_unit_LQ_tail_index),
 		.dispatch_unit_LQ_full(DUT_dispatch_unit_LQ_full),
 		.dispatch_unit_LQ_task_valid(tb_dispatch_unit_LQ_task_valid),
 		.dispatch_unit_LQ_task_struct(tb_dispatch_unit_LQ_task_struct),
@@ -318,7 +318,7 @@ module lsq_tb ();
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
 
-		.dispatch_unit_SQ_tail_index(DUT_dispatch_unit_SQ_tail_index),
+		// .dispatch_unit_SQ_tail_index(DUT_dispatch_unit_SQ_tail_index),
 		.dispatch_unit_SQ_full(DUT_dispatch_unit_SQ_full),
 		.dispatch_unit_SQ_task_valid(tb_dispatch_unit_SQ_task_valid),
 		.dispatch_unit_SQ_task_struct(tb_dispatch_unit_SQ_task_struct),
@@ -544,7 +544,7 @@ module lsq_tb ();
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
 
-		.dispatch_unit_LQ_tail_index(DUT_dispatch_unit_LQ_tail_index),
+		// .dispatch_unit_LQ_tail_index(DUT_dispatch_unit_LQ_tail_index),
 		.dispatch_unit_LQ_full(DUT_dispatch_unit_LQ_full),
 		.dispatch_unit_LQ_task_valid(tb_dispatch_unit_LQ_task_valid),
 		// .dispatch_unit_LQ_task_struct(tb_dispatch_unit_LQ_task_struct),
@@ -576,7 +576,7 @@ module lsq_tb ();
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
 
-		.dispatch_unit_SQ_tail_index(DUT_dispatch_unit_SQ_tail_index),
+		// .dispatch_unit_SQ_tail_index(DUT_dispatch_unit_SQ_tail_index),
 		.dispatch_unit_SQ_full(DUT_dispatch_unit_SQ_full),
 		.dispatch_unit_SQ_task_valid(tb_dispatch_unit_SQ_task_valid),
 		// .dispatch_unit_SQ_task_struct(tb_dispatch_unit_SQ_task_struct),
@@ -602,7 +602,7 @@ module lsq_tb ();
 		.\dispatch_unit_SQ_task_struct.source_1.ready (tb_dispatch_unit_SQ_task_struct.source_1.ready),
 		.\dispatch_unit_SQ_task_struct.source_1.phys_reg_tag (tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag),
 		.\dispatch_unit_SQ_task_struct.imm14 (tb_dispatch_unit_SQ_task_struct.imm14),
-		.\dispatch_unit_SQ_task_struct.LQ_index (tb_dispatch_unit_SQ_task_struct.LQ_index),
+		// .\dispatch_unit_SQ_task_struct.LQ_index (tb_dispatch_unit_SQ_task_struct.LQ_index),
 		.\dispatch_unit_SQ_task_struct.ROB_index (tb_dispatch_unit_SQ_task_struct.ROB_index),
 
 	    //////////
@@ -803,12 +803,12 @@ module lsq_tb ();
 			tb_error = 1'b1;
 		end
 
-		if (expected_dispatch_unit_LQ_tail_index !== DUT_dispatch_unit_LQ_tail_index) begin
-			$display("TB ERROR: expected_dispatch_unit_LQ_tail_index (%h) != DUT_dispatch_unit_LQ_tail_index (%h)",
-				expected_dispatch_unit_LQ_tail_index, DUT_dispatch_unit_LQ_tail_index);
-			num_errors++;
-			tb_error = 1'b1;
-		end
+		// if (expected_dispatch_unit_LQ_tail_index !== DUT_dispatch_unit_LQ_tail_index) begin
+		// 	$display("TB ERROR: expected_dispatch_unit_LQ_tail_index (%h) != DUT_dispatch_unit_LQ_tail_index (%h)",
+		// 		expected_dispatch_unit_LQ_tail_index, DUT_dispatch_unit_LQ_tail_index);
+		// 	num_errors++;
+		// 	tb_error = 1'b1;
+		// end
 
 		if (expected_dispatch_unit_LQ_full !== DUT_dispatch_unit_LQ_full) begin
 			$display("TB ERROR: expected_dispatch_unit_LQ_full (%h) != DUT_dispatch_unit_LQ_full (%h)",
@@ -817,12 +817,12 @@ module lsq_tb ();
 			tb_error = 1'b1;
 		end
 
-		if (expected_dispatch_unit_SQ_tail_index !== DUT_dispatch_unit_SQ_tail_index) begin
-			$display("TB ERROR: expected_dispatch_unit_SQ_tail_index (%h) != DUT_dispatch_unit_SQ_tail_index (%h)",
-				expected_dispatch_unit_SQ_tail_index, DUT_dispatch_unit_SQ_tail_index);
-			num_errors++;
-			tb_error = 1'b1;
-		end
+		// if (expected_dispatch_unit_SQ_tail_index !== DUT_dispatch_unit_SQ_tail_index) begin
+		// 	$display("TB ERROR: expected_dispatch_unit_SQ_tail_index (%h) != DUT_dispatch_unit_SQ_tail_index (%h)",
+		// 		expected_dispatch_unit_SQ_tail_index, DUT_dispatch_unit_SQ_tail_index);
+		// 	num_errors++;
+		// 	tb_error = 1'b1;
+		// end
 
 		if (expected_dispatch_unit_SQ_full !== DUT_dispatch_unit_SQ_full) begin
 			$display("TB ERROR: expected_dispatch_unit_SQ_full (%h) != DUT_dispatch_unit_SQ_full (%h)",
@@ -1101,7 +1101,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -1229,14 +1229,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -1392,7 +1392,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -1520,14 +1520,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -1690,7 +1690,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -1818,14 +1818,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -2016,7 +2016,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -2144,14 +2144,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -2336,7 +2336,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -2464,14 +2464,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -2656,7 +2656,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -2784,14 +2784,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -2976,7 +2976,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -3104,14 +3104,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -3296,7 +3296,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -3424,14 +3424,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -3616,7 +3616,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -3744,14 +3744,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -3936,7 +3936,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -4064,14 +4064,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -4256,7 +4256,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -4384,14 +4384,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -4576,7 +4576,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -4704,14 +4704,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -4896,7 +4896,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -5024,14 +5024,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -5216,7 +5216,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -5344,14 +5344,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -5536,7 +5536,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -5664,14 +5664,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -5856,7 +5856,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -5984,14 +5984,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -6176,7 +6176,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -6304,14 +6304,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -6496,7 +6496,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -6624,14 +6624,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -6816,7 +6816,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -6944,14 +6944,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -7136,7 +7136,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -7264,14 +7264,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -7456,7 +7456,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -7584,14 +7584,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -7776,7 +7776,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -7904,14 +7904,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -8096,7 +8096,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -8224,14 +8224,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -8416,7 +8416,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -8544,14 +8544,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -8736,7 +8736,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -8864,14 +8864,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -9056,7 +9056,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -9184,14 +9184,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -9376,7 +9376,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -9504,14 +9504,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -9696,7 +9696,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h0;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    //////////
 	    // ROB: //
@@ -9824,14 +9824,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -10022,7 +10022,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(16);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h10;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(5);
 	    //////////
 	    // ROB: //
@@ -10150,14 +10150,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -10342,7 +10342,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(16);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h10;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0);
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(5);
 	    //////////
 	    // ROB: //
@@ -10470,14 +10470,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -10662,7 +10662,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(17);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h11;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(6);
 	    //////////
 	    // ROB: //
@@ -10790,14 +10790,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -10982,7 +10982,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(18);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h12;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(7);
 	    //////////
 	    // ROB: //
@@ -11110,14 +11110,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -11302,7 +11302,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(19);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h13;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    //////////
 	    // ROB: //
@@ -11430,14 +11430,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -11622,7 +11622,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(19);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h13;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    //////////
 	    // ROB: //
@@ -11750,14 +11750,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -11942,7 +11942,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(19);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h13;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    //////////
 	    // ROB: //
@@ -12070,14 +12070,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -12262,7 +12262,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(19);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h13;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    //////////
 	    // ROB: //
@@ -12390,14 +12390,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -12582,7 +12582,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(20);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h14;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(9);
 	    //////////
 	    // ROB: //
@@ -12710,14 +12710,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -12902,7 +12902,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(20);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h14;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(9);
 	    //////////
 	    // ROB: //
@@ -13030,14 +13030,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -13222,7 +13222,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(21);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h15;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(10);
 	    //////////
 	    // ROB: //
@@ -13350,14 +13350,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -13542,7 +13542,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -13670,14 +13670,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -13862,7 +13862,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -13990,14 +13990,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -14182,7 +14182,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -14310,14 +14310,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -14502,7 +14502,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -14630,14 +14630,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -14822,7 +14822,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -14950,14 +14950,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b1;
 	    //////////
 	    // ROB: //
@@ -15142,7 +15142,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -15270,14 +15270,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -15462,7 +15462,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -15590,14 +15590,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -15782,7 +15782,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -15910,14 +15910,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -16102,7 +16102,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -16230,14 +16230,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -16422,7 +16422,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b0;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h16;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    //////////
 	    // ROB: //
@@ -16550,14 +16550,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -16748,7 +16748,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -16876,14 +16876,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(3);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -17068,7 +17068,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -17196,14 +17196,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -17388,7 +17388,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -17516,14 +17516,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -17708,7 +17708,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -17836,14 +17836,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -18028,7 +18028,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -18156,14 +18156,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -18348,7 +18348,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -18476,14 +18476,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -18668,7 +18668,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -18796,14 +18796,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -18988,7 +18988,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -19116,14 +19116,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -19309,7 +19309,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -19437,14 +19437,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -19630,7 +19630,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h17;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    //////////
 	    // ROB: //
@@ -19758,14 +19758,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(2);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -19950,7 +19950,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(24);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h18;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(15);
 	    //////////
 	    // ROB: //
@@ -20078,14 +20078,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(0);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -20270,7 +20270,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(24);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h18;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(15);
 	    //////////
 	    // ROB: //
@@ -20398,14 +20398,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(3);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -20590,7 +20590,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -20718,14 +20718,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(1);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -20910,7 +20910,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -21038,14 +21038,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -21230,7 +21230,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -21358,14 +21358,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -21550,7 +21550,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -21678,14 +21678,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -21870,7 +21870,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -21998,14 +21998,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -22190,7 +22190,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -22318,14 +22318,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -22510,7 +22510,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -22638,14 +22638,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -22830,7 +22830,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -22958,14 +22958,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -23151,7 +23151,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -23279,14 +23279,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -23472,7 +23472,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -23600,14 +23600,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -23793,7 +23793,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -23921,14 +23921,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(1);
 		expected_dispatch_unit_LQ_full = 1'b1;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //
@@ -24114,7 +24114,7 @@ module lsq_tb ();
         tb_dispatch_unit_SQ_task_struct.source_1.ready = 1'b1;
         tb_dispatch_unit_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         tb_dispatch_unit_SQ_task_struct.imm14 = 14'h19;
-        tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
+        // tb_dispatch_unit_SQ_task_struct.LQ_index = LQ_index_t'(0); // not using
         tb_dispatch_unit_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    //////////
 	    // ROB: //
@@ -24242,14 +24242,14 @@ module lsq_tb ();
 	    // input logic dispatch_unit_LQ_full,
 	    // output logic dispatch_unit_LQ_task_valid,
 	    // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
-		expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
+		// expected_dispatch_unit_LQ_tail_index = LQ_index_t'(0);
 		expected_dispatch_unit_LQ_full = 1'b0;
 	    // // SQ interface
 	    // input SQ_index_t dispatch_unit_SQ_tail_index,
 	    // input logic dispatch_unit_SQ_full,
 	    // output logic dispatch_unit_SQ_task_valid,
 	    // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
-		expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
+		// expected_dispatch_unit_SQ_tail_index = SQ_index_t'(2);
 		expected_dispatch_unit_SQ_full = 1'b0;
 	    //////////
 	    // ROB: //

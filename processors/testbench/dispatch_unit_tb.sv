@@ -91,13 +91,13 @@ module dispatch_unit_tb ();
 	ALU_RS_input_struct_t [1:0] DUT_ALU_RS_task_struct, expected_ALU_RS_task_struct;
 
     // LQ interface
-	LQ_index_t tb_LQ_tail_index;
+	// LQ_index_t tb_LQ_tail_index;
 	logic tb_LQ_full;
 	logic DUT_LQ_task_valid, expected_LQ_task_valid;
 	LQ_enqueue_struct_t DUT_LQ_task_struct, expected_LQ_task_struct;
 
     // SQ interface
-	SQ_index_t tb_SQ_tail_index;
+	// SQ_index_t tb_SQ_tail_index;
 	logic tb_SQ_full;
 	logic DUT_SQ_task_valid, expected_SQ_task_valid;
 	SQ_enqueue_struct_t DUT_SQ_task_struct, expected_SQ_task_struct;
@@ -173,13 +173,13 @@ module dispatch_unit_tb ();
 		.ALU_RS_task_struct(DUT_ALU_RS_task_struct),
 
 	    // SQ interface
-		.SQ_tail_index(tb_SQ_tail_index),
+		// .SQ_tail_index(tb_SQ_tail_index),
 		.SQ_full(tb_SQ_full),
 		.SQ_task_valid(DUT_SQ_task_valid),
 		.SQ_task_struct(DUT_SQ_task_struct),
 
 	    // LQ interface
-		.LQ_tail_index(tb_LQ_tail_index),
+		// .LQ_tail_index(tb_LQ_tail_index),
 		.LQ_full(tb_LQ_full),
 		.LQ_task_valid(DUT_LQ_task_valid),
 		.LQ_task_struct(DUT_LQ_task_struct),
@@ -312,7 +312,7 @@ module dispatch_unit_tb ();
 		.\ALU_RS_task_struct[1].ROB_index (DUT_ALU_RS_task_struct[1].ROB_index),
 
 	    // SQ interface
-		.SQ_tail_index(tb_SQ_tail_index),
+		// .SQ_tail_index(tb_SQ_tail_index),
 		.SQ_full(tb_SQ_full),
 		.SQ_task_valid(DUT_SQ_task_valid),
 		// struct -> need to enumerate
@@ -325,11 +325,11 @@ module dispatch_unit_tb ();
 		.\SQ_task_struct.source_1.ready (DUT_SQ_task_struct.source_1.ready),
 		.\SQ_task_struct.source_1.phys_reg_tag (DUT_SQ_task_struct.source_1.phys_reg_tag),
 		.\SQ_task_struct.imm14 (DUT_SQ_task_struct.imm14),
-		.\SQ_task_struct.LQ_index (DUT_SQ_task_struct.LQ_index),
+		// .\SQ_task_struct.LQ_index (DUT_SQ_task_struct.LQ_index),
 		.\SQ_task_struct.ROB_index (DUT_SQ_task_struct.ROB_index),
 
 	    // LQ interface
-		.LQ_tail_index(tb_LQ_tail_index),
+		// .LQ_tail_index(tb_LQ_tail_index),
 		.LQ_full(tb_LQ_full),
 		.LQ_task_valid(DUT_LQ_task_valid),
 		// struct -> need to enumerate
@@ -340,7 +340,7 @@ module dispatch_unit_tb ();
 		.\LQ_task_struct.source.phys_reg_tag (DUT_LQ_task_struct.source.phys_reg_tag),
 		.\LQ_task_struct.dest_phys_reg_tag (DUT_LQ_task_struct.dest_phys_reg_tag),
 		.\LQ_task_struct.imm14 (DUT_LQ_task_struct.imm14),
-		.\LQ_task_struct.SQ_index (DUT_LQ_task_struct.SQ_index),
+		// .\LQ_task_struct.SQ_index (DUT_LQ_task_struct.SQ_index),
 		.\LQ_task_struct.ROB_index (DUT_LQ_task_struct.ROB_index),
 
 	    // BRU RS interface
@@ -470,7 +470,7 @@ module dispatch_unit_tb ();
 			$display("\texpected.source.phys_reg_tag = %d, DUT.source.phys_reg_tag = %d", expected_LQ_task_struct.source.phys_reg_tag, DUT_LQ_task_struct.source.phys_reg_tag);
 			$display("\texpected.dest_phys_reg_tag = %d, DUT.dest_phys_reg_tag = %d", expected_LQ_task_struct.dest_phys_reg_tag, DUT_LQ_task_struct.dest_phys_reg_tag);
 			$display("\texpected.imm14 = %h, DUT.imm14 = %h", expected_LQ_task_struct.imm14, DUT_LQ_task_struct.imm14);
-			$display("\texpected.SQ_index = %d, DUT.SQ_index = %d", expected_LQ_task_struct.SQ_index, DUT_LQ_task_struct.SQ_index);
+			// $display("\texpected.SQ_index = %d, DUT.SQ_index = %d", expected_LQ_task_struct.SQ_index, DUT_LQ_task_struct.SQ_index);
 			$display("\texpected.ROB_index = %d, DUT.ROB_index = %d", expected_LQ_task_struct.ROB_index, DUT_LQ_task_struct.ROB_index);
 			num_errors++;
 			tb_error = 1'b1;
@@ -494,7 +494,7 @@ module dispatch_unit_tb ();
 			$display("\texpected.source_1.ready = %h, DUT.source_1.ready = %h", expected_SQ_task_struct.source_1.ready, DUT_SQ_task_struct.source_1.ready);
 			$display("\texpected.source_1.phys_reg_tag = %d, DUT.source_1.phys_reg_tag = %d", expected_SQ_task_struct.source_1.phys_reg_tag, DUT_SQ_task_struct.source_1.phys_reg_tag);
 			$display("\texpected.imm14 = %h, DUT.imm14 = %h", expected_SQ_task_struct.imm14, DUT_SQ_task_struct.imm14);
-			$display("\texpected.LQ_index = %d, DUT.LQ_index = %d", expected_SQ_task_struct.LQ_index, DUT_SQ_task_struct.LQ_index);
+			// $display("\texpected.LQ_index = %d, DUT.LQ_index = %d", expected_SQ_task_struct.LQ_index, DUT_SQ_task_struct.LQ_index);
 			$display("\texpected.ROB_index = %d, DUT.ROB_index = %d", expected_SQ_task_struct.ROB_index, DUT_SQ_task_struct.ROB_index);
 			num_errors++;
 			tb_error = 1'b1;
@@ -587,10 +587,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// // tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -662,7 +662,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.imm14 = daddr_t'(0);
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -674,7 +674,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = daddr_t'(0);
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -735,10 +735,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// // tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -810,7 +810,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.imm14 = daddr_t'(0);
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -822,7 +822,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = daddr_t'(0);
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -891,10 +891,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -966,7 +966,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.imm14 = daddr_t'(0);
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -978,7 +978,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = daddr_t'(0);
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -1047,10 +1047,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -1122,7 +1122,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.imm14 = daddr_t'(0);
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -1134,7 +1134,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = daddr_t'(0);
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -1197,10 +1197,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -1272,7 +1272,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(2);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.imm14 = daddr_t'({5'd1, 5'd0, 4'b1000});
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -1284,7 +1284,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
         expected_SQ_task_struct.imm14 = daddr_t'({5'd1, 5'd0, 4'b1000});
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -1347,10 +1347,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b01;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -1422,7 +1422,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(2);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(33);
         expected_LQ_task_struct.imm14 = daddr_t'({5'd2, 5'd0, 4'b1000});
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(1);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -1434,7 +1434,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(5);
         expected_SQ_task_struct.imm14 = daddr_t'({5'd2, 5'd0, 4'b1000});
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(1);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -1497,10 +1497,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b11;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -1572,7 +1572,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(5);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.imm14 = daddr_t'({5'd30, 5'd0, 4'b1001});
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(2);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -1584,7 +1584,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(33);
         expected_SQ_task_struct.imm14 = daddr_t'({5'd30, 5'd0, 4'b1001});
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(2);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -1647,10 +1647,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b10;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -1722,7 +1722,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(5);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.imm14 = daddr_t'({5'd30, 5'd0, 4'b1001});
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(2);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -1734,7 +1734,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(33);
         expected_SQ_task_struct.imm14 = daddr_t'({5'd30, 5'd0, 4'b1001});
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(2);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -1797,10 +1797,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b10;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -1872,7 +1872,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(35);
         expected_LQ_task_struct.imm14 = daddr_t'({5'd0, 5'd0, 4'b0010});
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(3);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -1884,7 +1884,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = daddr_t'({5'd0, 5'd0, 4'b0010});
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(3);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b1;
@@ -1947,10 +1947,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2022,7 +2022,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(6);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(35);
         expected_LQ_task_struct.imm14 = daddr_t'({5'd13, 5'd28, 4'b1001});
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(4);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2034,7 +2034,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(19);
         expected_SQ_task_struct.imm14 = daddr_t'({5'd13, 5'd28, 4'b1001});
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(4);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2097,10 +2097,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2172,7 +2172,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
         expected_LQ_task_struct.imm14 = {5'd14, 5'd0, 4'b1001};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(5);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2184,7 +2184,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(21);
         expected_SQ_task_struct.imm14 = {5'd14, 5'd0, 4'b1001};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(5);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2247,10 +2247,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2322,7 +2322,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(36);
         expected_LQ_task_struct.imm14 = {5'd14, 5'd0, 4'b1001};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(5);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2334,7 +2334,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(21);
         expected_SQ_task_struct.imm14 = {5'd14, 5'd0, 4'b1001};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(5);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2397,10 +2397,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2472,7 +2472,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(25);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(37);
         expected_LQ_task_struct.imm14 = {5'd15, 5'd0, 4'b1010};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(6);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2484,7 +2484,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(32);
         expected_SQ_task_struct.imm14 = {5'd15, 5'd0, 4'b1010};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(6);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2547,10 +2547,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2622,7 +2622,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(22);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(38);
         expected_LQ_task_struct.imm14 = {5'd16, 5'd0, 4'b1010};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(7);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2634,7 +2634,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(35);
         expected_SQ_task_struct.imm14 = {5'd16, 5'd0, 4'b1010};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(7);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2697,10 +2697,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2772,7 +2772,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(33);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(39);
         expected_LQ_task_struct.imm14 = {5'd17, 5'd0, 4'b0001};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2784,7 +2784,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(38);
         expected_SQ_task_struct.imm14 = {5'd17, 5'd0, 4'b0001};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2847,10 +2847,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -2922,7 +2922,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(33);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(39);
         expected_LQ_task_struct.imm14 = {5'd17, 5'd0, 4'b0001};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -2934,7 +2934,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(38);
         expected_SQ_task_struct.imm14 = {5'd17, 5'd0, 4'b0001};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -2997,10 +2997,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -3072,7 +3072,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(40);
         expected_LQ_task_struct.imm14 = {5'd18, 5'd0, 4'b0001};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(9);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3084,7 +3084,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(29);
         expected_SQ_task_struct.imm14 = {5'd18, 5'd0, 4'b0001};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(9);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -3147,10 +3147,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -3222,7 +3222,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(37);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(41);
         expected_LQ_task_struct.imm14 = {5'd19, 5'd0, 4'b1000};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(10);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3234,7 +3234,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(39);
         expected_SQ_task_struct.imm14 = {5'd19, 5'd0, 4'b1000};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(10);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -3297,10 +3297,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -3372,7 +3372,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(23);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(42);
         expected_LQ_task_struct.imm14 = {5'd20, 5'd0, 4'b1000};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(11);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3384,7 +3384,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(41);
         expected_SQ_task_struct.imm14 = {5'd20, 5'd0, 4'b1000};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(11);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -3447,10 +3447,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -3522,7 +3522,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(43);
         expected_LQ_task_struct.imm14 = {5'd21, 5'd0, 4'b1001};
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(12);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3534,7 +3534,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = {5'd21, 5'd0, 4'b1001};
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(12);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -3597,10 +3597,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -3672,7 +3672,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(35);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h5 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(13);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3684,7 +3684,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(22);
         expected_SQ_task_struct.imm14 = 16'h5 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(13);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -3747,10 +3747,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b01;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -3822,7 +3822,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(32);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.imm14 = 16'h201 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(14);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3834,7 +3834,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(23);
         expected_SQ_task_struct.imm14 = 16'h201 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(14);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -3897,10 +3897,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b10;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(3); // misc val
+		// tb_SQ_tail_index = SQ_index_t'(3); // misc val
 		tb_SQ_full = 1'b1; // misc full
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(7); // misc val
+		// tb_LQ_tail_index = LQ_index_t'(7); // misc val
 		tb_LQ_full = 1'b1; // misc full
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b1; // misc full
@@ -3972,7 +3972,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(46);
         expected_LQ_task_struct.imm14 = 16'h71a7 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(3);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(3);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(15);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -3984,7 +3984,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(24);
         expected_SQ_task_struct.imm14 = 16'h71a7 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(7);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(7);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(15);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -4047,10 +4047,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -4122,7 +4122,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(46);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'd64 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(16);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -4134,7 +4134,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(45);
         expected_SQ_task_struct.imm14 = 16'd64 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(16);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b1;
@@ -4197,10 +4197,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b1; // give BRU RS full 
@@ -4272,7 +4272,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h0123 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(17);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -4284,7 +4284,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0123 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -4347,10 +4347,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -4422,7 +4422,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h0123 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(17);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -4434,7 +4434,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0123 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(17);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b1;
@@ -4497,10 +4497,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -4572,7 +4572,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(36);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'hfedc >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(18);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -4584,7 +4584,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(25);
         expected_SQ_task_struct.imm14 = 16'hfedc >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(18);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -4647,10 +4647,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b1;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -4722,7 +4722,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(41);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(48);
         expected_LQ_task_struct.imm14 = 16'h9d4 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(19);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -4734,7 +4734,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(26);
         expected_SQ_task_struct.imm14 = 16'h9d4 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(19);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -4797,10 +4797,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b1;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -4872,7 +4872,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(41);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(48);
         expected_LQ_task_struct.imm14 = 16'h9d4 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(19);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -4884,7 +4884,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(26);
         expected_SQ_task_struct.imm14 = 16'h9d4 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(19);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -4947,10 +4947,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5022,7 +5022,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(41);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(48);
         expected_LQ_task_struct.imm14 = 16'h9d4 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(19);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -5034,7 +5034,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(26);
         expected_SQ_task_struct.imm14 = 16'h9d4 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(19);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5097,10 +5097,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5172,7 +5172,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(49);
         expected_LQ_task_struct.imm14 = 16'h98 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(20);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -5184,7 +5184,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(27);
         expected_SQ_task_struct.imm14 = 16'h98 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(20);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5247,10 +5247,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5322,7 +5322,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(50);
         expected_LQ_task_struct.imm14 = 16'h7f >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(21);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -5334,7 +5334,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(28);
         expected_SQ_task_struct.imm14 = 16'h7f >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(21);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5397,10 +5397,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5472,7 +5472,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(50);
         expected_LQ_task_struct.imm14 = 16'h7f >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(21);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -5484,7 +5484,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(28);
         expected_SQ_task_struct.imm14 = 16'h7f >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(21);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5547,10 +5547,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5622,7 +5622,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(9);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(51);
         expected_LQ_task_struct.imm14 = 16'h4be9 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(22);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -5634,7 +5634,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(29);
         expected_SQ_task_struct.imm14 = 16'h4be9 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(22);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5697,10 +5697,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b1;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5772,7 +5772,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(35);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(52);
         expected_LQ_task_struct.imm14 = 16'h10d >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(23);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -5784,7 +5784,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
         expected_SQ_task_struct.imm14 = 16'h10d >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(23);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5847,10 +5847,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(2);
+		// tb_SQ_tail_index = SQ_index_t'(2);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(5);
+		// tb_LQ_tail_index = LQ_index_t'(5);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -5922,7 +5922,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(35);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(52);
         expected_LQ_task_struct.imm14 = 16'h10d >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(23);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b1;
@@ -5934,7 +5934,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
         expected_SQ_task_struct.imm14 = 16'h10d >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(5);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(5);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(23);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -5997,10 +5997,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6072,7 +6072,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(52);
         expected_LQ_task_struct.imm14 = 16'h1c9 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(24);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6084,7 +6084,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(34);
         expected_SQ_task_struct.imm14 = 16'h1c9 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(24);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -6147,10 +6147,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6222,7 +6222,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
         expected_LQ_task_struct.imm14 = 16'd26 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(25);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6234,7 +6234,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'd26 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(25);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -6297,10 +6297,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b11;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6372,7 +6372,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
         expected_LQ_task_struct.imm14 = 16'd99 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(26);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6384,7 +6384,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'd99 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(26);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -6447,10 +6447,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b01;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6522,7 +6522,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(53);
         expected_LQ_task_struct.imm14 = 16'd99 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(26);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6534,7 +6534,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'd99 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(26);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -6597,10 +6597,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6672,7 +6672,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(53);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(54);
         expected_LQ_task_struct.imm14 = 16'hffff >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(27);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6684,7 +6684,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(53);
         expected_SQ_task_struct.imm14 = 16'hffff >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(27);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -6747,10 +6747,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6822,7 +6822,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(54);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(28);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6834,7 +6834,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(28);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -6897,10 +6897,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -6972,7 +6972,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(52);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(54);
         expected_LQ_task_struct.imm14 = 16'h55 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(29);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -6984,7 +6984,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(52);
         expected_SQ_task_struct.imm14 = 16'h55 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(29);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7053,10 +7053,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -7128,7 +7128,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(33);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(55);
         expected_LQ_task_struct.imm14 = {5'd1, 5'd0, 6'b100001} >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -7140,7 +7140,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(3);
         expected_SQ_task_struct.imm14 = {5'd1, 5'd0, 6'b100001} >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7203,10 +7203,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -7278,7 +7278,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(55);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -7290,7 +7290,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7353,10 +7353,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -7428,7 +7428,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -7440,7 +7440,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7509,10 +7509,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -7584,7 +7584,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -7596,7 +7596,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7659,10 +7659,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -7734,7 +7734,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(46);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -7746,7 +7746,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7809,10 +7809,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -7884,7 +7884,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -7896,7 +7896,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -7959,10 +7959,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8034,7 +8034,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8046,7 +8046,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(30);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -8115,10 +8115,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8190,7 +8190,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(0);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8202,7 +8202,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -8265,10 +8265,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8340,7 +8340,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(25);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = {5'd0, 5'd0, 6'b100000} >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8352,7 +8352,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(34);
         expected_SQ_task_struct.imm14 = {5'd0, 5'd0, 6'b100000} >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(0);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -8415,10 +8415,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8490,7 +8490,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(25);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h234 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(1);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8502,7 +8502,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h234 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(1);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -8565,10 +8565,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8640,7 +8640,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h7e0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(2);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8652,7 +8652,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h7e0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(2);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -8721,10 +8721,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8796,7 +8796,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h7e0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(3);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8808,7 +8808,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h7e0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(3);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -8871,10 +8871,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -8946,7 +8946,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h7e4 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(3);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -8958,7 +8958,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h7e4 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(3);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9021,10 +9021,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -9096,7 +9096,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h7e8 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(4);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -9108,7 +9108,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h7e8 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(4);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9171,10 +9171,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(0);
+		// tb_LQ_tail_index = LQ_index_t'(0);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -9246,7 +9246,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(25);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.imm14 = 16'h36d0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(5);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -9258,7 +9258,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(32);
         expected_SQ_task_struct.imm14 = 16'h36d0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(0);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(5);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9324,10 +9324,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(1);
+		// tb_LQ_tail_index = LQ_index_t'(1);
 		tb_LQ_full = 1'b1;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -9399,7 +9399,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.imm14 = 16'h005c >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(6);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -9411,7 +9411,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(33);
         expected_SQ_task_struct.imm14 = 16'h005c >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(1);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(1);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(6);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9477,10 +9477,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(1);
+		// tb_LQ_tail_index = LQ_index_t'(1);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -9552,7 +9552,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(44);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.imm14 = 16'h005c >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(6);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -9564,7 +9564,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(33);
         expected_SQ_task_struct.imm14 = 16'h005c >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(1);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(1);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(6);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9630,10 +9630,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(2);
+		// tb_LQ_tail_index = LQ_index_t'(2);
 		tb_LQ_full = 1'b1;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -9705,7 +9705,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(46);
         expected_LQ_task_struct.imm14 = 16'h1234 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(7);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -9717,7 +9717,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(45);
         expected_SQ_task_struct.imm14 = 16'h1234 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(2);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(2);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(7);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9783,10 +9783,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(0);
+		// tb_SQ_tail_index = SQ_index_t'(0);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(2);
+		// tb_LQ_tail_index = LQ_index_t'(2);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -9858,7 +9858,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(45);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(46);
         expected_LQ_task_struct.imm14 = 16'h1234 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(0);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(7);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b1;
@@ -9870,7 +9870,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(45);
         expected_SQ_task_struct.imm14 = 16'h1234 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(2);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(2);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(7);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -9936,10 +9936,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(1);
+		// tb_SQ_tail_index = SQ_index_t'(1);
 		tb_SQ_full = 1'b1;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(3);
+		// tb_LQ_tail_index = LQ_index_t'(3);
 		tb_LQ_full = 1'b1;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -10011,7 +10011,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(3);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(1);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(1);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -10023,7 +10023,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(4);
         expected_SQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(3);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(3);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -10089,10 +10089,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(1);
+		// tb_SQ_tail_index = SQ_index_t'(1);
 		tb_SQ_full = 1'b1;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(3);
+		// tb_LQ_tail_index = LQ_index_t'(3);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -10164,7 +10164,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(3);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(1);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(1);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -10176,7 +10176,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(4);
         expected_SQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(3);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(3);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -10242,10 +10242,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(1);
+		// tb_SQ_tail_index = SQ_index_t'(1);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(3);
+		// tb_LQ_tail_index = LQ_index_t'(3);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0;
@@ -10317,7 +10317,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(3);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(47);
         expected_LQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(1);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(1);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b1;
@@ -10329,7 +10329,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(4);
         expected_SQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(3);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(3);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(8);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -10398,10 +10398,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(2);
+		// tb_SQ_tail_index = SQ_index_t'(2);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(4);
+		// tb_LQ_tail_index = LQ_index_t'(4);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -10473,7 +10473,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(3);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(48);
         expected_LQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(9);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -10485,7 +10485,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b0;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(39);
         expected_SQ_task_struct.imm14 = 16'h3210 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(4);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(4);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(9);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;
@@ -10548,10 +10548,10 @@ module dispatch_unit_tb ();
 	    // 2x ALU RS interface
 		tb_ALU_RS_full = 2'b00;
 	    // SQ interface
-		tb_SQ_tail_index = SQ_index_t'(2);
+		// tb_SQ_tail_index = SQ_index_t'(2);
 		tb_SQ_full = 1'b0;
 	    // LQ interface
-		tb_LQ_tail_index = LQ_index_t'(4);
+		// tb_LQ_tail_index = LQ_index_t'(4);
 		tb_LQ_full = 1'b0;
 	    // BRU RS interface
 		tb_BRU_RS_full = 1'b0; 
@@ -10623,7 +10623,7 @@ module dispatch_unit_tb ();
         expected_LQ_task_struct.source.phys_reg_tag = phys_reg_tag_t'(34);
         expected_LQ_task_struct.dest_phys_reg_tag = phys_reg_tag_t'(48);
         expected_LQ_task_struct.imm14 = 16'h7e0 >> 2;
-        expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
+        // expected_LQ_task_struct.SQ_index = SQ_index_t'(2);
         expected_LQ_task_struct.ROB_index = ROB_index_t'(9);
 	    // SQ interface
 		expected_SQ_task_valid = 1'b0;
@@ -10635,7 +10635,7 @@ module dispatch_unit_tb ();
         expected_SQ_task_struct.source_1.ready = 1'b1;
         expected_SQ_task_struct.source_1.phys_reg_tag = phys_reg_tag_t'(0);
         expected_SQ_task_struct.imm14 = 16'h7e0 >> 2;
-        expected_SQ_task_struct.LQ_index = LQ_index_t'(4);
+        // expected_SQ_task_struct.LQ_index = LQ_index_t'(4);
         expected_SQ_task_struct.ROB_index = ROB_index_t'(9);
 	    // BRU RS interface
 		expected_BRU_RS_task_valid = 1'b0;

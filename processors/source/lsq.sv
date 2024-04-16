@@ -93,7 +93,7 @@ module lsq (
     // output logic dispatch_unit_LQ_task_valid,
     // output LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
 
-    output LQ_index_t dispatch_unit_LQ_tail_index,
+    // output LQ_index_t dispatch_unit_LQ_tail_index,
     output logic dispatch_unit_LQ_full,
     input logic dispatch_unit_LQ_task_valid,
     input LQ_enqueue_struct_t dispatch_unit_LQ_task_struct,
@@ -116,7 +116,7 @@ module lsq (
     // output logic dispatch_unit_SQ_task_valid,
     // output SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
 
-    output SQ_index_t dispatch_unit_SQ_tail_index,
+    // output SQ_index_t dispatch_unit_SQ_tail_index,
     output logic dispatch_unit_SQ_full,
     input logic dispatch_unit_SQ_task_valid,
     input SQ_enqueue_struct_t dispatch_unit_SQ_task_struct,
@@ -699,6 +699,7 @@ module lsq (
                         end
                         else begin
                             $display("lsq: SQ Operand Pipeline: ERROR: operand 1 VTM but no individual VTM");
+                            $display("\t@: %0t",$realtime);
                             SQ_operand_pipeline_DUT_error = 1'b1;
                         end
 
@@ -751,6 +752,7 @@ module lsq (
                         end
                         else begin
                             $display("lsq: SQ Operand Pipeline: ERROR: operand 0 VTM but no individual VTM");
+                            $display("\t@: %0t",$realtime);
                             SQ_operand_pipeline_DUT_error = 1'b1;
                         end
 
@@ -802,6 +804,7 @@ module lsq (
                     end
                     else begin
                         $display("lsq: SQ Operand Pipeline: ERROR: operand 0 VTM but no individual VTM");
+                        $display("\t@: %0t",$realtime);
                         SQ_operand_pipeline_DUT_error = 1'b1;
                     end
 
@@ -817,6 +820,7 @@ module lsq (
                     end
                     else begin
                         $display("lsq: SQ Operand Pipeline: ERROR: operand 1 VTM but no individual VTM");
+                        $display("\t@: %0t",$realtime);
                         SQ_operand_pipeline_DUT_error = 1'b1;
                     end
 
@@ -1240,6 +1244,7 @@ module lsq (
                         end
                         else begin
                             $display("lsq: LQ Operand Pipeline: ERROR: operand VTM but no individual VTM");
+                            $display("\t@: %0t",$realtime);
                             LQ_operand_pipeline_DUT_error = 1'b1;
                         end
 
@@ -1864,6 +1869,7 @@ module lsq (
             // assert dispatch unit not asserting when shouldn't:
             if (dispatch_unit_LQ_full) begin
                 $display("lsq: ERROR: dispatch unit enQing task when LQ busy");
+                $display("\t@: %0t",$realtime);
                 central_LSQ_DUT_error = 1'b1;
             end
         end
@@ -2112,6 +2118,7 @@ module lsq (
 
         //     if (LQ_SQ_search_ptr != LQ_head_ptr) begin
         //         $display("lsq: Central LSQ: ERROR: LQ empty but LQ_SQ_search_ptr != LQ_head_ptr");
+        //         $display("\t@: %0t",$realtime);
         //         central_LSQ_DUT_error = 1'b1;
         //     end
         // end
@@ -2227,6 +2234,7 @@ module lsq (
             // error if already loaded 
             if (LQ_array[dcache_read_resp_LQ_index].dcache_loaded) begin
                 $display("lsq: ERROR: d$ read resp when already d$ loaded");
+                $display("\t@: %0t",$realtime);
                 central_LSQ_DUT_error = 1'b1;
             end
 
@@ -2253,6 +2261,7 @@ module lsq (
             // // error if already SQ searched
             // if (LQ_array[LQ_SQ_search_ptr.index].SQ_searched) begin
             //     $display("lsq: ERROR: SQ search resp when already SQ searched");
+            //     $display("\t@: %0t",$realtime);
             //     central_LSQ_DUT_error = 1'b1;
             // end
                 // actually, this is okay, if ever get d$ read resp at same time, need to retry SQ search
@@ -2782,11 +2791,11 @@ module lsq (
         // remaining interfaces: //
         ///////////////////////////
 
-        // LQ interface
-        dispatch_unit_LQ_tail_index = LQ_tail_ptr.index;
+        // // LQ interface
+        // dispatch_unit_LQ_tail_index = LQ_tail_ptr.index;
 
-        // SQ interface
-        dispatch_unit_SQ_tail_index = SQ_tail_ptr.index;
+        // // SQ interface
+        // dispatch_unit_SQ_tail_index = SQ_tail_ptr.index;
 
     end
 

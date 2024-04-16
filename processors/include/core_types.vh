@@ -335,7 +335,7 @@ package core_types_pkg;
         source_reg_status_t source_0;
         source_reg_status_t source_1;
         daddr_t imm14;
-        LQ_index_t LQ_index;
+        // LQ_index_t LQ_index;
             // may want separate counter tag to link the store and load parts of SC
                 // or ROB_index serves this role
         // admin

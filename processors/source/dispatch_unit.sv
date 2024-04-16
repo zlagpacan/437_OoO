@@ -96,13 +96,13 @@ module dispatch_unit (
     output ALU_RS_input_struct_t [1:0] ALU_RS_task_struct,
 
     // LQ interface
-    input LQ_index_t LQ_tail_index,
+    // input LQ_index_t LQ_tail_index,
     input logic LQ_full,
     output logic LQ_task_valid,
     output LQ_enqueue_struct_t LQ_task_struct,
 
     // SQ interface
-    input SQ_index_t SQ_tail_index,
+    // input SQ_index_t SQ_tail_index,
     input logic SQ_full,
     output logic SQ_task_valid,
     output SQ_enqueue_struct_t SQ_task_struct,
@@ -731,7 +731,7 @@ module dispatch_unit (
         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
         LQ_task_struct.imm14 = instr_imm16[15:2];
-        LQ_task_struct.SQ_index = SQ_tail_index;
+        // LQ_task_struct.SQ_index = SQ_tail_index;
         LQ_task_struct.ROB_index = ROB_tail_index;
 
         // SQ struct
@@ -746,7 +746,7 @@ module dispatch_unit (
         SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
         SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
         SQ_task_struct.imm14 = instr_imm16[15:2];
-        SQ_task_struct.LQ_index = LQ_tail_index;
+        // SQ_task_struct.LQ_index = LQ_tail_index;
         SQ_task_struct.ROB_index = ROB_tail_index;
 
         // BRU struct
@@ -806,6 +806,7 @@ module dispatch_unit (
             default:
             begin
                 $display("dispatch_unit: ERROR: got to final case for ALU_RS_full");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
@@ -827,6 +828,7 @@ module dispatch_unit (
             $display("dispatch_unit: ERROR: prmt_save_checkpoint_safe_column != prfl_save_checkpoint_safe_column");
             $display("\tprmt_save_checkpoint_safe_column = %h", prmt_save_checkpoint_safe_column);
             $display("\tprfl_save_checkpoint_safe_column = %h", prfl_save_checkpoint_safe_column);
+            $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
 
@@ -847,12 +849,14 @@ module dispatch_unit (
             $display("dispatch_unit: ERROR: prmt_restore_checkpoint_success != prfl_restore_checkpoint_success");
             $display("\tprmt_restore_checkpoint_success = %h", prmt_restore_checkpoint_success);
             $display("\tprfl_restore_checkpoint_success = %h", prfl_restore_checkpoint_success);
+            $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
         // assert in flush state if restoring
-        if (restore_checkpoint_valid & ~core_control_flush_dispatch_unit) begin
+        if (restore_checkpoint_valid & restore_checkpoint_speculate_failed & ~core_control_flush_dispatch_unit) begin
             $display("dispatch_unit: ERROR: restoring but not flushing");
             $display("\trestore_checkpoint_valid = %h", restore_checkpoint_valid);
+            $display("\trestore_checkpoint_speculate_failed = %h", restore_checkpoint_speculate_failed);
             $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
             next_DUT_error = 1'b1;
         end
@@ -869,6 +873,7 @@ module dispatch_unit (
             $display("dispatch_unit: ERROR: killing but not flushing");
             $display("\tkill_bus_valid = %h", kill_bus_valid);
             $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
+            $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
 
@@ -1080,6 +1085,7 @@ module dispatch_unit (
                                 NOP:
                                 begin
                                     $display("dispatch_unit: ERROR: got to RTYPE NOP case when should've been caught in rd == $0 check");
+                                    $display("\t@: %0t",$realtime);
                                     next_DUT_error = 1'b1;
                                 end
 
@@ -1096,6 +1102,7 @@ module dispatch_unit (
                                 JR:
                                 begin
                                     $display("dispatch_unit: ERROR: got to RTYPE JR case when should've been caught in RTYPE & JR check");
+                                    $display("\t@: %0t",$realtime);
                                     next_DUT_error = 1'b1;
                                 end
 
@@ -1143,6 +1150,7 @@ module dispatch_unit (
                                 default:
                                 begin
                                     $display("dispatch_unit: ERROR: unrecognized RTYPE instr");
+                                    $display("\t@: %0t",$realtime);
                                     next_DUT_error = 1'b1;
                                 end
 
@@ -2142,7 +2150,7 @@ module dispatch_unit (
                         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
                         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                         LQ_task_struct.imm14 = instr_imm16[15:2];
-                        LQ_task_struct.SQ_index = SQ_tail_index;
+                        // LQ_task_struct.SQ_index = SQ_tail_index;
                         LQ_task_struct.ROB_index = ROB_tail_index;
                     end
                 end
@@ -2196,7 +2204,7 @@ module dispatch_unit (
                         SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
                         SQ_task_struct.imm14 = instr_imm16[15:2];
-                        SQ_task_struct.LQ_index = LQ_tail_index;
+                        // SQ_task_struct.LQ_index = LQ_tail_index;
                         SQ_task_struct.ROB_index = ROB_tail_index;
                     end
                 end
@@ -2281,7 +2289,7 @@ module dispatch_unit (
                         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
                         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                         LQ_task_struct.imm14 = instr_imm16[15:2];
-                        LQ_task_struct.SQ_index = SQ_tail_index;
+                        // LQ_task_struct.SQ_index = SQ_tail_index;
                         LQ_task_struct.ROB_index = ROB_tail_index;
                     end
                 end
@@ -2384,7 +2392,7 @@ module dispatch_unit (
                         SQ_task_struct.source_1.ready = prrt_dispatch_source_1_ready;
                         SQ_task_struct.source_1.phys_reg_tag = prmt_source_phys_reg_tag_1;
                         SQ_task_struct.imm14 = instr_imm16[15:2];
-                        SQ_task_struct.LQ_index = LQ_tail_index;
+                        // SQ_task_struct.LQ_index = LQ_tail_index;
                         SQ_task_struct.ROB_index = ROB_tail_index;
                         // send LQ task
                         LQ_task_valid = 1'b1;
@@ -2395,7 +2403,7 @@ module dispatch_unit (
                         LQ_task_struct.source.phys_reg_tag = prmt_source_phys_reg_tag_0;
                         LQ_task_struct.dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
                         LQ_task_struct.imm14 = instr_imm16[15:2];
-                        LQ_task_struct.SQ_index = SQ_tail_index;
+                        // LQ_task_struct.SQ_index = SQ_tail_index;
                         LQ_task_struct.ROB_index = ROB_tail_index;
                     end
                 end
@@ -2426,6 +2434,7 @@ module dispatch_unit (
                 default:
                 begin
                     $display("dispatch_unit: ERROR: unrecognized opcode");
+                    $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1; 
                 end
 

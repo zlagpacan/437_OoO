@@ -1,0 +1,38 @@
+Design: done
+
+RTL TB: none
+
+Synthesis: done
+
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Mon Apr 15 19:09:43 2024           ;
+; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+; Revision Name                      ; system                                          ;
+; Top-level Entity Name              ; system                                          ;
+; Family                             ; Cyclone IV E                                    ;
+; Device                             ; EP4CE115F29C8                                   ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 15,793 / 114,480 ( 14 % )                       ;
+;     Total combinational functions  ; 14,932 / 114,480 ( 13 % )                       ;
+;     Dedicated logic registers      ; 5,757 / 114,480 ( 5 % )                         ;
+; Total registers                    ; 5758                                            ;
+; Total pins                         ; 102 / 529 ( 19 % )                              ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
+; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
++------------------------------------+-------------------------------------------------+
+
++-----------------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary                        ;
++------------+-----------------+---------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
++------------+-----------------+---------------------+------+
+; 48.96 MHz  ; 48.96 MHz       ; CPUCLK              ;      ;
+; 72.17 MHz  ; 72.17 MHz       ; altera_reserved_tck ;      ;
+; 137.21 MHz ; 137.21 MHz      ; CLK                 ;      ;
++------------+-----------------+---------------------+------+
+
+Synthesized TB: none
