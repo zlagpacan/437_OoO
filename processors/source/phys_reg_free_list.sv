@@ -179,6 +179,7 @@ module phys_reg_free_list (
             // DUT error: FIFO full
             if (full) begin
                 $display("phys_reg_free_list: ERROR: tried to enqueue when free list full");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
@@ -226,6 +227,7 @@ module phys_reg_free_list (
                     revert_speculated_dest_phys_reg_tag);
                 $display("\t\tfree list value = %d",
                     phys_reg_free_list_by_index[prev_head_index_ptr.index]);
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
@@ -376,6 +378,7 @@ module phys_reg_free_list (
             // otherwise, unexpected
             else begin
                 $display("phys_reg_free_list: ERROR: invalid full/empty case");
+                $display("\t@: %0t",$realtime);
                 assert(0);
             end
         end

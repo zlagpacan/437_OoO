@@ -21,11 +21,11 @@ module fetch_unit_tb ();
     // parameters
     parameter PERIOD = 10;
 
-    parameter PC_RESET_VAL = 16'h0;
-    parameter BTB_FRAMES = 256;
-    parameter RAS_DEPTH = 8;
-    parameter LOG_BTB_FRAMES = $clog2(BTB_FRAMES);
-    parameter LOG_RAS_DEPTH = $clog2(RAS_DEPTH);
+    // parameter PC_RESET_VAL = 16'h0;
+    // parameter BTB_FRAMES = 256;
+    // parameter RAS_DEPTH = 8;
+    // parameter LOG_BTB_FRAMES = $clog2(BTB_FRAMES);
+    // parameter LOG_RAS_DEPTH = $clog2(RAS_DEPTH);
 
     // TB signals:
     logic CLK = 1'b1, nRST;

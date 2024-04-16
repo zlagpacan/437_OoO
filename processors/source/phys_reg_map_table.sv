@@ -138,6 +138,7 @@ module phys_reg_map_table (
         begin
             $display("phys_reg_map_table: ERROR: working column not valid");
             $display("\t\tworking column = %h", phys_reg_map_table_working_column);
+            $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
 
@@ -185,6 +186,7 @@ module phys_reg_map_table (
                 $display("\t\tmap table value = 0x%h",
                     phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
                     .array[revert_dest_arch_reg_tag]);
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 

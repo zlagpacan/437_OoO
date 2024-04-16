@@ -337,12 +337,14 @@ module rob (
             // assert no enqueue while full
             if (full) begin
                 $display("rob: ERROR: ROB enqueued when already full");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
             // assert in IDLE state
             if (ROB_state != ROB_IDLE) begin
                 $display("rob: ERROR: ROB enqueued when not ROB_IDLE");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
@@ -374,12 +376,14 @@ module rob (
                 complete_bus_0_dest_phys_reg_tag
             ) begin
                 $display("rob: ERROR: tag mismatch on complete bus 0");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
             // assert bus match: ALU 0
             if (~ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_ALU_0) begin
                 $display("rob: ERROR: bus mismatch on complete bus 0 (no ALU 0)");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
         end
@@ -402,12 +406,14 @@ module rob (
                 complete_bus_1_dest_phys_reg_tag
             ) begin
                 $display("rob: ERROR: tag mismatch on complete bus 1");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
             // assert bus match: ALU 1
             if (~ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_ALU_1) begin
                 $display("rob: ERROR: bus mismatch on complete bus 1 (no ALU 1)");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
         end
@@ -430,12 +436,14 @@ module rob (
                 complete_bus_2_dest_phys_reg_tag
             ) begin
                 $display("rob: ERROR: tag mismatch on complete bus 2");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 
             // assert bus match: LQ
             if (~ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_LQ) begin
                 $display("rob: ERROR: bus mismatch on complete bus 2 (no LQ)");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
         end
@@ -464,6 +472,7 @@ module rob (
             // assert BRU match
             if (~ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
                 $display("rob: ERROR: BRU mismatch on complete");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
         end
@@ -484,6 +493,7 @@ module rob (
             // assert SQ match
             if (~ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_SQ) begin
                 $display("rob: ERROR: SQ mismatch on complete");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
         end
@@ -537,6 +547,7 @@ module rob (
                     // assert no dequeue while empty
                     if (empty) begin
                         $display("rob: ERROR: ROB dequeued when already empty");
+                        $display("\t@: %0t",$realtime);
                         next_DUT_error = 1'b1;
                     end
 
@@ -1085,6 +1096,7 @@ module rob (
             default:
             begin
                 $display("rob: ERROR: ROB in default state");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
             end
 

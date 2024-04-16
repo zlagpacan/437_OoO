@@ -120,6 +120,7 @@ module phys_reg_ready_table (
             ((complete_bus_2_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & complete_bus_2_valid & complete_bus_1_valid)
         ) begin
             $display("phys_reg_ready_table: ERROR: multiple writers to same phys reg");
+            $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
 
@@ -132,6 +133,7 @@ module phys_reg_ready_table (
             ((complete_bus_2_dest_phys_reg_tag == phys_reg_tag_t'(0)) & complete_bus_2_valid)
         ) begin
             $display("phys_reg_ready_table: ERROR: write to phys reg 0");
+            $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
 

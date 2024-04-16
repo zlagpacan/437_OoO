@@ -1,0 +1,5 @@
+org 0x0000
+
+ori $3, $0, 0xabcd
+sw $3, 0x0100($0)
+halt

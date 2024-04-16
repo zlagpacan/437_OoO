@@ -1,0 +1,19 @@
+org 0x0000
+
+ori $8, $zero, 0x0100 # r8->p32|0x20 = 0x0100
+ori $9, $zero, 0x0200 # r9->p33|0x21 = 0x0200
+
+# pain train
+lw $1, 4($8) # r1->p34|0x22 = 0x89abcdef
+xor $3, $0, $1 # r3->p35|0x23 = 0x89abcdef
+and $1, $3, $1 # r1->p36|0x24 = 0x89abcdef
+xori $3, $0, 0x5f6a # r3->p37|0x25 = 0x00005f6a
+add $2, $1, $3 # r2->p38|0x26 = 0x89ac2d59
+sw $2, 8($9)
+sw $2, 12($9)
+
+halt
+
+org 0x0100
+cfw 0x01234567
+cfw 0x89abcdef
