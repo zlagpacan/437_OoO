@@ -117,20 +117,46 @@ module phys_reg_free_list (
     // seq
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
+            
             ///////////////////////////////////////////////////////////////////////////////////////////////
+            
+            // // phys reg free list:
+            //     // reset free list follows the phys reg tags > arch reg tags
+            //     // start from next after highest arch reg tag
+            // for (int i = 0; i < FREE_LIST_DEPTH; i++) begin
+            //     phys_reg_free_list_by_index[i] <= phys_reg_tag_t'(NUM_ARCH_REGS + i);
+            // end
+            
+            // // reset with free list full
+            // head_index_ptr.index <= '0;
+            // head_index_ptr.msb <= 1'b0;
+            // tail_index_ptr.index <= '0;
+            // tail_index_ptr.msb <= 1'b1;
+
+            // // start with no checkpoints
+            // checkpoint_columns_by_column_index <= '0;
+            // checkpoint_tail_column <= checkpoint_column_t'(0);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+
+            // tricky edge case: first free's of arch reg's after reset
+                // just make room for all phys reg's
+                // start head at phys reg tags > arch reg tags
+           
             // phys reg free list:
                 // reset free list follows the phys reg tags > arch reg tags
                 // start from next after highest arch reg tag
             for (int i = 0; i < FREE_LIST_DEPTH; i++) begin
-                phys_reg_free_list_by_index[i] <= phys_reg_tag_t'(NUM_ARCH_REGS + i);
+                phys_reg_free_list_by_index[i] <= phys_reg_tag_t'(i);
             end
-            ///////////////////////////////////////////////////////////////////////////////////////////////
-            
-            // reset with free list full
-            head_index_ptr.index <= '0;
+
+            // reset with free half full
+                // head pointer starting at phys reg tags > arch reg tags
+                // tail pointer starting at 0 wrapped around
             head_index_ptr.msb <= 1'b0;
-            tail_index_ptr.index <= '0;
+            head_index_ptr.index <= (FREE_LIST_DEPTH >> 1);
             tail_index_ptr.msb <= 1'b1;
+            tail_index_ptr.index <= '0;
 
             // start with no checkpoints
             checkpoint_columns_by_column_index <= '0;
@@ -345,8 +371,11 @@ module phys_reg_free_list (
     // seq
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
-            // start full, not empty
-            full <= 1'b1;
+            // // start full, not empty
+            // full <= 1'b1;
+            // empty <= 1'b0;
+            // start half full, not empty
+            full <= 1'b0;
             empty <= 1'b0;
         end
         else begin

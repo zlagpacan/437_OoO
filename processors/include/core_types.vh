@@ -180,8 +180,11 @@ package core_types_pkg;
         // need checkpoint columns
         // max size of free list is (NUM_PHYS_REGS - NUM_ARCH_REGS)?
             // maximum number of non-in-flight phys reg's
+            // tricky edge case: first free's of arch reg's after reset
+            // just make room for all phys reg's
 
-    parameter FREE_LIST_DEPTH = NUM_PHYS_REGS - NUM_ARCH_REGS;
+    // parameter FREE_LIST_DEPTH = NUM_PHYS_REGS - NUM_ARCH_REGS;
+    parameter FREE_LIST_DEPTH = NUM_PHYS_REGS;
     parameter LOG_FREE_LIST_DEPTH = $clog2(FREE_LIST_DEPTH);
 
     ///////////////////////////

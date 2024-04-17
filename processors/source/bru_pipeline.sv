@@ -203,11 +203,17 @@ module bru_pipeline (
     word_t EX_stage_A;
     word_t EX_stage_B;
 
+    //////////////////////////////////////////////////////////
+    // prevent successive restarts (only care about first): 
+
+    logic flush_BP;
+
     ////////////
     // logic: 
 
     // seq
     always_ff @ (posedge CLK, negedge nRST) begin
+
         if (~nRST) begin
             
             // Dispatch -> RS Latch
@@ -241,6 +247,41 @@ module bru_pipeline (
             EX_stage_checkpoint_safe_column <= checkpoint_column_t'(0); // default 0
             EX_stage_ROB_index <= ROB_index_t'(0);  // default 0
         end
+
+        else if (flush_BP) begin
+
+            // Dispatch -> RS Latch
+            // send invalid tasks with reasonable defaults
+            RS_stage_task_valid <= 1'b0;
+            // RS_stage_task_struct <= '0; // all 0's is safe nop (doesn't matter because valid 0 anyway)
+            RS_stage_task_struct.op <= BRU_BEQ;
+            RS_stage_task_struct.source_0.needed <= 1'b0;
+            RS_stage_task_struct.source_0.ready <= 1'b0;
+            RS_stage_task_struct.source_0.phys_reg_tag <= phys_reg_tag_t'(0);
+            RS_stage_task_struct.source_1.needed <= 1'b0;
+            RS_stage_task_struct.source_1.ready <= 1'b0;
+            RS_stage_task_struct.source_1.phys_reg_tag <= phys_reg_tag_t'(0);
+            RS_stage_task_struct.imm16 <= 16'h0;
+            RS_stage_task_struct.PC <= pc_t'(0);    // default 0
+            RS_stage_task_struct.nPC <= pc_t'(1);   // default PC + 4 = 0 + 1 = 1
+            RS_stage_task_struct.checkpoint_safe_column <= checkpoint_column_t'(0); // default 0
+            RS_stage_task_struct.ROB_index <= ROB_index_t'(0);  // default 0
+
+            // RS -> EX Latch
+            EX_stage_task_valid <= 1'b0;
+            EX_stage_op <= BRU_op_t'(BRU_BEQ);      // default BEQ
+            EX_stage_operand_0 <= 32'h0;    
+            EX_stage_operand_1 <= 32'h0;
+            EX_stage_operand_0_bus_select <= 2'd3;  // default raw operand 0
+            EX_stage_operand_1_bus_select <= 2'd3;  // default raw operand 1
+            EX_stage_BTB_DIRP_index <= BTB_DIRP_index_t'(0);    // default 0
+            EX_stage_branch_PC <= pc_t'(1);         // default PC + 4 + 0 = 0 + 1 + 0 = 1
+            EX_stage_PC_plus_4 <= pc_t'(1);         // default 0 + 1 = 1
+            EX_stage_nPC <= pc_t'(1);               // default PC + 4 = 0 + 1 = 1
+            EX_stage_checkpoint_safe_column <= checkpoint_column_t'(0); // default 0
+            EX_stage_ROB_index <= ROB_index_t'(0);  // default 0
+        end
+
         else begin
 
             // Dispatch -> RS Latch
@@ -710,6 +751,9 @@ module bru_pipeline (
             2'd3:   EX_stage_B = EX_stage_operand_1;
         endcase
 
+        // no flush
+        flush_BP = 1'b0;
+
         // BRU EX stage behavior by op
         casez (EX_stage_op)
 
@@ -726,7 +770,11 @@ module bru_pipeline (
                     // restart if didn't take branch PC
                     if (EX_stage_nPC != EX_stage_branch_PC) begin
                         
-                        this_restart_valid = EX_stage_task_valid;
+                        // if valid task, send restart, flush BP
+                        if (EX_stage_task_valid) begin
+                            this_restart_valid = 1'b1;
+                            flush_BP = 1'b1;
+                        end
                     end
 
                     // direction is taken
@@ -741,8 +789,12 @@ module bru_pipeline (
 
                     // restart if didn't take PC+4
                     if (EX_stage_nPC != EX_stage_PC_plus_4) begin
-
-                        this_restart_valid = EX_stage_task_valid;
+                        
+                        // if valid task, send restart, flush BP
+                        if (EX_stage_task_valid) begin
+                            this_restart_valid = 1'b1;
+                            flush_BP = 1'b1;
+                        end
                     end
 
                     // direction is not taken
@@ -766,7 +818,11 @@ module bru_pipeline (
                     // restart if didn't take branch PC
                     if (EX_stage_nPC != EX_stage_branch_PC) begin
                         
-                        this_restart_valid = EX_stage_task_valid;
+                        // if valid task, send restart, flush BP
+                        if (EX_stage_task_valid) begin
+                            this_restart_valid = 1'b1;
+                            flush_BP = 1'b1;
+                        end
                     end
 
                     // direction is taken
@@ -781,8 +837,12 @@ module bru_pipeline (
 
                     // restart if didn't take PC+4
                     if (EX_stage_nPC != EX_stage_PC_plus_4) begin
-
-                        this_restart_valid = EX_stage_task_valid;
+                        
+                        // if valid task, send restart, flush BP
+                        if (EX_stage_task_valid) begin
+                            this_restart_valid = 1'b1;
+                            flush_BP = 1'b1;
+                        end
                     end
 
                     // direction is not taken
@@ -802,8 +862,12 @@ module bru_pipeline (
 
                 // restart if didn't take JR (reg A)
                 if (EX_stage_nPC != pc_t'(EX_stage_A[PC_WIDTH-1:0])) begin
-
-                    this_restart_valid = EX_stage_task_valid;
+                        
+                    // if valid task, send restart, flush BP
+                    if (EX_stage_task_valid) begin
+                        this_restart_valid = 1'b1;
+                        flush_BP = 1'b1;
+                    end
                 end
             end
 

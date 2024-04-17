@@ -1,5 +1,6 @@
 org 0x0000
 
+ori $sp, $0, 0x3ffc
 ori $3, $0, 10
 jal outer_func
 sw $3, 0x0200($0)
