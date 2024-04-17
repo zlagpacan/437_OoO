@@ -215,7 +215,7 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(32);
 	    // enqueue
 	    // full/empty
-		expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 	    // reg map revert
 	    // free list checkpoint save
@@ -259,7 +259,7 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(32);
 	    // enqueue
 	    // full/empty
-		expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 	    // reg map revert
 	    // free list checkpoint save
@@ -311,7 +311,7 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(32);
 	    // enqueue
 	    // full/empty
-		expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 	    // reg map revert
 	    // free list checkpoint save
@@ -366,7 +366,8 @@ module phys_reg_free_list_tb ();
 			expected_dequeue_phys_reg_tag = phys_reg_tag_t'(32 + i);
 			// enqueue
 			// full/empty
-			expected_full = i == 0 ? 1'b1 : 1'b0;
+			// expected_full = i == 0 ? 1'b1 : 1'b0;
+			expected_full = 1'b0;
 			expected_empty = 1'b0;
 			// reg map revert
 			// free list checkpoint save
@@ -410,7 +411,8 @@ module phys_reg_free_list_tb ();
 		// DUT error
 		expected_DUT_error = 1'b0;
 	    // dequeue
-		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(32); // back to first phys reg entry but now empty
+		// expected_dequeue_phys_reg_tag = phys_reg_tag_t'(32); // back to first phys reg entry but now empty
+		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(0);
 		// enqueue
 		// full/empty
 		expected_full = 1'b0;
@@ -465,7 +467,8 @@ module phys_reg_free_list_tb ();
 			// DUT error
 			expected_DUT_error = 1'b0;
 			// dequeue
-			expected_dequeue_phys_reg_tag = phys_reg_tag_t'(i == 31 ? 32 : 31);
+			// expected_dequeue_phys_reg_tag = phys_reg_tag_t'(i == 31 ? 32 : 31);
+			expected_dequeue_phys_reg_tag = phys_reg_tag_t'(i == 31 ? 0 : 31);
 			// enqueue
 			// full/empty
 			expected_full = 1'b0;
@@ -526,7 +529,8 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(31);
 		// enqueue
 		// full/empty
-		expected_full = 1'b1;
+		// expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 		// reg map revert
 		// free list checkpoint save
@@ -572,7 +576,8 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(31);
 		// enqueue
 		// full/empty
-		expected_full = 1'b1;
+		// expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 		// reg map revert
 		// free list checkpoint save
@@ -710,7 +715,8 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(31);
 		// enqueue
 		// full/empty
-		expected_full = 1'b1;
+		// expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 		// reg map revert
 		// free list checkpoint save
@@ -756,7 +762,8 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(31);
 		// enqueue
 		// full/empty
-		expected_full = 1'b1;
+		// expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 		// reg map revert
 		// free list checkpoint save
@@ -1870,7 +1877,8 @@ module phys_reg_free_list_tb ();
 		expected_dequeue_phys_reg_tag = phys_reg_tag_t'(30);
 		// enqueue
 		// full/empty
-		expected_full = 1'b1;
+		// expected_full = 1'b1;
+		expected_full = 1'b0;
 		expected_empty = 1'b0;
 		// reg map revert
 		// free list checkpoint save

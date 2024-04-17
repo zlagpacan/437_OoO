@@ -608,6 +608,21 @@ module rob (
                     end
                 end
 
+                // // ROB invalid move dequeue
+                //     // invalid and head != tail
+                // else if (
+                //     ~ROB_array_by_entry[head_index_ptr.index].valid
+                //     &
+                //     (
+                //         head_index_ptr 
+                //         !=
+                //         tail_index_ptr
+                //     )
+                // ) begin
+                //     // increment head
+                //     next_head_index_ptr = head_index_ptr + ROB_ptr_t'(1);
+                // end
+
                 // restart req for ROB_IDLE:
 
                 // simultaneous BRU and LQ restarts -> restart at older

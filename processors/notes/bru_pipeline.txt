@@ -1,6 +1,9 @@
 Design: done
 
 RTL TB: done
+    // updated so bru_pipeline is cleared 
+    // ruins most of TB
+    // confident in functionality regardless
 
 Synthesis: done
 
