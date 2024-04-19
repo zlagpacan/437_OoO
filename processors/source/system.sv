@@ -217,6 +217,7 @@ module system (input logic CLK, nRST, system_if.sys syif);
 		next_write_buffer_tail = write_buffer_tail;
 		write_buffer_CAM_data = 32'h0;
 		write_buffer_CAM_found = 1'b0;
+		next_dcache_read_resp_data = 32'h0;
 		
 		// priority:
 			// d$ read req

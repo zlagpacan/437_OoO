@@ -30,6 +30,9 @@ add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/wr
 add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/next_write_buffer_head
 add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/write_buffer_tail
 add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/next_write_buffer_tail
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/write_buffer_CAM_found
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/write_buffer_CAM_data
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/next_dcache_read_resp_data
 add wave -noupdate -group {Fetch Unit Signals} /system_tb/DUT/CORE0/FU/DUT_error
 add wave -noupdate -group {Fetch Unit Signals} /system_tb/DUT/CORE0/FU/from_pipeline_BTB_DIRP_update
 add wave -noupdate -group {Fetch Unit Signals} /system_tb/DUT/CORE0/FU/from_pipeline_BTB_DIRP_index
@@ -789,7 +792,7 @@ add wave -noupdate -group {LSQ Signals} /system_tb/DUT/CORE0/LSQ/LQ_restart_dcac
 add wave -noupdate -group {LSQ Signals} /system_tb/DUT/CORE0/LSQ/LQ_restart_dcache_inv_LQ_index
 add wave -noupdate -group {LSQ Signals} /system_tb/DUT/CORE0/LSQ/LQ_restart_dcache_inv_ROB_index
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {1413372 ps} 0}
+WaveRestoreCursors {{Cursor 1} {520000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 331
 configure wave -valuecolwidth 100
@@ -805,4 +808,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {1688489 ps}
+WaveRestoreZoom {0 ps} {1356 ns}

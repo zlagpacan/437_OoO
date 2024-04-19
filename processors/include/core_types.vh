@@ -348,6 +348,7 @@ package core_types_pkg;
     typedef struct packed {
         logic valid;
         logic ready;
+        logic written;
         logic conditional;
         ROB_index_t ROB_index;
         daddr_t write_addr;
