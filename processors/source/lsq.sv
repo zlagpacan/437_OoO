@@ -1354,6 +1354,9 @@ module lsq (
         // d$ interface
         // remaining interfaces
 
+        // LQ restart reg
+        // LQ complete bus reg
+
     ////////////////////
     // LQ FIFO array: //
     ////////////////////
@@ -1670,6 +1673,56 @@ module lsq (
     // remaining interfaces: //
     ///////////////////////////
 
+    /////////////////////
+    // LQ restart reg: //
+    /////////////////////
+
+    logic next_ROB_LQ_restart_valid;
+    logic next_ROB_LQ_restart_after_instr;
+    ROB_index_t next_ROB_LQ_restart_ROB_index;
+
+    // seq:
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            ROB_LQ_restart_valid <= 1'b0;
+            ROB_LQ_restart_after_instr <= 1'b0;
+            ROB_LQ_restart_ROB_index <= ROB_index_t'(0);
+        end
+        else begin
+            ROB_LQ_restart_valid <= next_ROB_LQ_restart_valid;
+            ROB_LQ_restart_after_instr <= next_ROB_LQ_restart_after_instr;
+            ROB_LQ_restart_ROB_index <= next_ROB_LQ_restart_ROB_index;
+        end
+    end
+
+    //////////////////////////
+    // LQ complete bus reg: //
+    //////////////////////////
+
+    logic next_this_complete_bus_tag_valid;
+    phys_reg_tag_t next_this_complete_bus_tag;
+    ROB_index_t next_this_complete_bus_ROB_index;
+    logic next_next_this_complete_bus_data_valid; // only needs to go to reg file
+    word_t next_next_this_complete_bus_data;
+
+    // seq:
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            this_complete_bus_tag_valid <= 1'b0;
+            this_complete_bus_tag <= phys_reg_tag_t'(0);
+            this_complete_bus_ROB_index <= ROB_index_t'(0);
+            next_this_complete_bus_data_valid <= 1'b0;
+            next_this_complete_bus_data <= 32'h0;
+        end
+        else begin
+            this_complete_bus_tag_valid <= next_this_complete_bus_tag_valid;
+            this_complete_bus_tag <= next_this_complete_bus_tag;
+            this_complete_bus_ROB_index <= next_this_complete_bus_ROB_index;
+            next_this_complete_bus_data_valid <= next_next_this_complete_bus_data_valid;
+            next_this_complete_bus_data <= next_next_this_complete_bus_data;
+        end
+    end
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // Central LSQ Logic:
 
@@ -1789,11 +1842,11 @@ module lsq (
             // mess with LQ_array, complete bus, restart
 
         // invalid complete bus broadcast
-        this_complete_bus_tag_valid = 1'b0;
-        this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-        this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-        next_this_complete_bus_data_valid = 1'b0;
-        next_this_complete_bus_data = SQ_search_resp_data;
+        next_this_complete_bus_tag_valid = 1'b0;
+        next_this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+        next_this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+        next_next_this_complete_bus_data_valid = 1'b0;
+        next_next_this_complete_bus_data = SQ_search_resp_data;
 
         /////////////////////////////////
         // LQ dcache invalidation CAM: //
@@ -2309,11 +2362,11 @@ module lsq (
                 if (SQ_search_resp_present) begin
 
                     // valid complete bus broadcast from SQ
-                    this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                    next_this_complete_bus_data_valid = 1'b1;
-                    next_this_complete_bus_data = SQ_search_resp_data;
+                    next_this_complete_bus_tag_valid = 1'b1;
+                    next_this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+                    next_this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                    next_next_this_complete_bus_data_valid = 1'b1;
+                    next_next_this_complete_bus_data = SQ_search_resp_data;
 
                     // no need to kill d$ read
                 end
@@ -2322,11 +2375,11 @@ module lsq (
                 else begin
 
                     // valid complete bus broadcast from d$
-                    this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
-                    next_this_complete_bus_data_valid = 1'b1;
-                    next_this_complete_bus_data = dcache_read_resp_data;
+                    next_this_complete_bus_tag_valid = 1'b1;
+                    next_this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                    next_this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
+                    next_next_this_complete_bus_data_valid = 1'b1;
+                    next_next_this_complete_bus_data = dcache_read_resp_data;
                 end
             end
 
@@ -2342,11 +2395,11 @@ module lsq (
                     if (SQ_search_resp_present) begin
 
                         // valid complete bus broadcast from SQ
-                        this_complete_bus_tag_valid = 1'b1;
-                        this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                        this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                        next_this_complete_bus_data_valid = 1'b1;
-                        next_this_complete_bus_data = SQ_search_resp_data;
+                        next_this_complete_bus_tag_valid = 1'b1;
+                        next_this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+                        next_this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                        next_next_this_complete_bus_data_valid = 1'b1;
+                        next_next_this_complete_bus_data = SQ_search_resp_data;
                     
                         // check for d$ loaded
                             // mis-speculated load, should have taken from SQ
@@ -2371,11 +2424,11 @@ module lsq (
                 else begin
 
                     // valid complete bus broadcast from d$
-                    this_complete_bus_tag_valid = 1'b1;
-                    this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
-                    this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
-                    next_this_complete_bus_data_valid = 1'b1;
-                    next_this_complete_bus_data = dcache_read_resp_data;
+                    next_this_complete_bus_tag_valid = 1'b1;
+                    next_this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                    next_this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
+                    next_next_this_complete_bus_data_valid = 1'b1;
+                    next_next_this_complete_bus_data = dcache_read_resp_data;
 
                     // don't move SQ search on
                     SQ_search_req_valid = 1'b1;
@@ -2393,11 +2446,11 @@ module lsq (
             if (~LQ_array[dcache_read_resp_LQ_index].SQ_loaded) begin
 
                 // valid complete bus broadcast from d$
-                this_complete_bus_tag_valid = 1'b1;
-                this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
-                this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
-                next_this_complete_bus_data_valid = 1'b1;
-                next_this_complete_bus_data = dcache_read_resp_data;
+                next_this_complete_bus_tag_valid = 1'b1;
+                next_this_complete_bus_tag = LQ_array[dcache_read_resp_LQ_index].dest_phys_reg_tag;
+                next_this_complete_bus_ROB_index = LQ_array[dcache_read_resp_LQ_index].ROB_index;
+                next_next_this_complete_bus_data_valid = 1'b1;
+                next_next_this_complete_bus_data = dcache_read_resp_data;
             end
         end
 
@@ -2410,11 +2463,11 @@ module lsq (
             if (SQ_search_resp_present) begin
 
                 // valid complete bus broadcast from SQ
-                this_complete_bus_tag_valid = 1'b1;
-                this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
-                this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
-                next_this_complete_bus_data_valid = 1'b1;
-                next_this_complete_bus_data = SQ_search_resp_data;
+                next_this_complete_bus_tag_valid = 1'b1;
+                next_this_complete_bus_tag = LQ_array[LQ_SQ_search_ptr.index].dest_phys_reg_tag;
+                next_this_complete_bus_ROB_index = LQ_array[LQ_SQ_search_ptr.index].ROB_index;
+                next_next_this_complete_bus_data_valid = 1'b1;
+                next_next_this_complete_bus_data = SQ_search_resp_data;
             
                 // check for d$ loaded
                     // mis-speculated load, should have taken from SQ
@@ -2647,9 +2700,9 @@ module lsq (
         end
 
         // default: no top level restart
-        ROB_LQ_restart_valid = 1'b0;
-        ROB_LQ_restart_after_instr = 1'b0;
-        ROB_LQ_restart_ROB_index = ROB_index_t'(0);
+        next_ROB_LQ_restart_valid = 1'b0;
+        next_ROB_LQ_restart_after_instr = 1'b0;
+        next_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
 
         // need to select b/w potential invalidation due to d$ inv vs. missed SQ forward
             // if both valid, pick older instr
@@ -2657,7 +2710,7 @@ module lsq (
         if (LQ_restart_dcache_inv_valid & LQ_restart_missed_SQ_forward_valid) begin
 
             // definitely valid
-            ROB_LQ_restart_valid = 1'b1;
+            next_ROB_LQ_restart_valid = 1'b1;
 
             // check older instruction based on current head
                 // they can be same instr
@@ -2671,8 +2724,8 @@ module lsq (
             ) begin
 
                 // restart d$ inv
-                ROB_LQ_restart_after_instr = 1'b0;
-                ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
+                next_ROB_LQ_restart_after_instr = 1'b0;
+                next_ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
 
                 // tail follows d$ inv
                     // adjust msb still greater than head as expect
@@ -2691,8 +2744,8 @@ module lsq (
             else begin
 
                 // restart missed SQ forward
-                ROB_LQ_restart_after_instr = 1'b1;
-                ROB_LQ_restart_ROB_index = LQ_restart_missed_SQ_forward_ROB_index;
+                next_ROB_LQ_restart_after_instr = 1'b1;
+                next_ROB_LQ_restart_ROB_index = LQ_restart_missed_SQ_forward_ROB_index;
 
                 // tail follows LQ entry after LQ SQ search ptr
                 next_LQ_tail_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);
@@ -2703,11 +2756,11 @@ module lsq (
         else if (LQ_restart_dcache_inv_valid) begin
 
             // still valid (really just OR)
-            ROB_LQ_restart_valid = 1'b1;
+            next_ROB_LQ_restart_valid = 1'b1;
 
             // restart d$ inv
-            ROB_LQ_restart_after_instr = 1'b0;
-            ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
+            next_ROB_LQ_restart_after_instr = 1'b0;
+            next_ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
 
             // tail follows d$ inv
                 // adjust msb still greater than head as expect
@@ -2726,11 +2779,11 @@ module lsq (
         else if (LQ_restart_missed_SQ_forward_valid) begin
 
             // still valid (really just OR)
-            ROB_LQ_restart_valid = 1'b1;
+            next_ROB_LQ_restart_valid = 1'b1;
 
             // restart missed SQ forward
-            ROB_LQ_restart_after_instr = 1'b1;
-            ROB_LQ_restart_ROB_index = LQ_restart_missed_SQ_forward_ROB_index;
+            next_ROB_LQ_restart_after_instr = 1'b1;
+            next_ROB_LQ_restart_ROB_index = LQ_restart_missed_SQ_forward_ROB_index;
 
             // tail follows LQ entry after LQ SQ search ptr
             next_LQ_tail_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);
