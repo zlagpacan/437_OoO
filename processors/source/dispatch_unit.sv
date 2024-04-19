@@ -868,11 +868,22 @@ module dispatch_unit (
             // ALREADY CONNECTED
             // assert in flush state if killing
 
-        // assert in flush state if killing
-        if (kill_bus_valid & ~core_control_flush_dispatch_unit) begin
+        // // assert in flush state if killing
+        // if (kill_bus_valid & ~core_control_flush_dispatch_unit) begin
+        //     $display("dispatch_unit: ERROR: killing but not flushing");
+        //     $display("\tkill_bus_valid = %h", kill_bus_valid);
+        //     $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
+        //     $display("\t@: %0t",$realtime);
+        //     next_DUT_error = 1'b1;
+        // end
+            
+        // don't remember: shouldn't this be stall state?
+
+        // assert in stall state if killing
+        if (kill_bus_valid & ~core_control_stall_dispatch_unit) begin
             $display("dispatch_unit: ERROR: killing but not flushing");
             $display("\tkill_bus_valid = %h", kill_bus_valid);
-            $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
+            $display("\tcore_control_stall_dispatch_unit = %h", core_control_stall_dispatch_unit);
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end
