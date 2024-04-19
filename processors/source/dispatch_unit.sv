@@ -2189,7 +2189,7 @@ module dispatch_unit (
                         ROB_struct_out.complete = 1'b0;
                         ROB_struct_out.dispatched_unit.DU_SQ = 1'b1;
                         ROB_struct_out.restart_PC = dispatch_unit_PC;
-                        ROB_struct_out.reg_write = 1'b1;
+                        ROB_struct_out.reg_write = 1'b0;
                         ROB_struct_out.dest_arch_reg_tag = instr_rt;
                         ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
                         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;

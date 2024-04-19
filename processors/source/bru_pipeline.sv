@@ -861,7 +861,7 @@ module bru_pipeline (
                 this_restart_PC = pc_t'(EX_stage_A[PC_WIDTH-1+2:2]);
 
                 // restart if didn't take JR (reg A)
-                if (EX_stage_nPC != pc_t'(EX_stage_A[PC_WIDTH-1:0])) begin
+                if (EX_stage_nPC != pc_t'(EX_stage_A[PC_WIDTH-1+2:2])) begin
                         
                     // if valid task, send restart, flush BP
                     if (EX_stage_task_valid) begin

@@ -576,6 +576,9 @@ module rob (
                         // if LQ blocked, don't move on
                         if (LQ_retire_blocked) begin
 
+                            // prevent old rename from being freed
+                            dispatch_unit_retire_valid = 1'b0;
+
                             // keep entry valid
                             next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b1;
 

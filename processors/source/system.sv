@@ -116,6 +116,23 @@ module system (input logic CLK, nRST, system_if.sys syif);
 	word_t dcache_write_req_data;
 	logic dcache_write_req_blocked;
 
+	// need write buffer to make sure write req's don't disappear if read req at same time
+	typedef struct packed {
+		logic valid;
+		daddr_t addr;
+		word_t data;
+	} write_buffer_t;
+
+	write_buffer_t [3:0] write_buffer, next_write_buffer;
+	logic [2:0] write_buffer_head, next_write_buffer_head;
+	logic [2:0] write_buffer_tail, next_write_buffer_tail; 
+
+	// write buffer CAM value
+	logic write_buffer_CAM_found;
+	word_t write_buffer_CAM_data;
+
+	word_t next_dcache_read_resp_data;
+
 	core CORE0 (
 		.CLK(CPUCLK),
 		.nRST(nRST),
@@ -151,14 +168,28 @@ module system (input logic CLK, nRST, system_if.sys syif);
 
 	always_ff @ (posedge CPUCLK, negedge nRST) begin
 		if (~nRST) begin
+
+			// immediate d$ read req resp
 			dcache_read_resp_valid <= 1'b0;
 			dcache_read_resp_LQ_index <= LQ_index_t'(0);
 			dcache_read_resp_data <= 32'h0;
+
+			// write buffer
+			write_buffer <= '0;
+			write_buffer_head <= 3'h0;
+			write_buffer_tail <= 3'h0;
 		end
 		else begin
+
+			// immediate d$ read req resp
 			dcache_read_resp_valid <= dcache_read_req_valid;
 			dcache_read_resp_LQ_index <= dcache_read_req_LQ_index;
-			dcache_read_resp_data <= prif.ramload;
+			dcache_read_resp_data <= next_dcache_read_resp_data;
+
+			// write buffer
+			write_buffer <= next_write_buffer;
+			write_buffer_head <= next_write_buffer_head;
+			write_buffer_tail <= next_write_buffer_tail;
 		end
 	end
 
@@ -171,7 +202,7 @@ module system (input logic CLK, nRST, system_if.sys syif);
 		prif.memaddr = 32'h0;
 		prif.memREN = 1'b0;
 		prif.memWEN = 1'b0;
-		prif.memstore = dcache_write_req_data;
+		prif.memstore = write_buffer[write_buffer_head[1:0]].data;
 
 		// i$ interface
 		icache_hit = 1'b0;
@@ -179,6 +210,13 @@ module system (input logic CLK, nRST, system_if.sys syif);
 
 		// d$ interface
 		dcache_write_req_blocked = 1'b0;
+
+		// write buffer
+		next_write_buffer = write_buffer;
+		next_write_buffer_head = write_buffer_head;
+		next_write_buffer_tail = write_buffer_tail;
+		write_buffer_CAM_data = 32'h0;
+		write_buffer_CAM_found = 1'b0;
 		
 		// priority:
 			// d$ read req
@@ -187,20 +225,43 @@ module system (input logic CLK, nRST, system_if.sys syif);
 			// i$ read req
 		if (dcache_read_req_valid) begin
 
-			// service d$ read req
-			prif.memaddr = {16'h0, dcache_read_req_addr, 2'b00};
-			prif.memREN = 1'b1;
+			// CAM search write buffer
+			for (int i = 0; i < 4; i++) begin
 
-			// if write req, block it
-			if (dcache_write_req_valid) begin
-				dcache_write_req_blocked = 1'b1;
+				if (
+					write_buffer[i].valid & 
+					write_buffer[i].addr == dcache_read_req_addr
+				) begin
+					write_buffer_CAM_found = 1'b1;
+					write_buffer_CAM_data = write_buffer[i].data;
+				end
+			end
+
+			if (write_buffer_CAM_found) begin
+				next_dcache_read_resp_data = write_buffer_CAM_data;
+			end	
+			else begin
+				// service d$ read req with RAM
+				prif.memaddr = {16'h0, dcache_read_req_addr, 2'b00};
+				prif.memREN = 1'b1;
+				next_dcache_read_resp_data = prif.ramload;
 			end
 		end
-		else if (dcache_write_req_valid) begin
+		// else if (dcache_write_req_valid) begin
 
-			// service d$ write req
-			prif.memaddr = {16'h0, dcache_write_req_addr, 2'b00};
+		// 	// service d$ write req
+		// 	prif.memaddr = {16'h0, dcache_write_req_addr, 2'b00};
+		// 	prif.memWEN = 1'b1;
+		// end
+		else if (write_buffer[write_buffer_head[1:0]].valid) begin
+
+			// send write to RAM
+			prif.memaddr = {16'h0, write_buffer[write_buffer_head[1:0]].addr, 2'b00};
 			prif.memWEN = 1'b1;
+
+			// deQ write buffer
+			next_write_buffer_head = write_buffer_head + 1;
+			next_write_buffer[write_buffer_head[1:0]].valid = 1'b0;
 		end
 		else if (icache_REN) begin
 
@@ -211,12 +272,38 @@ module system (input logic CLK, nRST, system_if.sys syif);
 			// give hit
 			icache_hit = 1'b1;
 		end
+
+		// write buffer enQ
+		if (dcache_write_req_valid) begin
+			next_write_buffer[write_buffer_tail[1:0]].valid = 1'b1;
+			next_write_buffer[write_buffer_tail[1:0]].addr = dcache_write_req_addr;
+			next_write_buffer[write_buffer_tail[1:0]].data = dcache_write_req_data;
+
+			next_write_buffer_tail = write_buffer_tail + 1;
+		end
+
+		// write buffer full
+		if (
+			next_write_buffer_head[1:0] == next_write_buffer_tail[1:0]
+			&
+			next_write_buffer_head[2] != next_write_buffer_tail[2]
+		) begin
+			dcache_write_req_blocked = 1'b1;
+		end
 	end
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// interface connections
-	assign syif.halt = halt;
+	// assign syif.halt = halt;
+	assign syif.halt = 
+		halt &
+		~write_buffer[0].valid &
+		~write_buffer[1].valid &
+		~write_buffer[2].valid &
+		~write_buffer[3].valid
+	;
+		// clear write buffer before finish halt
 	assign syif.load = prif.ramload;
 
 	// who has ram control

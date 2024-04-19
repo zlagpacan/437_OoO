@@ -9,6 +9,10 @@
         register writing instruction can rename an architectural register to. The table can also checkpoint
         a free list which can be restored using a FIFO of free list head pointers.
 
+        Consider: Update to prevent potential free + dispatch or dispatch then old free
+            - simple flat table of ready/not ready
+                - actually this might still be same problem
+
         It is the external controller's responsibility to prevent making phys reg 0 free.
 */
 
