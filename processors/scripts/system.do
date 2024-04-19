@@ -24,6 +24,12 @@ add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/dc
 add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/dcache_write_req_addr
 add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/dcache_write_req_data
 add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/dcache_write_req_blocked
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/write_buffer
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/next_write_buffer
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/write_buffer_head
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/next_write_buffer_head
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/write_buffer_tail
+add wave -noupdate -expand -group {Hack Mem Interface Signals} /system_tb/DUT/next_write_buffer_tail
 add wave -noupdate -group {Fetch Unit Signals} /system_tb/DUT/CORE0/FU/DUT_error
 add wave -noupdate -group {Fetch Unit Signals} /system_tb/DUT/CORE0/FU/from_pipeline_BTB_DIRP_update
 add wave -noupdate -group {Fetch Unit Signals} /system_tb/DUT/CORE0/FU/from_pipeline_BTB_DIRP_index
@@ -182,6 +188,80 @@ add wave -noupdate -expand -group {Dispatch Unit Signals} /system_tb/DUT/CORE0/D
 add wave -noupdate -expand -group {Dispatch Unit Signals} /system_tb/DUT/CORE0/DU/instr_funct
 add wave -noupdate -expand -group {Dispatch Unit Signals} /system_tb/DUT/CORE0/DU/ALU_RS_select
 add wave -noupdate -expand -group {Dispatch Unit Signals} /system_tb/DUT/CORE0/DU/ALU_RS_both_full
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/DUT_error
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/source_arch_reg_tag_0
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/source_phys_reg_tag_0
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/source_arch_reg_tag_1
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/source_phys_reg_tag_1
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/old_dest_arch_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/old_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/rename_valid
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/rename_dest_arch_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/rename_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/revert_valid
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/revert_dest_arch_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/revert_safe_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/revert_speculated_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/save_checkpoint_valid
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/save_checkpoint_ROB_index
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/save_checkpoint_safe_column
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/restore_checkpoint_valid
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/restore_checkpoint_speculate_failed
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/restore_checkpoint_ROB_index
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/restore_checkpoint_safe_column
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/restore_checkpoint_success
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/next_DUT_error
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/phys_reg_map_table_columns_by_column_index
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/next_phys_reg_map_table_columns_by_column_index
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/phys_reg_map_table_working_column
+add wave -noupdate -group {Phys Reg Map Table Signals} /system_tb/DUT/CORE0/DU/prmt/next_phys_reg_map_table_working_column
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/DUT_error
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/dequeue_valid
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/dequeue_phys_reg_tag
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/enqueue_valid
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/enqueue_phys_reg_tag
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/full
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/empty
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/revert_valid
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/revert_speculated_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/save_checkpoint_valid
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/save_checkpoint_ROB_index
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/save_checkpoint_safe_column
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/restore_checkpoint_valid
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/restore_checkpoint_speculate_failed
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/restore_checkpoint_ROB_index
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/restore_checkpoint_safe_column
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/restore_checkpoint_success
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_DUT_error
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/phys_reg_free_list_by_index
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_phys_reg_free_list_by_index
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/head_index_ptr
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_head_index_ptr
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/prev_head_index_ptr
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/tail_index_ptr
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_tail_index_ptr
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/checkpoint_columns_by_column_index
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_checkpoint_columns_by_column_index
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/checkpoint_tail_column
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_checkpoint_tail_column
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_full
+add wave -noupdate -group {Phys Reg Free List Signals} /system_tb/DUT/CORE0/DU/prfl/next_empty
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/DUT_error
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/dispatch_source_0_phys_reg_tag
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/dispatch_source_0_ready
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/dispatch_source_1_phys_reg_tag
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/dispatch_source_1_ready
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/dispatch_dest_write
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/dispatch_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/complete_bus_0_valid
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/complete_bus_1_valid
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/complete_bus_2_valid
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/next_DUT_error
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/ready_table_by_phys_reg_tag_index
+add wave -noupdate -group {Phys Reg Ready Table Signals} /system_tb/DUT/CORE0/DU/prrt/next_ready_table_by_phys_reg_tag_index
 add wave -noupdate -expand -group {Phys Reg File Signals} /system_tb/DUT/CORE0/PRF/DUT_error
 add wave -noupdate -expand -group {Phys Reg File Signals} /system_tb/DUT/CORE0/PRF/read_overload
 add wave -noupdate -expand -group {Phys Reg File Signals} /system_tb/DUT/CORE0/PRF/LQ_read_req_valid
@@ -709,7 +789,7 @@ add wave -noupdate -group {LSQ Signals} /system_tb/DUT/CORE0/LSQ/LQ_restart_dcac
 add wave -noupdate -group {LSQ Signals} /system_tb/DUT/CORE0/LSQ/LQ_restart_dcache_inv_LQ_index
 add wave -noupdate -group {LSQ Signals} /system_tb/DUT/CORE0/LSQ/LQ_restart_dcache_inv_ROB_index
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {262464 ps} 0}
+WaveRestoreCursors {{Cursor 1} {1413372 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 331
 configure wave -valuecolwidth 100
@@ -725,4 +805,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {759765 ps}
+WaveRestoreZoom {0 ps} {1688489 ps}

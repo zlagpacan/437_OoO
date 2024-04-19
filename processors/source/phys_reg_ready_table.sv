@@ -120,8 +120,17 @@ module phys_reg_ready_table (
             ((complete_bus_2_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & complete_bus_2_valid & complete_bus_1_valid)
         ) begin
             $display("phys_reg_ready_table: ERROR: multiple writers to same phys reg");
+            $display("\tdispatch_dest_write = %h", dispatch_dest_write);
+            $display("\tdispatch_dest_phys_reg_tag = %h", dispatch_dest_phys_reg_tag);
+            $display("\tcomplete_bus_0_valid = %h", complete_bus_0_valid);
+            $display("\tcomplete_bus_0_dest_phys_reg_tag = %h", complete_bus_0_dest_phys_reg_tag);
+            $display("\tcomplete_bus_1_valid = %h", complete_bus_1_valid);
+            $display("\tcomplete_bus_1_dest_phys_reg_tag = %h", complete_bus_1_dest_phys_reg_tag);
+            $display("\tcomplete_bus_2_valid = %h", complete_bus_2_valid);
+            $display("\tcomplete_bus_2_dest_phys_reg_tag = %h", complete_bus_2_dest_phys_reg_tag);
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+                // this can actually be okay if checkpoint restore was success, writing back instr that hasn't been killed yet
         end
 
         // DUT error: check for write to phys reg 0
@@ -137,12 +146,13 @@ module phys_reg_ready_table (
             next_DUT_error = 1'b1;
         end
 
-        // dispatch 
-        if (dispatch_dest_write) begin
+        // // dispatch 
+        // if (dispatch_dest_write) begin
             
-            // clear ready bit at dispatch phys reg tag
-            next_ready_table_by_phys_reg_tag_index[dispatch_dest_phys_reg_tag] = 1'b0;
-        end
+        //     // clear ready bit at dispatch phys reg tag
+        //     next_ready_table_by_phys_reg_tag_index[dispatch_dest_phys_reg_tag] = 1'b0;
+        // end
+            // this is highest priority, do last
         
         // complete bus 0
         if (complete_bus_0_valid) begin
@@ -163,6 +173,13 @@ module phys_reg_ready_table (
 
             // set ready bit at complete bus 2 phys reg tag
             next_ready_table_by_phys_reg_tag_index[complete_bus_2_dest_phys_reg_tag] = 1'b1;
+        end
+
+        // dispatch 
+        if (dispatch_dest_write) begin
+            
+            // clear ready bit at dispatch phys reg tag
+            next_ready_table_by_phys_reg_tag_index[dispatch_dest_phys_reg_tag] = 1'b0;
         end
 
         // read logic:
