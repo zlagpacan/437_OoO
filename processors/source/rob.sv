@@ -636,7 +636,7 @@ module rob (
                     // check BRU older -> restart BRU
                     if (
                         BRU_restart_ROB_index - head_index_ptr
-                        <= 
+                        <
                         LQ_restart_ROB_index - head_index_ptr
                     ) begin
 
@@ -814,14 +814,14 @@ module rob (
                 // check BRU valid and older than current restart
                 if (BRU_restart_valid & (
                     BRU_restart_ROB_index - head_index_ptr
-                    <=
+                    <
                     restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
                     // check LQ valid and older than BRU -> restart LQ
                     if (LQ_restart_valid & (
                         LQ_restart_ROB_index - head_index_ptr
-                        <=
+                        <
                         BRU_restart_ROB_index - head_index_ptr
                     )) begin
 
@@ -887,7 +887,7 @@ module rob (
                 // check LQ valid and older than current restart
                 if (LQ_restart_valid & (
                     LQ_restart_ROB_index - head_index_ptr
-                    <=
+                    <
                     restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
@@ -990,14 +990,14 @@ module rob (
                 // check BRU valid and older than current restart
                 if (BRU_restart_valid & (
                     BRU_restart_ROB_index - head_index_ptr
-                    <=
+                    <
                     restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
                     // check LQ valid and older than BRU -> restart LQ
                     if (LQ_restart_valid & (
                         LQ_restart_ROB_index - head_index_ptr
-                        <=
+                        <
                         BRU_restart_ROB_index - head_index_ptr
                     )) begin
 
@@ -1056,7 +1056,7 @@ module rob (
                 // check LQ valid and older than current restart
                 if (LQ_restart_valid & (
                     LQ_restart_ROB_index - head_index_ptr
-                    <=
+                    <
                     restart_ROB_index_ptr - head_index_ptr
                 )) begin
 
