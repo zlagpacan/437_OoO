@@ -1569,9 +1569,12 @@ module lsq (
 
     // SQ search intermediate vals
     logic SQ_search_CAM_ambiguous;
-    logic SQ_search_CAM_present;
-    SQ_index_t SQ_search_CAM_youngest_older_index;
-    word_t SQ_search_CAM_youngest_older_data;
+    logic SQ_search_CAM_unwritten_present;
+    SQ_index_t SQ_search_CAM_unwritten_youngest_older_index;
+    word_t SQ_search_CAM_unwritten_youngest_older_data;
+    logic SQ_search_CAM_written_present;
+    SQ_index_t SQ_search_CAM_written_youngest_older_index;
+    word_t SQ_search_CAM_written_youngest_older_data;
 
     // reg b/w CAM result and complete bus broadcast logic
     logic SQ_search_resp_valid;
@@ -1978,6 +1981,7 @@ module lsq (
                 // share some decoding from SQ operand pipeline
             next_SQ_array[SQ_tail_ptr.index].valid = 1'b1;
             next_SQ_array[SQ_tail_ptr.index].ready = 1'b0;
+            next_SQ_array[SQ_tail_ptr.index].written = 1'b0;
             next_SQ_array[SQ_tail_ptr.index].conditional = (dispatch_unit_SQ_task_struct.op == SQ_SC);
             next_SQ_array[SQ_tail_ptr.index].ROB_index = SQ_operand_task_ROB_index;
             next_SQ_array[SQ_tail_ptr.index].write_addr = 14'h0;
@@ -2016,8 +2020,8 @@ module lsq (
 
                 if (ROB_SQ_retire_ROB_index == SQ_array[i].ROB_index) begin
 
-                    // check entry valid
-                    if (SQ_array[i].valid) begin
+                    // check entry valid and not written
+                    if (SQ_array[i].valid & ~SQ_array[i].written) begin
 
                         // can guarantee ready, ROB wouldn't be sending retire valid if wasn't complete
 
@@ -2027,8 +2031,10 @@ module lsq (
                         next_dcache_write_req_data = SQ_array[i].write_data;
                         next_dcache_write_req_conditional = SQ_array[i].conditional;
 
-                        // invalidate entry
-                        next_SQ_array[i].valid = 1'b0;
+                        // // invalidate entry
+                        // next_SQ_array[i].valid = 1'b0;
+                            // instead, mark written, still available to forward from with SQ search
+                        next_SQ_array[i].written = 1'b1;
                     end
 
                     // otherwise, don't care, shouldn't happen
@@ -2050,6 +2056,7 @@ module lsq (
                 if (kill_bus_ROB_index == SQ_array[i].ROB_index) begin
 
                     // invalidate entry
+                        // prevent bad forwarding from written or unwritten
                     next_SQ_array[i].valid = 1'b0;
                 end
             end
@@ -2059,8 +2066,18 @@ module lsq (
         // SQ deQ: //
         /////////////
 
-        // deQ from head if SQ not empty, entry (going to be) invalid
-        if (~SQ_empty & ~next_SQ_array[SQ_head_ptr.index].valid) begin
+        // deQ from head if SQ not empty, entry (going to be) invalid or valid and (going to be) written
+        if (~SQ_empty & 
+            (
+                ~next_SQ_array[SQ_head_ptr.index].valid
+                |
+                (
+                    SQ_array[SQ_head_ptr.index].valid
+                    &
+                    next_SQ_array[SQ_head_ptr.index].written
+                )
+            )
+        ) begin
 
             // increment head
             next_SQ_head_ptr = SQ_head_ptr + SQ_ptr_t'(1);
@@ -2420,12 +2437,19 @@ module lsq (
 
         // try to service request with CAM search
         SQ_search_CAM_ambiguous = 1'b0;
-        SQ_search_CAM_present = 1'b0;
-        SQ_search_CAM_youngest_older_index = SQ_head_ptr.index;
+        SQ_search_CAM_unwritten_present = 1'b0;
+        SQ_search_CAM_unwritten_youngest_older_index = SQ_head_ptr.index;
             // safe init value should be head, which is oldest possible instr
             // don't init this so CAM is simplified?
                 // if don't init, need way to find max without comparing to this signal
-        SQ_search_CAM_youngest_older_data = 32'h0;
+        SQ_search_CAM_unwritten_youngest_older_data = 32'h0;
+            // don't init this so CAM is simplified?
+        SQ_search_CAM_written_present = 1'b0;
+        SQ_search_CAM_written_youngest_older_index = SQ_head_ptr.index;
+            // safe init value should be head, which is oldest possible instr
+            // don't init this so CAM is simplified?
+                // if don't init, need way to find max without comparing to this signal
+        SQ_search_CAM_written_youngest_older_data = 32'h0;
             // don't init this so CAM is simplified?
 
         if (SQ_search_req_valid) begin
@@ -2433,13 +2457,15 @@ module lsq (
             // CAM search through SQ
             for (int i = 0; i < SQ_DEPTH; i++) begin
 
-                // check for valid and older
+                // check for valid, unwritten, and older
                     // older -> less than
                     // subtract from current head
                     // compare against SQ tail when LQ was dispatched
                 if (
                     SQ_array[i].valid
                     & 
+                    ~SQ_array[i].written
+                    &
                     (
                         SQ_index_t'(i) - SQ_head_ptr.index
                         <
@@ -2468,7 +2494,7 @@ module lsq (
                     ) begin
 
                         // forwarding store is present
-                        SQ_search_CAM_present = 1'b1;
+                        SQ_search_CAM_unwritten_present = 1'b1;
 
                         // check new youngest
                             // younger -> greater than
@@ -2478,14 +2504,51 @@ module lsq (
                         if (
                             SQ_index_t'(i) - SQ_head_ptr.index
                             >=
-                            SQ_search_CAM_youngest_older_index - SQ_head_ptr.index
+                            SQ_search_CAM_unwritten_youngest_older_index - SQ_head_ptr.index
                         ) begin
 
                             // update youngest
-                            SQ_search_CAM_youngest_older_index = SQ_index_t'(i);
+                            SQ_search_CAM_unwritten_youngest_older_index = SQ_index_t'(i);
 
                             // update youngest data
-                            SQ_search_CAM_youngest_older_data = SQ_array[i].write_data;
+                            SQ_search_CAM_unwritten_youngest_older_data = SQ_array[i].write_data;
+                        end
+                    end
+                end
+
+                // check for valid, written
+                else if (
+                    SQ_array[i].valid
+                    & 
+                    SQ_array[i].written
+                ) begin
+
+                    // check addr match
+                    if (
+                        SQ_search_req_read_addr
+                        ==
+                        SQ_array[i].write_addr
+                    ) begin
+
+                        // forwarding store is present
+                        SQ_search_CAM_written_present = 1'b1;
+
+                        // check new youngest
+                            // younger -> greater than
+                            // subtract from current head
+                            // check == since can be taking from oldest possible instr
+                                // init value of SQ_search_CAM_youngest_older_index
+                        if (
+                            SQ_index_t'(i) - SQ_head_ptr.index
+                            >=
+                            SQ_search_CAM_written_youngest_older_index - SQ_head_ptr.index
+                        ) begin
+
+                            // update youngest
+                            SQ_search_CAM_written_youngest_older_index = SQ_index_t'(i);
+
+                            // update youngest data
+                            SQ_search_CAM_written_youngest_older_data = SQ_array[i].write_data;
                         end
                     end
                 end
@@ -2505,10 +2568,27 @@ module lsq (
                 next_SQ_search_resp_valid = 1'b1;
 
                 // give resp present based on search
-                next_SQ_search_resp_present = SQ_search_CAM_present;
+                    // favor unwritten present, then written present
 
-                // give resp data based on search
-                next_SQ_search_resp_data = SQ_search_CAM_youngest_older_data;
+                // check unwritten present
+                if (SQ_search_CAM_unwritten_present) begin
+
+                    next_SQ_search_resp_present = 1'b1;
+
+                    // give resp data based on unwritten search
+                    next_SQ_search_resp_data = SQ_search_CAM_unwritten_youngest_older_data;
+                end
+
+                // otherwise, check written present
+                else if (SQ_search_CAM_written_present) begin
+
+                    next_SQ_search_resp_present = 1'b1;
+
+                    // give resp data based on written search
+                    next_SQ_search_resp_data = SQ_search_CAM_written_youngest_older_data;
+                end
+
+                
             end
         end
 
