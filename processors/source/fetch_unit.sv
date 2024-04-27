@@ -248,8 +248,9 @@ module fetch_unit #(
         next_RAS_top_write_index = RAS_top_write_index;
 
         // push to RAS on jump and link
+            // and successfully sending to dispatch
         RAS_push_val = PC_plus_4;
-        if (is_jal) begin
+        if (is_jal & icache_hit & ~core_control_stall_fetch_unit) begin
             
             // RAS write at top index
             next_RAS_entry_by_top_index[RAS_top_write_index] = RAS_push_val;
@@ -259,7 +260,8 @@ module fetch_unit #(
         end
 
         // pop from RAS on jump to ret addr
-        if (is_jr & is_ra) begin
+            // and successfully sending to dispatch
+        if (is_jr & is_ra & icache_hit & ~core_control_stall_fetch_unit) begin
 
             // decrement top index
             next_RAS_top_write_index = RAS_top_read_index;

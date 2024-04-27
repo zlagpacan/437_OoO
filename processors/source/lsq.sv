@@ -2074,7 +2074,10 @@ module lsq (
                 if (ROB_SQ_retire_ROB_index == SQ_array[i].ROB_index) begin
 
                     // check entry valid and not written
-                    if (SQ_array[i].valid & ~SQ_array[i].written) begin
+                    if (
+                        SQ_array[i].valid &
+                        ~SQ_array[i].written
+                    ) begin
 
                         // can guarantee ready, ROB wouldn't be sending retire valid if wasn't complete
 

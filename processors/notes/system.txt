@@ -5,20 +5,25 @@ RTL TB: testasm
 
 Synthesis: done
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Unicore, No Caches: 
+
+- mergesort: 15085 cycles
+
 +--------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                       ;
 +------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Fri Apr 19 03:32:42 2024           ;
+; Fitter Status                      ; Successful - Fri Apr 26 22:56:56 2024           ;
 ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
 ; Revision Name                      ; system                                          ;
 ; Top-level Entity Name              ; system                                          ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29C8                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 16,505 / 114,480 ( 14 % )                       ;
-;     Total combinational functions  ; 15,657 / 114,480 ( 14 % )                       ;
-;     Dedicated logic registers      ; 6,219 / 114,480 ( 5 % )                         ;
-; Total registers                    ; 6219                                            ;
+; Total logic elements               ; 16,584 / 114,480 ( 14 % )                       ;
+;     Total combinational functions  ; 15,693 / 114,480 ( 14 % )                       ;
+;     Dedicated logic registers      ; 6,268 / 114,480 ( 5 % )                         ;
+; Total registers                    ; 6268                                            ;
 ; Total pins                         ; 102 / 529 ( 19 % )                              ;
 ; Total virtual pins                 ; 0                                               ;
 ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
@@ -31,9 +36,9 @@ Synthesis: done
 +------------+-----------------+---------------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
 +------------+-----------------+---------------------+------+
-; 48.49 MHz  ; 48.49 MHz       ; CPUCLK              ;      ;
-; 87.49 MHz  ; 87.49 MHz       ; altera_reserved_tck ;      ;
-; 141.76 MHz ; 141.76 MHz      ; CLK                 ;      ;
+; 51.95 MHz  ; 51.95 MHz       ; CPUCLK              ;      ;
+; 72.8 MHz   ; 72.8 MHz        ; altera_reserved_tck ;      ;
+; 130.09 MHz ; 130.09 MHz      ; CLK                 ;      ;
 +------------+-----------------+---------------------+------+
 
 Synthesized TB: none
