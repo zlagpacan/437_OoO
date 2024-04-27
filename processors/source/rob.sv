@@ -361,14 +361,21 @@ module rob (
         // complete bus 0
         if (complete_bus_0_valid) begin
 
-            next_ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
-
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion on complete bus 0");
                 invalid_complete = 1'b1;
+
+                // // don't mark complete in this case
+                // next_ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
+                    // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+            end
+
+            // otherwise, safe to mark complete
+            else begin
+                next_ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
             end
 
             // assert tag match
@@ -391,14 +398,21 @@ module rob (
         // complete bus 1
         if (complete_bus_1_valid) begin
 
-            next_ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
-
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion on complete bus 1");
                 invalid_complete = 1'b1;
+
+                // // don't mark complete in this case
+                // next_ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
+                    // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+            end
+
+            // otherwise, safe to mark complete
+            else begin
+                next_ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
             end
 
             // assert tag match
@@ -421,14 +435,21 @@ module rob (
         // complete bus 2
         if (complete_bus_2_valid) begin
 
-            next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
-
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion on complete bus 2");
                 invalid_complete = 1'b1;
+
+                // // don't mark complete in this case
+                // next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
+                    // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+            end
+            
+            // otherwise, safe to mark complete
+            else begin
+                next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
             end
 
             // assert tag match
@@ -451,14 +472,21 @@ module rob (
         // BRU complete
         if (BRU_complete_valid) begin
 
-            next_ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
-
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion by BRU");
                 invalid_complete = 1'b1;
+
+                // // don't mark complete in this case
+                // next_ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
+                    // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+            end
+            
+            // otherwise, safe to mark complete
+            else begin
+                next_ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
             end
 
             // check for no restart needed -> send checkpoint invalidate to dispatch unit
@@ -480,14 +508,21 @@ module rob (
         // SQ complete
         if (SQ_complete_valid) begin
 
-            next_ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
-
             // check for invalid
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
                 $display("rob: INFO: invalid completion by SQ");
                 invalid_complete = 1'b1;
+
+                // // don't mark complete in this case
+                // next_ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
+                    // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+            end
+
+            // otherwise, safe to mark complete
+            else begin
+                next_ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
             end
 
             // assert SQ match
@@ -828,15 +863,16 @@ module rob (
                         // LQ -> no check for checkpoint restore, immediately revert
                         next_ROB_state = ROB_REVERT;
 
-                        // set tail so points to youngest dispatched instr
-                            // if dispatching this cycle, keep tail same
-                            // otherwise, decrement tail
-                        if (dispatch_unit_enqueue_valid) begin
-                            next_tail_index_ptr = tail_index_ptr;
-                        end
-                        else begin
-                            next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
-                        end
+                        // // set tail so points to youngest dispatched instr
+                        //     // if dispatching this cycle, keep tail same
+                        //     // otherwise, decrement tail
+                        // if (dispatch_unit_enqueue_valid) begin
+                        //     next_tail_index_ptr = tail_index_ptr;
+                        // end
+                        // else begin
+                        //     next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                        // end
+                            // want to keep tail logic determined from checkpoint success/failure
 
                         // check restart after this load (SQ forward handles)
                         if (LQ_restart_after_instr) begin
@@ -894,15 +930,16 @@ module rob (
                     // LQ -> no check for checkpoint restore, immediately revert
                     next_ROB_state = ROB_REVERT;
 
-                    // set tail so points to youngest dispatched instr
-                        // if dispatching this cycle, keep tail same
-                        // otherwise, decrement tail
-                    if (dispatch_unit_enqueue_valid) begin
-                        next_tail_index_ptr = tail_index_ptr;
-                    end
-                    else begin
-                        next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
-                    end
+                    // // set tail so points to youngest dispatched instr
+                    //     // if dispatching this cycle, keep tail same
+                    //     // otherwise, decrement tail
+                    // if (dispatch_unit_enqueue_valid) begin
+                    //     next_tail_index_ptr = tail_index_ptr;
+                    // end
+                    // else begin
+                    //     next_tail_index_ptr = tail_index_ptr - ROB_ptr_t'(1);
+                    // end
+                        // want to keep tail logic determined from checkpoint success/failure
 
                     // check restart after this load (SQ forward handles)
                     if (LQ_restart_after_instr) begin

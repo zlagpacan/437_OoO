@@ -268,6 +268,12 @@ module phys_reg_map_table (
             next_phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column]
                 .array[rename_dest_arch_reg_tag] = 
                 rename_dest_phys_reg_tag;
+
+            if (rename_dest_arch_reg_tag == arch_reg_tag_t'(0)) begin
+                $display("phys_reg_map_table: ERROR: renaming arch reg tag 0");
+                $display("\t@: %0t",$realtime);
+                next_DUT_error = 1'b1;
+            end
         end
 
         // checkpoint invalidate

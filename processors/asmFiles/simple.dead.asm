@@ -1,0 +1,9 @@
+org 0x0000
+
+ori $0, $5, 0x1024
+lw $0, 0x0100($0)
+sw $0, 0x0104($0)
+halt
+
+org 0x0100
+cfw 0xdeadbeef

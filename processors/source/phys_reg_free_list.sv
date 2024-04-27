@@ -253,9 +253,9 @@ module phys_reg_free_list (
             // DUT error: check value at head - 1 == expected speculated value to re-free
             if (phys_reg_free_list_by_index[prev_head_index_ptr.index] != revert_speculated_dest_phys_reg_tag) begin
                 $display("phys_reg_free_list: ERROR: revert -> speculated phys reg mapping not in expected free list slot");
-                $display("\t\trevert_speculated_dest_phys_reg_tag = %d", 
+                $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
-                $display("\t\tfree list value = %d",
+                $display("\t\tfree list value = 0x%h",
                     phys_reg_free_list_by_index[prev_head_index_ptr.index]);
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
