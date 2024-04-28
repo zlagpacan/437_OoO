@@ -1,7 +1,37 @@
 Design: done
 
-RTL TB: TODO
+RTL TB: done
 
-Synthesis: TODO
+Synthesis: done
 
-Synthesized TB: TODO
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Sat Apr 27 12:50:43 2024           ;
+; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+; Revision Name                      ; icache                                          ;
+; Top-level Entity Name              ; icache                                          ;
+; Family                             ; Cyclone IV E                                    ;
+; Device                             ; EP4CE115F29C8                                   ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 1,396 / 114,480 ( 1 % )                         ;
+;     Total combinational functions  ; 889 / 114,480 ( < 1 % )                         ;
+;     Dedicated logic registers      ; 1,141 / 114,480 ( < 1 % )                       ;
+; Total registers                    ; 1219                                            ;
+; Total pins                         ; 149 / 529 ( 28 % )                              ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                           ;
+; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
++------------------------------------+-------------------------------------------------+
+
++--------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary               ;
++------------+-----------------+------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name ; Note ;
++------------+-----------------+------------+------+
+; 110.57 MHz ; 110.57 MHz      ; CLK        ;      ;
++------------+-----------------+------------+------+
+
+Synthesized TB: done
+    - imem_load had gross full enumeration of [1:0][31:0]
