@@ -89,9 +89,10 @@ module icache (
     icache_frame_t [ICACHE_NUM_SETS-1:0] next_stream_buffer;
 
     // stream state
-    typedef enum logic {
+    typedef enum logic [1:0] {
         STREAM_IDLE,
-        STREAM_FETCH
+        STREAM_FETCH,
+        STREAM_HALT
     } stream_state_t;
 
     stream_state_t stream_state;
@@ -103,21 +104,25 @@ module icache (
 
     // missing block addr reg
     typedef struct packed {
-        logic [ICACHE_NUM_INDEX_BITS-1:0] index;
         logic [ICACHE_NUM_TAG_BITS-1:0] tag;
+        logic [ICACHE_NUM_INDEX_BITS-1:0] index;
     } icache_block_addr_t;
 
     icache_block_addr_t missing_block_addr;
     icache_block_addr_t next_missing_block_addr;
 
+    icache_block_addr_t missing_plus_counter_block_addr;
+
     // icache_addr -> struct
     typedef struct packed {
-        logic [WORD_ADDR_SPACE_WIDTH-BLOCK_ADDR_SPACE_WIDTH-1:0] block_offset;
-        logic [ICACHE_NUM_INDEX_BITS-1:0] index;
+        logic [15:0] upper_bits;
         logic [ICACHE_NUM_TAG_BITS-1:0] tag;
-    } icache_addr_t;
+        logic [ICACHE_NUM_INDEX_BITS-1:0] index;
+        logic [WORD_ADDR_SPACE_WIDTH-BLOCK_ADDR_SPACE_WIDTH-1:0] block_offset;
+        logic [1:0] word_offset;
+    } icache_word_addr_t;
 
-    icache_addr_t icache_addr_structed; 
+    icache_word_addr_t icache_addr_structed; 
 
     // seq:
     always_ff @ (posedge CLK, negedge nRST) begin
@@ -143,6 +148,8 @@ module icache (
         // cast structs
         icache_addr_structed = icache_addr;
 
+        missing_plus_counter_block_addr = missing_block_addr + stream_counter;
+
         ///////////////
         // defaults: //
         ///////////////
@@ -167,9 +174,53 @@ module icache (
         next_stream_counter = stream_counter;
         next_missing_block_addr = missing_block_addr;
 
+        //////////////////////////
+        // stream buffer logic: //
+        //////////////////////////
+            // do before hit logic so new miss is prioritized
+
+        case (stream_state) 
+
+            STREAM_IDLE:
+            begin
+                // no mem side imem req
+                    // give block addr from missing block addr + counter by default
+                imem_REN = 1'b0;
+                imem_block_addr = missing_block_addr + stream_counter;
+            end
+
+            STREAM_FETCH:
+            begin
+                // give mem side imem req
+                    // give block addr from missing block addr + counter
+                imem_REN = 1'b1;
+                imem_block_addr = missing_plus_counter_block_addr;
+
+                // check for imem resp
+                if (imem_hit) begin
+
+                    // load in block
+                    next_stream_buffer[missing_plus_counter_block_addr.index].valid = 1'b1;
+                    next_stream_buffer[missing_plus_counter_block_addr.index].tag = missing_plus_counter_block_addr.tag;
+                    next_stream_buffer[missing_plus_counter_block_addr.index].block = imem_load;
+
+                    // increment counter
+                    next_stream_counter = stream_counter + 1;
+
+                    // check done all loads
+                    if (stream_counter == ICACHE_NUM_SETS-1) begin
+
+                        next_stream_state = STREAM_IDLE;
+                    end
+                end
+            end
+
+        endcase
+
         ////////////////
         // hit logic: //
         ////////////////
+            // can happen if stream in idle or fetch
 
         // check core side i$ req
         if (icache_REN) begin
@@ -207,7 +258,14 @@ module icache (
             end
 
             // otherwise, check this block addr not in stream fetch
-            else if (missing_block_addr != {icache_addr_structed.tag, icache_addr_structed.index}) begin
+                // start new stream fetch
+            else if (
+                !(
+                    stream_state == STREAM_FETCH
+                    &
+                    missing_block_addr == {icache_addr_structed.tag, icache_addr_structed.index}
+                )
+            ) begin
 
                 // go to stream fetch mode
                 next_stream_state = STREAM_FETCH;
@@ -220,37 +278,25 @@ module icache (
             end
         end
 
-        //////////////////////////
-        // stream buffer logic: //
-        //////////////////////////
-            // do before hit logic so new miss is prioritized
+        ///////////////////////
+        // halt state logic: //
+        ///////////////////////
 
-        case (stream_state) 
+        // check need to enter stream halt
+        if (icache_halt) begin
+            next_stream_state = STREAM_HALT;
+        end
 
-            STREAM_IDLE:
-            begin
-                // no mem side imem req
-                    // give block addr from missing block addr + counter by default
-                imem_REN = 1'b0;
-                imem_block_addr = missing_block_addr + stream_counter;
-            end
+        // check need to enter stream halt
+        if (stream_state == STREAM_HALT) begin
 
-            STREAM_FETCH:
-            begin
-                // give mem side imem req
-                    // give block addr from missing block addr + counter
-                imem_REN = 1'b1;
-                imem_block_addr = missing_block_addr + stream_counter;
+            // stay in stream halt
+            next_stream_state = STREAM_HALT;
 
-                // check for imem resp
-                if (imem_hit) begin
+            // disable mem read
+            imem_REN = 1'b0;
+        end
 
-                    // load in block
-                    next_stream_buffer[missing_block_addr.index].block = imem_load;
-                end
-            end
-
-        endcase
     end
 
 endmodule
