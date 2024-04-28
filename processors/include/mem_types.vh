@@ -19,6 +19,19 @@ package mem_types_pkg;
 
     import core_types_pkg::*;
 
+    //////////////
+    // general: //
+    //////////////
+        // a lot (like mem addr space bit widths) are already in core_types_package
+
+    // ramstate
+    typedef enum logic [1:0] {
+        FREE,
+        BUSY,
+        ACCESS,
+        ERROR
+    } ramstate_t;
+
     /////////////
     // icache: //
     /////////////
@@ -52,6 +65,16 @@ package mem_types_pkg;
 
     parameter DCACHE_LOAD_MISS_RETURN_Q_DEPTH = 2;
     parameter DCACHE_LOG_LOAD_MISS_RETURN_Q_DEPTH = $clog2(DCACHE_LOAD_MISS_RETURN_Q_DEPTH);
+
+    /////////////////////
+    // mem controller: //
+    /////////////////////
+
+    parameter MEM_CONTROLLER_READ_BUFFER_DEPTH = 4;
+    parameter MEM_CONTROLLER_LOG_READ_BUFFER_DEPTH = $clog2(MEM_CONTROLLER_READ_BUFFER_DEPTH);
+
+    parameter MEM_CONTROLLER_WRITE_BUFFER_DEPTH = 8;
+    parameter MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH = $clog2(MEM_CONTROLLER_WRITE_BUFFER_DEPTH);
 
     // for unicore
     typedef enum logic {

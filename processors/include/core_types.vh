@@ -107,14 +107,6 @@ package core_types_pkg;
         funct_t                 funct;
     } r_t;
 
-    // ramstate
-    typedef enum logic [1:0] {
-        FREE,
-        BUSY,
-        ACCESS,
-        ERROR
-    } ramstate_t;
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // this implementation's defs:
 
