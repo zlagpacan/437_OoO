@@ -10,9 +10,15 @@ and memory (ram).
 `include "system_if.vh"
 
 // types
-`include "cpu_types_pkg.vh"
+// `include "cpu_types_pkg.vh"
+// import cpu_types_pkg::*;
+	// use mine instead
+
 `include "core_types.vh"
 import core_types_pkg::*;
+
+`include "mem_types.vh"
+import mem_types_pkg::*;
 
 module system (input logic CLK, nRST, system_if.sys syif);
 

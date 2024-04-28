@@ -762,9 +762,14 @@ module dcache (
                 next_backlog_Q_bus_read_req_tail_ptr = backlog_Q_bus_read_req_tail_ptr + 1;
 
                 // check if tail surpasses head
-                    // next_tail == next_head + 1 -> tail + 2 == head + 2
-                    // tail == head
-                if (backlog_Q_bus_read_req_tail_ptr == backlog_Q_bus_read_req_head_ptr) begin
+                    // tail msb != head msb
+                    // next_tail index == next_head index + 1 -> tail index + 2 == head index + 2
+                    // tail index == head index
+                if (
+                    backlog_Q_bus_read_req_tail_ptr.msb != backlog_Q_bus_read_req_head_ptr.msb
+                    &
+                    backlog_Q_bus_read_req_tail_ptr.index == backlog_Q_bus_read_req_head_ptr.index
+                ) begin
                     $display("dcache: ERROR: backlog Q tail surpasses head: 3'b111");
                     $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1;
@@ -918,8 +923,13 @@ module dcache (
         end
 
         // otherwise, check if tail surpasses head
-            // next_tail == next_head + 1
-        else if (next_store_MSHR_Q_tail_ptr == next_store_MSHR_Q_head_ptr + 1) begin
+            // next tail msb != next head msb
+            // next_tail index == next_head index + 1
+        else if (
+            next_store_MSHR_Q_tail_ptr.msb != next_store_MSHR_Q_head_ptr.msb
+            &
+            next_store_MSHR_Q_tail_ptr.index == next_store_MSHR_Q_head_ptr.index + 1
+        ) begin
             $display("dcache: ERROR: store MSHR Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
@@ -1436,8 +1446,13 @@ module dcache (
         end
 
         // check load miss return Q tail surpasses head
-            // next tail == next_head + 1
-        if (next_load_miss_return_Q_tail_ptr == next_load_miss_return_Q_head_ptr + 1) begin
+            // next tail msb != next head msb
+            // next tail index == next head index + 1
+        if (
+            next_load_miss_return_Q_tail_ptr.msb != next_load_miss_return_Q_head_ptr.msb
+            &
+            next_load_miss_return_Q_tail_ptr.index == next_load_miss_return_Q_head_ptr.index + 1
+        ) begin
             $display("dcache: ERROR: load miss return Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;

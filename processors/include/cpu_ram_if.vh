@@ -9,11 +9,17 @@
 `define CPU_RAM_IF_VH
 
 // typedefs
-`include "cpu_types_pkg.vh"
+// `include "cpu_types_pkg.vh"
+  // use mine instead
+`include "core_types.vh"
+`include "mem_types.vh"
 
 interface cpu_ram_if;
   // import types
-  import cpu_types_pkg::*;
+  // import cpu_types_pkg::*;"
+    // use mine instead
+  import core_types_pkg::*;
+  import mem_types_pkg::*;
 
   // ram signals
   logic               ramREN, ramWEN;

@@ -8,11 +8,15 @@
 // interface
 `include "cpu_ram_if.vh"
 // types
-`include "cpu_types_pkg.vh"
+// `include "cpu_types_pkg.vh"
+  // use mine instead
+`include "mem_types_pkg.vh"
 
 module ram (input logic CLK, nRST, cpu_ram_if.ram ramif);
   // import types
-  import cpu_types_pkg::*;
+  // import cpu_types_pkg::*;
+    // use mine instead
+  import mem_types_pkg::*;
 
   parameter BAD = 32'hBAD1BAD1, LAT = 0;
 
