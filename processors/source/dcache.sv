@@ -1508,7 +1508,6 @@ module dcache (
                     // shouldn't double write index 0 since should have been invalidated
                 if (flush_counter.msb) begin
                     next_dcache_state = DCACHE_HALT;
-                    next_flushed = 1'b1;
                 end
 
                 // otherwise, send dmem write req for this counter value if entry valid and dirty
