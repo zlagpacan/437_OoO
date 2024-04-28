@@ -27,8 +27,8 @@ package mem_types_pkg;
 
     parameter ICACHE_NUM_SETS = 8;
 
-    parameter ICACHE_NUM_TAG_BITS = BLOCK_ADDR_SPACE_WIDTH - ICACHE_NUM_INDEX_BITS;
     parameter ICACHE_NUM_INDEX_BITS = $clog2(ICACHE_NUM_SETS);
+    parameter ICACHE_NUM_TAG_BITS = BLOCK_ADDR_SPACE_WIDTH - ICACHE_NUM_INDEX_BITS;
     parameter ICACHE_NUM_BLOCK_OFFSET_BITS = WORD_ADDR_SPACE_WIDTH - BLOCK_ADDR_SPACE_WIDTH;
 
     /////////////
@@ -40,8 +40,8 @@ package mem_types_pkg;
 
     parameter DCACHE_NUM_SETS = 8;
 
-    parameter DCACHE_NUM_TAG_BITS = BLOCK_ADDR_SPACE_WIDTH - DCACHE_NUM_INDEX_BITS;
     parameter DCACHE_NUM_INDEX_BITS = $clog2(DCACHE_NUM_SETS);
+    parameter DCACHE_NUM_TAG_BITS = BLOCK_ADDR_SPACE_WIDTH - DCACHE_NUM_INDEX_BITS;
     parameter DCACHE_NUM_BLOCK_OFFSET_BITS = WORD_ADDR_SPACE_WIDTH - BLOCK_ADDR_SPACE_WIDTH;
 
     parameter DCACHE_STORE_MSHR_Q_DEPTH = 4;
@@ -49,6 +49,9 @@ package mem_types_pkg;
 
     parameter DCACHE_BUS_READ_REQ_BACKLOG_Q_DEPTH = 4;
     parameter DCACHE_LOG_BUS_READ_REQ_BACKLOG_Q_DEPTH = $clog2(DCACHE_BUS_READ_REQ_BACKLOG_Q_DEPTH);
+
+    parameter DCACHE_LOAD_MISS_RETURN_Q_DEPTH = 2;
+    parameter DCACHE_LOG_LOAD_MISS_RETURN_Q_DEPTH = $clog2(DCACHE_LOAD_MISS_RETURN_Q_DEPTH);
 
     // for unicore
     typedef enum logic {
