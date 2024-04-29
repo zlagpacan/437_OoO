@@ -16,6 +16,8 @@
         Non-blocking, asynchronous interface to core and to mem.
 
         4 MSHR's, 1 assigned to each LQ index.
+
+        TODO: implement LL-SC
 */
 
 `include "core_types.vh"
@@ -91,6 +93,7 @@ module dcache (
     output logic dmem_write_req_valid,
     output block_addr_t dmem_write_req_block_addr,
     output word_t [1:0] dmem_write_req_data,
+    input logic dmem_write_req_slow_down,
 
     //////////////
     // flushed: //
@@ -1216,7 +1219,10 @@ module dcache (
             next_load_miss_return_Q
             [load_miss_return_Q_tail_ptr.index]
             .data
-                = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block;
+            = 
+            load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block
+            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_offset]
+            ;
 
             // increment load miss return Q tail
             next_load_miss_return_Q_tail_ptr = load_miss_return_Q_tail_ptr + 1;
@@ -1525,8 +1531,18 @@ module dcache (
                     next_dcache_state = DCACHE_HALT;
                 end
 
+                // otherwise, check for slow down
+                else if (dmem_write_req_slow_down) begin
+
+                    // don't send dmem write req
+
+                    // keep frame valid
+
+                    // maintain counter
+                end
+
                 // otherwise, send dmem write req for this counter value if entry valid and dirty
-                if (
+                else if (
                     dcache_frame_by_way_by_set
                     [flush_counter.way]
                     [flush_counter.index]
@@ -1566,10 +1582,16 @@ module dcache (
                     [flush_counter.index]
                     .valid
                         = 1'b0;
+
+                    // increment counter
+                    next_flush_counter = flush_counter + 1;
                 end
 
-                // increment counter
-                next_flush_counter = flush_counter + 1;
+                // otherwise, nothing to write, move counter on
+                else begin
+                    // increment counter
+                    next_flush_counter = flush_counter + 1;
+                end
             end
 
             DCACHE_HALT:

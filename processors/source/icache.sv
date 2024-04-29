@@ -165,7 +165,7 @@ module icache (
         // no mem side imem req
             // give block addr from missing block addr + counter by default
         imem_REN = 1'b0;
-        imem_block_addr = missing_block_addr + stream_counter;
+        imem_block_addr = missing_plus_counter_block_addr;
 
         // hold state
         next_loop_way = loop_way;
@@ -186,7 +186,7 @@ module icache (
                 // no mem side imem req
                     // give block addr from missing block addr + counter by default
                 imem_REN = 1'b0;
-                imem_block_addr = missing_block_addr + stream_counter;
+                imem_block_addr = missing_plus_counter_block_addr;
             end
 
             STREAM_FETCH:
@@ -257,13 +257,17 @@ module icache (
                     = stream_buffer[icache_addr_structed.index];
             end
 
-            // otherwise, check this block addr not in stream fetch
+            // otherwise, check this block addr not in current stream fetch range
                 // start new stream fetch
             else if (
                 !(
                     stream_state == STREAM_FETCH
                     &
-                    missing_block_addr == {icache_addr_structed.tag, icache_addr_structed.index}
+                    (
+                        {icache_addr_structed.tag, icache_addr_structed.index} - missing_block_addr 
+                        <
+                        ICACHE_NUM_SETS
+                    )
                 )
             ) begin
 
