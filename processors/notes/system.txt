@@ -1,46 +1,148 @@
-Design: done
-
-RTL TB: testasm
-    - all unicore passing
-
-Synthesis: done
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Unicore, No Caches: 
 
 - has to be LAT=0
 
-- mergesort: 15085 cycles
+- mergesort:
+    - LAT=0: 15085 cycles
 
-+--------------------------------------------------------------------------------------+
-; Fitter Summary                                                                       ;
-+------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Fri Apr 26 22:56:56 2024           ;
-; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
-; Revision Name                      ; system                                          ;
-; Top-level Entity Name              ; system                                          ;
-; Family                             ; Cyclone IV E                                    ;
-; Device                             ; EP4CE115F29C8                                   ;
-; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 16,584 / 114,480 ( 14 % )                       ;
-;     Total combinational functions  ; 15,693 / 114,480 ( 14 % )                       ;
-;     Dedicated logic registers      ; 6,268 / 114,480 ( 5 % )                         ;
-; Total registers                    ; 6268                                            ;
-; Total pins                         ; 102 / 529 ( 19 % )                              ;
-; Total virtual pins                 ; 0                                               ;
-; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
-; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
-; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
-+------------------------------------+-------------------------------------------------+
+Design: done
 
-+-----------------------------------------------------------+
-; Slow 1200mV 85C Model Fmax Summary                        ;
-+------------+-----------------+---------------------+------+
-; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
-+------------+-----------------+---------------------+------+
-; 51.95 MHz  ; 51.95 MHz       ; CPUCLK              ;      ;
-; 72.8 MHz   ; 72.8 MHz        ; altera_reserved_tck ;      ;
-; 130.09 MHz ; 130.09 MHz      ; CLK                 ;      ;
-+------------+-----------------+---------------------+------+
+RTL TB: testasm
+    - all passing
 
-Synthesized TB: none
+Synthesis: done
+
+    +--------------------------------------------------------------------------------------+
+    ; Fitter Summary                                                                       ;
+    +------------------------------------+-------------------------------------------------+
+    ; Fitter Status                      ; Successful - Fri Apr 26 22:56:56 2024           ;
+    ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+    ; Revision Name                      ; system                                          ;
+    ; Top-level Entity Name              ; system                                          ;
+    ; Family                             ; Cyclone IV E                                    ;
+    ; Device                             ; EP4CE115F29C8                                   ;
+    ; Timing Models                      ; Final                                           ;
+    ; Total logic elements               ; 16,584 / 114,480 ( 14 % )                       ;
+    ;     Total combinational functions  ; 15,693 / 114,480 ( 14 % )                       ;
+    ;     Dedicated logic registers      ; 6,268 / 114,480 ( 5 % )                         ;
+    ; Total registers                    ; 6268                                            ;
+    ; Total pins                         ; 102 / 529 ( 19 % )                              ;
+    ; Total virtual pins                 ; 0                                               ;
+    ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
+    ; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+    ; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
+    +------------------------------------+-------------------------------------------------+
+
+    +-----------------------------------------------------------+
+    ; Slow 1200mV 85C Model Fmax Summary                        ;
+    +------------+-----------------+---------------------+------+
+    ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
+    +------------+-----------------+---------------------+------+
+    ; 51.95 MHz  ; 51.95 MHz       ; CPUCLK              ;      ;
+    ; 72.8 MHz   ; 72.8 MHz        ; altera_reserved_tck ;      ;
+    ; 130.09 MHz ; 130.09 MHz      ; CLK                 ;      ;
+    +------------+-----------------+---------------------+------+
+
+Synthesized TB: testasm -s
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Unicore with Caches: 
+
+- perf comparison to "old 437"
+    - multicore with only using single core
+        - all that have
+        - only a bit worse than old pure unicore with caches based on mergesort numbers
+
+- mergesort:
+    - LAT=0: 15503 cycles -> old 437: 17419 cycles
+    - LAT=2: 16867 cycles -> old 437: 18541 cycles
+    - LAT=6: 19659 cycles -> old 437: 21371 cycles
+    - LAT=10: 22749 cycles -> old 437: 23911 cycles
+
+    - there may be errors in design causing perf problems
+
+- daxpy:
+    - LAT=0: 70819 cycles -> old 437: 180353 cycles -> 2.55x
+    - LAT=2: 75501 cycles -> old 437: 214181 cycles -> 2.84x
+    - LAT=6: 85679 cycles -> old 437: 298249 cycles -> 3.48x
+    - LAT=10: 117721 cycles -> old 437: 374113 cycles -> 3.18x
+
+Design: done
+
+RTL TB: testasm
+    - LAT=0: all passing
+    - LAT=2: fib.asm failing
+    - LAT=6: fib.asm failing
+    - LAT=10: fib.asm failing
+
+Synthesis: done
+
+    - critical paths are pretty much directly from mem controller to ram
+    - can reasonably say hit freq limit because too big
+
+    - LAT = 0:
+    +--------------------------------------------------------------------------------------+
+    ; Fitter Summary                                                                       ;
+    +------------------------------------+-------------------------------------------------+
+    ; Fitter Status                      ; Successful - Mon Apr 29 02:00:19 2024           ;
+    ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+    ; Revision Name                      ; system                                          ;
+    ; Top-level Entity Name              ; system                                          ;
+    ; Family                             ; Cyclone IV E                                    ;
+    ; Device                             ; EP4CE115F29C8                                   ;
+    ; Timing Models                      ; Final                                           ;
+    ; Total logic elements               ; 23,384 / 114,480 ( 20 % )                       ;
+    ;     Total combinational functions  ; 21,445 / 114,480 ( 19 % )                       ;
+    ;     Dedicated logic registers      ; 10,158 / 114,480 ( 9 % )                        ;
+    ; Total registers                    ; 10159                                           ;
+    ; Total pins                         ; 102 / 529 ( 19 % )                              ;
+    ; Total virtual pins                 ; 0                                               ;
+    ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
+    ; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+    ; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
+    +------------------------------------+-------------------------------------------------+
+
+    +-----------------------------------------------------------+
+    ; Slow 1200mV 85C Model Fmax Summary                        ;
+    +------------+-----------------+---------------------+------+
+    ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
+    +------------+-----------------+---------------------+------+
+    ; 49.49 MHz  ; 49.49 MHz       ; CPUCLK              ;      ;
+    ; 86.15 MHz  ; 86.15 MHz       ; altera_reserved_tck ;      ;
+    ; 147.45 MHz ; 147.45 MHz      ; CLK                 ;      ;
+    +------------+-----------------+---------------------+------+
+
+    - LAT = 2
+    +--------------------------------------------------------------------------------------+
+    ; Fitter Summary                                                                       ;
+    +------------------------------------+-------------------------------------------------+
+    ; Fitter Status                      ; Successful - Mon Apr 29 02:44:14 2024           ;
+    ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+    ; Revision Name                      ; system                                          ;
+    ; Top-level Entity Name              ; system                                          ;
+    ; Family                             ; Cyclone IV E                                    ;
+    ; Device                             ; EP4CE115F29C8                                   ;
+    ; Timing Models                      ; Final                                           ;
+    ; Total logic elements               ; 23,320 / 114,480 ( 20 % )                       ;
+    ;     Total combinational functions  ; 21,424 / 114,480 ( 19 % )                       ;
+    ;     Dedicated logic registers      ; 10,162 / 114,480 ( 9 % )                        ;
+    ; Total registers                    ; 10163                                           ;
+    ; Total pins                         ; 102 / 529 ( 19 % )                              ;
+    ; Total virtual pins                 ; 0                                               ;
+    ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
+    ; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+    ; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
+    +------------------------------------+-------------------------------------------------+
+
+    +-----------------------------------------------------------+
+    ; Slow 1200mV 85C Model Fmax Summary                        ;
+    +------------+-----------------+---------------------+------+
+    ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
+    +------------+-----------------+---------------------+------+
+    ; 51.21 MHz  ; 51.21 MHz       ; CPUCLK              ;      ;
+    ; 99.98 MHz  ; 99.98 MHz       ; altera_reserved_tck ;      ;
+    ; 141.94 MHz ; 141.94 MHz      ; CLK                 ;      ;
+    +------------+-----------------+---------------------+------+
+
+Synthesized TB: testasm -s
