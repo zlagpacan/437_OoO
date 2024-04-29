@@ -10,12 +10,14 @@
 // types
 // `include "cpu_types_pkg.vh"
   // use mine instead
-`include "mem_types_pkg.vh"
+`include "core_types.vh"
+`include "mem_types.vh"
 
 module ram (input logic CLK, nRST, cpu_ram_if.ram ramif);
   // import types
   // import cpu_types_pkg::*;
     // use mine instead
+  import core_types_pkg::*;
   import mem_types_pkg::*;
 
   parameter BAD = 32'hBAD1BAD1, LAT = 0;

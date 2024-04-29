@@ -100,6 +100,7 @@ module dcache_tb ();
 	logic DUT_dmem_write_req_valid, expected_dmem_write_req_valid;
 	block_addr_t DUT_dmem_write_req_block_addr, expected_dmem_write_req_block_addr;
 	word_t [1:0] DUT_dmem_write_req_data, expected_dmem_write_req_data;
+	logic tb_dmem_write_req_slow_down;
 
     //////////////
     // flushed: //
@@ -179,6 +180,7 @@ module dcache_tb ();
 		.dmem_write_req_valid(DUT_dmem_write_req_valid),
 		.dmem_write_req_block_addr(DUT_dmem_write_req_block_addr),
 		.dmem_write_req_data(DUT_dmem_write_req_data),
+		.dmem_write_req_slow_down(tb_dmem_write_req_slow_down),
 
 	    //////////////
 	    // flushed: //
@@ -385,6 +387,8 @@ module dcache_tb ();
 		.dmem_write_req_data_1_30(DUT_dmem_write_req_data[1][30]),
 		.dmem_write_req_data_1_31(DUT_dmem_write_req_data[1][31]),
 
+		.dmem_write_req_slow_down(tb_dmem_write_req_slow_down),
+
 	    //////////////
 	    // flushed: //
 	    //////////////
@@ -551,6 +555,7 @@ module dcache_tb ();
 		tb_dmem_read_resp_block_addr = 13'h0;
 		tb_dmem_read_resp_data = {32'hdeadbeef, 32'hdeadbeef};
 	    // dmem write req:
+		tb_dmem_write_req_slow_down = 1'b0;
 	    //////////////
 	    // flushed: //
 	    //////////////
@@ -634,6 +639,7 @@ module dcache_tb ();
 		tb_dmem_read_resp_block_addr = 13'h0;
 		tb_dmem_read_resp_data = {32'hdeadbeef, 32'hdeadbeef};
 	    // dmem write req:
+		tb_dmem_write_req_slow_down = 1'b0;
 	    //////////////
 	    // flushed: //
 	    //////////////
@@ -725,6 +731,7 @@ module dcache_tb ();
 		tb_dmem_read_resp_block_addr = 13'h0;
 		tb_dmem_read_resp_data = {32'hdeadbeef, 32'hdeadbeef};
 	    // dmem write req:
+		tb_dmem_write_req_slow_down = 1'b0;
 	    //////////////
 	    // flushed: //
 	    //////////////

@@ -83,6 +83,7 @@ module mem_controller (
     input logic dmem_write_req_valid,
     input block_addr_t dmem_write_req_block_addr,
     input word_t [1:0] dmem_write_req_data,
+    output logic dmem_write_req_slow_down,
 
     //////////////
     // flushed: //
@@ -128,42 +129,42 @@ module mem_controller (
     typedef struct packed {
         logic valid;
         block_addr_t block_addr;
-    } dmem_read_buffer_entry_t;
+    } read_buffer_entry_t;
 
-    dmem_read_buffer_entry_t [MEM_CONTROLLER_READ_BUFFER_DEPTH-1:0] dmem_read_buffer;
-    dmem_read_buffer_entry_t [MEM_CONTROLLER_READ_BUFFER_DEPTH-1:0] next_dmem_read_buffer;
+    read_buffer_entry_t [MEM_CONTROLLER_READ_BUFFER_DEPTH-1:0] read_buffer;
+    read_buffer_entry_t [MEM_CONTROLLER_READ_BUFFER_DEPTH-1:0] next_read_buffer;
 
     // dmem read buffer ptr's
     typedef struct packed {
         logic msb;
         logic [MEM_CONTROLLER_LOG_READ_BUFFER_DEPTH-1:0] index;
-    } dmem_read_buffer_ptr_t;
+    } read_buffer_ptr_t;
 
-    dmem_read_buffer_ptr_t dmem_read_buffer_head_ptr;
-    dmem_read_buffer_ptr_t next_dmem_read_buffer_head_ptr;
-    dmem_read_buffer_ptr_t dmem_read_buffer_tail_ptr;
-    dmem_read_buffer_ptr_t next_dmem_read_buffer_tail_ptr;
+    read_buffer_ptr_t read_buffer_head_ptr;
+    read_buffer_ptr_t next_read_buffer_head_ptr;
+    read_buffer_ptr_t read_buffer_tail_ptr;
+    read_buffer_ptr_t next_read_buffer_tail_ptr;
 
     // dmem write buffer
     typedef struct packed {
         logic valid;
         block_addr_t block_addr;
         word_t [1:0] data;
-    } dmem_write_buffer_entry_t;
+    } write_buffer_entry_t;
 
-    dmem_write_buffer_entry_t [MEM_CONTROLLER_WRITE_BUFFER_DEPTH-1:0] dmem_write_buffer;
-    dmem_write_buffer_entry_t [MEM_CONTROLLER_WRITE_BUFFER_DEPTH-1:0] next_dmem_write_buffer;
+    write_buffer_entry_t [MEM_CONTROLLER_WRITE_BUFFER_DEPTH-1:0] write_buffer;
+    write_buffer_entry_t [MEM_CONTROLLER_WRITE_BUFFER_DEPTH-1:0] next_write_buffer;
 
     // dmem write buffer ptr's
     typedef struct packed {
         logic msb;
         logic [MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH-1:0] index;
-    } dmem_write_buffer_ptr_t;
+    } write_buffer_ptr_t;
 
-    dmem_write_buffer_ptr_t dmem_write_buffer_head_ptr;
-    dmem_write_buffer_ptr_t next_dmem_write_buffer_head_ptr;
-    dmem_write_buffer_ptr_t dmem_write_buffer_tail_ptr;
-    dmem_write_buffer_ptr_t next_dmem_write_buffer_tail_ptr;
+    write_buffer_ptr_t write_buffer_head_ptr;
+    write_buffer_ptr_t next_write_buffer_head_ptr;
+    write_buffer_ptr_t write_buffer_tail_ptr;
+    write_buffer_ptr_t next_write_buffer_tail_ptr;
 
     // working req
     typedef struct packed {
@@ -192,14 +193,25 @@ module mem_controller (
         // NO:
             // want check that returning imem addr matches current before giving hit
             // instead, have separate reg which drives imem_hit high if returning matches curr
-    logic returning_imem_hit;
-    logic next_returning_imem_hit;
+    // logic returning_imem_hit;
+    // logic next_returning_imem_hit;
     // block_addr_t returning_imem_block_addr;
     // block_addr_t next_returning_imem_block_addr;
         // these can come from working_req reg
 
+        // NEVERMIND ALL OF ^
+            // can do checks inside of ACCESS 1, want to give ihit early so icache can update block addr
+                // for next in stream
+
     // reg'd flushed
     logic next_mem_controller_flushed;
+
+    // write buffer search:
+    logic write_buffer_search_found;
+    logic [MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH-1:0] write_buffer_search_youngest_found_index;
+    logic [MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH-1:0] write_buffer_search_first_half_youngest_found_index;
+    logic [MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH-1:0] next_write_buffer_search_first_half_youngest_found_index;
+    word_t [1:0] write_buffer_search_data;
 
     //////////
     // seq: //
@@ -208,29 +220,29 @@ module mem_controller (
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
             mem_controller_state <= MEM_CONTROLLER_ARBITRATE;
-            dmem_read_buffer <= '0;
-            dmem_read_buffer_head_ptr <= '0;
-            dmem_read_buffer_tail_ptr <= '0;
-            dmem_write_buffer <= '0;
-            dmem_write_buffer_head_ptr <= '0;
-            dmem_write_buffer_tail_ptr <= '0;
+            read_buffer <= '0;
+            read_buffer_head_ptr <= '0;
+            read_buffer_tail_ptr <= '0;
+            write_buffer <= '0;
+            write_buffer_head_ptr <= '0;
+            write_buffer_tail_ptr <= '0;
             working_req <= '0;
             dmem_read_resp_valid <= 1'b0;
-            returning_imem_hit <= 1'b0;
             mem_controller_flushed <= 1'b0;
+            write_buffer_search_first_half_youngest_found_index <= '0;
         end
         else begin
             mem_controller_state <= next_mem_controller_state;
-            dmem_read_buffer <= next_dmem_read_buffer;
-            dmem_read_buffer_head_ptr <= next_dmem_read_buffer_head_ptr;
-            dmem_read_buffer_tail_ptr <= next_dmem_read_buffer_tail_ptr;
-            dmem_write_buffer <= next_dmem_write_buffer;
-            dmem_write_buffer_head_ptr <= next_dmem_write_buffer_head_ptr;
-            dmem_write_buffer_tail_ptr <= next_dmem_write_buffer_tail_ptr;
+            read_buffer <= next_read_buffer;
+            read_buffer_head_ptr <= next_read_buffer_head_ptr;
+            read_buffer_tail_ptr <= next_read_buffer_tail_ptr;
+            write_buffer <= next_write_buffer;
+            write_buffer_head_ptr <= next_write_buffer_head_ptr;
+            write_buffer_tail_ptr <= next_write_buffer_tail_ptr;
             working_req <= next_working_req;
             dmem_read_resp_valid <= next_dmem_read_resp_valid;
-            returning_imem_hit <= next_returning_imem_hit;
             mem_controller_flushed <= next_mem_controller_flushed;
+            write_buffer_search_first_half_youngest_found_index <= next_write_buffer_search_first_half_youngest_found_index;
         end
     end
 
@@ -275,6 +287,9 @@ module mem_controller (
         next_dmem_read_resp_valid = 1'b0;
         dmem_read_resp_block_addr = working_req.block_addr;
         dmem_read_resp_data = working_req.read_data;
+
+        // dmem write req
+        dmem_write_req_slow_down = 1'b0;
         
         //////////////
         // flushed:
@@ -286,18 +301,18 @@ module mem_controller (
         next_mem_controller_state = mem_controller_state;
 
         // dmem read buffer
-        next_dmem_read_buffer = dmem_read_buffer;
+        next_read_buffer = read_buffer;
         
         // dmem read buffer ptr's
-        next_dmem_read_buffer_head_ptr = dmem_read_buffer_head_ptr;
-        next_dmem_read_buffer_tail_ptr = dmem_read_buffer_tail_ptr;
+        next_read_buffer_head_ptr = read_buffer_head_ptr;
+        next_read_buffer_tail_ptr = read_buffer_tail_ptr;
 
         // dmem write buffer
-        next_dmem_write_buffer = dmem_write_buffer;
+        next_write_buffer = write_buffer;
 
         // dmem write buffer ptr's
-        next_dmem_write_buffer_head_ptr = dmem_write_buffer_head_ptr;
-        next_dmem_write_buffer_tail_ptr = dmem_write_buffer_tail_ptr;
+        next_write_buffer_head_ptr = write_buffer_head_ptr;
+        next_write_buffer_tail_ptr = write_buffer_tail_ptr;
 
         // working req
         next_working_req = working_req;
@@ -305,12 +320,14 @@ module mem_controller (
         // dmem read return
         next_dmem_read_resp_valid = 1'b0;
 
-        // imem read return
-            // invalid from working req
-        next_returning_imem_hit = 1'b0;
-
         // reg'd flushed
         next_mem_controller_flushed = 1'b0;
+
+        // write buffer search
+        write_buffer_search_found = 1'b0;;
+        write_buffer_search_youngest_found_index = write_buffer_head_ptr.index;
+        next_write_buffer_search_first_half_youngest_found_index = write_buffer_search_youngest_found_index;
+        write_buffer_search_data = {32'h0, 32'h0};
 
         /////////////////////////////////
         // state independent behavior: //
@@ -320,43 +337,39 @@ module mem_controller (
         if (dmem_read_req_valid) begin
 
             // update entry
-            next_dmem_read_buffer[dmem_read_buffer_tail_ptr.index].valid = 1'b1;
-            next_dmem_read_buffer[dmem_read_buffer_tail_ptr.index].block_addr =
+            next_read_buffer[read_buffer_tail_ptr.index].valid = 1'b1;
+            next_read_buffer[read_buffer_tail_ptr.index].block_addr =
                 dmem_read_req_block_addr
             ;
 
             // increment tail
-            next_dmem_read_buffer_tail_ptr = dmem_read_buffer_tail_ptr + 1;
+            next_read_buffer_tail_ptr = read_buffer_tail_ptr + 1;
         end
 
         // enQ dmem write buffer
         if (dmem_write_req_valid) begin
 
             // update entry
-            next_dmem_write_buffer[dmem_write_buffer_tail_ptr.index].valid = 1'b1;
-            next_dmem_write_buffer[dmem_write_buffer_tail_ptr.index].block_addr =
+            next_write_buffer[write_buffer_tail_ptr.index].valid = 1'b1;
+            next_write_buffer[write_buffer_tail_ptr.index].block_addr =
                 dmem_write_req_block_addr
             ;
-            next_dmem_write_buffer[dmem_write_buffer_tail_ptr.index].data =
+            next_write_buffer[write_buffer_tail_ptr.index].data =
                 dmem_write_req_data
             ;
 
             // increment tail
-            next_dmem_write_buffer_tail_ptr = dmem_write_buffer_tail_ptr + 1;
+            next_write_buffer_tail_ptr = write_buffer_tail_ptr + 1;
         end
 
-        // check serviced imem req matches current imem req
+        // check to give slow down to dcache
+            // write buffer tail - write buffer head > 1/2 capacity
         if (
-            returning_imem_hit
-            &
-            imem_REN
-            &
-            working_req.block_addr == imem_block_addr
+            write_buffer_tail_ptr - write_buffer_head_ptr 
+            > 
+            (MEM_CONTROLLER_WRITE_BUFFER_DEPTH / 2)
         ) begin
-            
-            // give imem hit
-            imem_hit = 1'b1;
-            imem_load = working_req.read_data;
+            dmem_write_req_slow_down = 1'b1;
         end
 
         ///////////////////////////////
@@ -372,38 +385,39 @@ module mem_controller (
                     // dmem read > dmem write > imem read
 
                 // check have dmem read
-                if (dmem_read_buffer[dmem_read_buffer_head_ptr.index].valid) begin
+                if (read_buffer[read_buffer_head_ptr.index].valid) begin
 
                     // update working req
                     next_working_req.imem_read = 1'b0;
                     next_working_req.dmem_read = 1'b1;
                     next_working_req.dmem_write = 1'b0;
-                    next_working_req.block_addr = dmem_read_buffer[dmem_read_buffer_head_ptr.index].block_addr;
-                
+                    next_working_req.block_addr = read_buffer[read_buffer_head_ptr.index].block_addr;
+
                     // deQ dmem read buffer
                         // invalidate head entry
                         // increment head
-                    next_dmem_read_buffer[dmem_read_buffer_head_ptr.index].valid = 1'b0;
-                    next_dmem_read_buffer_head_ptr = dmem_read_buffer_head_ptr + 1;
+                    next_read_buffer[read_buffer_head_ptr.index].valid = 1'b0;
+                    next_read_buffer_head_ptr = read_buffer_head_ptr + 1;
 
                     // goto ACCESS 0
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_0;
                 end
 
                 // check have dmem write
-                else if (dmem_write_buffer[dmem_write_buffer_head_ptr.index].valid) begin
+                else if (write_buffer[write_buffer_head_ptr.index].valid) begin
 
                     // update working req
                     next_working_req.imem_read = 1'b0;
                     next_working_req.dmem_read = 1'b0;
                     next_working_req.dmem_write = 1'b1;
-                    next_working_req.block_addr = dmem_write_buffer[dmem_write_buffer_head_ptr.index].block_addr;
-                
+                    next_working_req.block_addr = write_buffer[write_buffer_head_ptr.index].block_addr;
+                    next_working_req.write_data = write_buffer[write_buffer_head_ptr.index].data;
+
                     // deQ dmem write buffer
                         // invalidate head entry
                         // increment head
-                    next_dmem_write_buffer[dmem_write_buffer_head_ptr.index].valid = 1'b0;
-                    next_dmem_write_buffer_head_ptr = dmem_write_buffer_head_ptr + 1;
+                    next_write_buffer[write_buffer_head_ptr.index].valid = 1'b0;
+                    next_write_buffer_head_ptr = write_buffer_head_ptr + 1;
 
                     // goto ACCESS 0
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_0;
@@ -422,16 +436,25 @@ module mem_controller (
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_0;
                 end
 
-                // check dcache flushed and write buffer empty
+                // check dcache flushed and write buffer empty 
+                    // also check read buffer empty?
+                        // could be preventing BusRdX store from happening
+                        // NO: dcache wouldn't have been flushed if this true
                     // head == tail
                 if (
                     dcache_flushed
                     &
                     (
-                        dmem_write_buffer_head_ptr
+                        write_buffer_head_ptr
                         ==
-                        dmem_write_buffer_tail_ptr
+                        write_buffer_tail_ptr
                     )
+                    // &
+                    // (
+                    //     read_buffer_head_ptr
+                    //     ==
+                    //     read_buffer_tail_ptr
+                    // )
                     
                 ) begin
 
@@ -464,6 +487,69 @@ module mem_controller (
                 // if access, go to ACCESS 1
                 if (prif.ramstate == ACCESS) begin
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_1;
+                end
+
+                // if doing dmem_read, need to search through write buffer
+                if (working_req.dmem_read) begin
+
+                    // search through write buffer for youngest matching block addr
+                    write_buffer_search_found = 1'b0;
+                    write_buffer_search_youngest_found_index = write_buffer_head_ptr.index;
+                    write_buffer_search_data = {32'h0, 32'h0};
+                    // for (int i = 0; i < MEM_CONTROLLER_WRITE_BUFFER_DEPTH; i++) begin
+
+                    // ONLY SEARCH THROUGH FIRST HALF
+                    for (int i = 0; i < (MEM_CONTROLLER_WRITE_BUFFER_DEPTH / 2); i++) begin
+
+                        // check for entry valid and block addr match
+                        if (
+                            write_buffer[i].valid
+                            &
+                            (
+                                write_buffer[i].block_addr
+                                ==
+                                working_req.block_addr
+                            )
+                        ) begin
+
+                            // search successful
+                            write_buffer_search_found = 1'b1;
+
+                            // check new youngest
+                                // younger -> greater than
+                                // subtract from current head
+                                // check == since can be taking from oldest possible write == head
+                                    // init value of write_buffer_search_youngest_found_index
+                            if (
+                                i - write_buffer_head_ptr.index
+                                >=
+                                write_buffer_search_youngest_found_index - write_buffer_head_ptr.index
+                            ) begin
+
+                                // update youngest
+                                write_buffer_search_youngest_found_index = i;
+                                next_write_buffer_search_first_half_youngest_found_index = write_buffer_search_youngest_found_index;
+
+                                // update youngest data
+                                write_buffer_search_data = write_buffer[i].data;
+                            end
+                        end
+                    end
+
+                    // do write buffer forward if search successful
+                    if (write_buffer_search_found) begin
+
+                        // save forward val in working req
+                        next_working_req.read_data = write_buffer_search_data;
+
+                        // send dmem read resp
+                        next_dmem_read_resp_valid = 1'b1;
+
+                        // return to ARBITRATE
+                        next_mem_controller_state = MEM_CONTROLLER_ARBITRATE;
+                    end
+
+                    // otherwise, read seemessly continues trying to get val from mem
                 end
             end
 
@@ -499,10 +585,87 @@ module mem_controller (
                         next_dmem_read_resp_valid = 1'b1;
                     end
 
-                    // check for imem read
-                    if (working_req.imem_read) begin
-                        next_returning_imem_hit = 1'b1;
+                    // check serviced imem req matches current imem req
+                    if (
+                        working_req.imem_read
+                        &
+                        imem_REN
+                        &
+                        working_req.block_addr == imem_block_addr
+                    ) begin
+                        
+                        // give imem hit
+                        imem_hit = 1'b1;
+                        imem_load = {
+                            prif.ramload,
+                            working_req.read_data[0]
+                        };
                     end
+                end
+
+                // if doing dmem_read, need to search through write buffer
+                if (working_req.dmem_read) begin
+
+                    // search through write buffer for youngest matching block addr
+                    write_buffer_search_found = 1'b0;
+                    // write_buffer_search_youngest_found_index = write_buffer_head_ptr.index;
+                    // THIS TIME, START FROM YOUNGEST THAT FIRST HALF OF SEARCH FOUND
+                    write_buffer_search_youngest_found_index = write_buffer_search_first_half_youngest_found_index;
+
+                    write_buffer_search_data = {32'h0, 32'h0};
+                    // for (int i = 0; i < MEM_CONTROLLER_WRITE_BUFFER_DEPTH; i++) begin
+
+                    // ONLY SEARCH THROUGH SECOND HALF
+                    for (int i = (MEM_CONTROLLER_WRITE_BUFFER_DEPTH / 2); i < MEM_CONTROLLER_WRITE_BUFFER_DEPTH; i++) begin
+
+                        // check for entry valid and block addr match
+                        if (
+                            write_buffer[i].valid
+                            &
+                            (
+                                write_buffer[i].block_addr
+                                ==
+                                working_req.block_addr
+                            )
+                        ) begin
+
+                            // search successful
+                            write_buffer_search_found = 1'b1;
+
+                            // check new youngest
+                                // younger -> greater than
+                                // subtract from current head
+                                // check == since can be taking from oldest possible write == head
+                                    // init value of write_buffer_search_youngest_found_index
+                            if (
+                                i - write_buffer_head_ptr.index
+                                >=
+                                write_buffer_search_youngest_found_index - write_buffer_head_ptr.index
+                            ) begin
+
+                                // update youngest
+                                write_buffer_search_youngest_found_index = i;
+
+                                // update youngest data
+                                write_buffer_search_data = write_buffer[i].data;
+                            end
+                        end
+                    end
+
+                    // do write buffer forward if search successful
+                    if (write_buffer_search_found) begin
+
+                        // save forward val in working req
+                        next_working_req.read_data = write_buffer_search_data;
+
+                        // send dmem read resp
+                        next_dmem_read_resp_valid = 1'b1;
+
+                        // return to ARBITRATE
+                        next_mem_controller_state = MEM_CONTROLLER_ARBITRATE;
+                    end
+
+                    // otherwise, read seemessly continues trying to get val from mem
                 end
             end
 
@@ -523,9 +686,9 @@ module mem_controller (
 
         // dmem read buffer
         if (
-            next_dmem_read_buffer_tail_ptr.msb != next_dmem_read_buffer_head_ptr.msb
+            next_read_buffer_tail_ptr.msb != next_read_buffer_head_ptr.msb
             &
-            next_dmem_read_buffer_tail_ptr.index == dmem_read_buffer_head_ptr + 1
+            next_read_buffer_tail_ptr.index == read_buffer_head_ptr + 1
         ) begin
             $display("mem_controller: ERROR: dmem read buffer tail surpassed head");
             $display("\t@: %0t",$realtime);
@@ -534,9 +697,9 @@ module mem_controller (
 
         // dmem write buffer
         if (
-            next_dmem_write_buffer_tail_ptr.msb != next_dmem_write_buffer_head_ptr.msb
+            next_write_buffer_tail_ptr.msb != next_write_buffer_head_ptr.msb
             &
-            next_dmem_write_buffer_tail_ptr.index == dmem_write_buffer_head_ptr + 1
+            next_write_buffer_tail_ptr.index == write_buffer_head_ptr + 1
         ) begin
             $display("mem_controller: ERROR: dmem write buffer tail surpassed head");
             $display("\t@: %0t",$realtime);
