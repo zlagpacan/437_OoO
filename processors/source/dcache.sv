@@ -413,13 +413,14 @@ module dcache (
         
         // read resp interface:
 
-        // write req interface: 
-            // block if store MSHR Q full
-        dcache_write_req_blocked = 
-            store_MSHR_Q_head_ptr.msb != store_MSHR_Q_tail_ptr.msb
-            &
-            store_MSHR_Q_head_ptr.index == store_MSHR_Q_tail_ptr.index
-        ;
+        // // write req interface: 
+        //     // block if store MSHR Q (going to be) full
+        // dcache_write_req_blocked = 
+        //     next_store_MSHR_Q_head_ptr.msb != next_store_MSHR_Q_tail_ptr.msb
+        //     &
+        //     next_store_MSHR_Q_head_ptr.index == next_store_MSHR_Q_tail_ptr.index
+        // ;
+            // need to set this at end of always_comb
 
         // read kill interface x2:
         
@@ -524,10 +525,14 @@ module dcache (
 
         // store miss reg
             // invalid from dcache write req interface
+            // NO: want invalid from store MSHR Q head
         next_new_store_miss_reg.valid = 1'b0;
-        next_new_store_miss_reg.block_addr = {dcache_write_req_addr_structed.tag, dcache_write_req_addr_structed.index};
-        next_new_store_miss_reg.block_offset = dcache_write_req_addr_structed.block_offset;
-        next_new_store_miss_reg.store_word = dcache_write_req_data;
+        // next_new_store_miss_reg.block_addr = {dcache_write_req_addr_structed.tag, dcache_write_req_addr_structed.index};
+        // next_new_store_miss_reg.block_offset = dcache_write_req_addr_structed.block_offset;
+        // next_new_store_miss_reg.store_word = dcache_write_req_data;
+        next_new_store_miss_reg.block_addr = {store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.tag, store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index};
+        next_new_store_miss_reg.block_offset = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset;
+        next_new_store_miss_reg.store_word = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
 
         // backlog Q bus read req
         next_backlog_Q_bus_read_req_by_entry = backlog_Q_bus_read_req_by_entry;
@@ -625,70 +630,75 @@ module dcache (
         ///////////////////////////
         // store hit path logic: //
         ///////////////////////////
+            // actual store hit should happen when store gets to front of store MSHR Q
+                // this way previous loads or stores that could have given hit before this
+                // store is serviced can finish, then official miss check can happen
+                // this specific ordering not important for loads since have separate MSHR's that can
+                // share return data from mem
 
-        // no store hit
-        store_hit_this_cycle = 1'b0;
+        // // no store hit
+        // store_hit_this_cycle = 1'b0;
 
-        // check have dcache read req
-        if (dcache_write_req_valid) begin
+        // // check have dcache read req
+        // if (dcache_write_req_valid) begin
 
-            // iterate over ways
-            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+        //     // iterate over ways
+        //     for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
 
-                // check VTM
-                if (
-                    dcache_frame_by_way_by_set[i][dcache_write_req_addr_structed.index].valid
-                    &
-                    (
-                        dcache_frame_by_way_by_set[i][dcache_write_req_addr_structed.index].tag
-                        ==
-                        dcache_write_req_addr_structed.tag
-                    )
-                ) begin
+        //         // check VTM
+        //         if (
+        //             dcache_frame_by_way_by_set[i][dcache_write_req_addr_structed.index].valid
+        //             &
+        //             (
+        //                 dcache_frame_by_way_by_set[i][dcache_write_req_addr_structed.index].tag
+        //                 ==
+        //                 dcache_write_req_addr_structed.tag
+        //             )
+        //         ) begin
 
-                    // have hit
-                    store_hit_this_cycle = 1'b1;
+        //             // have hit
+        //             store_hit_this_cycle = 1'b1;
 
-                    // perform write in dcache frame
-                    next_dcache_frame_by_way_by_set
-                    [i]
-                    [dcache_write_req_addr_structed.index]
-                    .block
-                    [dcache_write_req_addr_structed.block_offset]
-                        = dcache_write_req_data;
+        //             // perform write in dcache frame
+        //             next_dcache_frame_by_way_by_set
+        //             [i]
+        //             [dcache_write_req_addr_structed.index]
+        //             .block
+        //             [dcache_write_req_addr_structed.block_offset]
+        //                 = dcache_write_req_data;
 
-                    // mark dcache frame dirty
-                    next_dcache_frame_by_way_by_set
-                    [i]
-                    [dcache_write_req_addr_structed.index]
-                    .dirty
-                        = 1'b1;
+        //             // mark dcache frame dirty
+        //             next_dcache_frame_by_way_by_set
+        //             [i]
+        //             [dcache_write_req_addr_structed.index]
+        //             .dirty
+        //                 = 1'b1;
 
-                    // // set LRU opposite this way
-                    //     // this part assumes 2-way assoc, otherwise "LRU" is just not the last way touched
-                    //     // NMRU -> Not Most Recently Used
-                    // next_dcache_set_LRU[dcache_write_req_addr_structed.index] = ~i;
-                    // set LRU next way
-                        // still NMRU but at least don't just toggle between opposite ways
-                    next_dcache_set_LRU[dcache_write_req_addr_structed.index] = i + 1;
+        //             // // set LRU opposite this way
+        //             //     // this part assumes 2-way assoc, otherwise "LRU" is just not the last way touched
+        //             //     // NMRU -> Not Most Recently Used
+        //             // next_dcache_set_LRU[dcache_write_req_addr_structed.index] = ~i;
+        //             // set LRU next way
+        //                 // still NMRU but at least don't just toggle between opposite ways
+        //             next_dcache_set_LRU[dcache_write_req_addr_structed.index] = i + 1;
 
-                    // add hit for perf counter
-                        // do next in case load and store both hit
-                    next_hit_counter = next_hit_counter + 1;
-                    $display("dcache: hit #%d", next_hit_counter);
-                end
-            end
+        //             // add hit for perf counter
+        //                 // do next in case load and store both hit
+        //             next_hit_counter = next_hit_counter + 1;
+        //             $display("dcache: hit #%d", next_hit_counter);
+        //         end
+        //     end
 
-            // check no hit after iter through ways
-            if (~store_hit_this_cycle) begin
+        //     // check no hit after iter through ways
+        //     if (~store_hit_this_cycle) begin
 
-                // set store miss reg
-                next_new_store_miss_reg.valid = 1'b1;
-                next_new_store_miss_reg.block_addr = {dcache_write_req_addr_structed.tag, dcache_write_req_addr_structed.index};
-                next_new_store_miss_reg.block_offset = dcache_write_req_addr_structed.block_offset;
-                next_new_store_miss_reg.store_word = dcache_write_req_data;
-            end
-        end
+        //         // set store miss reg
+        //         next_new_store_miss_reg.valid = 1'b1;
+        //         next_new_store_miss_reg.block_addr = {dcache_write_req_addr_structed.tag, dcache_write_req_addr_structed.index};
+        //         next_new_store_miss_reg.block_offset = dcache_write_req_addr_structed.block_offset;
+        //         next_new_store_miss_reg.store_word = dcache_write_req_data;
+        //     end
+        // end
 
         //////////////////////////////
         // load miss process logic: //
@@ -709,18 +719,44 @@ module dcache (
         ///////////////////////////////
         // store miss process logic: //
         ///////////////////////////////
+            // processing now part of deQ
 
-        // check have store miss
-        if (new_store_miss_reg.valid) begin
+        // // check have store miss
+        // if (new_store_miss_reg.valid) begin
 
-            // enQ to store MSHR Q
-                // can directly set to new_store_miss_reg values
-            next_store_MSHR_Q[store_MSHR_Q_tail_ptr.index] = new_store_miss_reg;
+        //     // enQ to store MSHR Q
+        //         // can directly set to new_store_miss_reg values
+        //     next_store_MSHR_Q[store_MSHR_Q_tail_ptr.index] = new_store_miss_reg;
+
+        //     // increment store MSHR Q tail
+        //     next_store_MSHR_Q_tail_ptr = store_MSHR_Q_tail_ptr + dcache_store_MSHR_Q_ptr_t'(1);
+
+        //     // will check competing bus read req's later
+        // end
+
+        //////////////////////////////
+        // store req process logic: //
+        //////////////////////////////
+            // directly enQ dcache write req into store MSHR Q
+
+        // check for dcache write req
+        if (dcache_write_req_valid) begin
+
+            // enQ into store MSHR Q
+            next_store_MSHR_Q[store_MSHR_Q_tail_ptr.index].valid = 1'b1;
+            next_store_MSHR_Q[store_MSHR_Q_tail_ptr.index].block_addr = {
+                dcache_write_req_addr_structed.tag,
+                dcache_write_req_addr_structed.index
+            };
+            next_store_MSHR_Q[store_MSHR_Q_tail_ptr.index].block_offset = 
+                dcache_write_req_addr_structed.block_offset
+            ;
+            next_store_MSHR_Q[store_MSHR_Q_tail_ptr.index].store_word =
+                dcache_write_req_data
+            ;
 
             // increment store MSHR Q tail
-            next_store_MSHR_Q_tail_ptr = store_MSHR_Q_tail_ptr + dcache_store_MSHR_Q_ptr_t'(1);
-
-            // will check competing bus read req's later
+            next_store_MSHR_Q_tail_ptr = store_MSHR_Q_tail_ptr + 1;
         end
 
         ///////////////////////////////
@@ -902,6 +938,10 @@ module dcache (
         ///////////////////////
         // store MSHR logic: //
         ///////////////////////
+            // now also does store hit logic
+        
+        store_hit_this_cycle = 1'b0;
+
 
         // check deQ
             // have store MSHR Q entry valid and MSHR invalid
@@ -911,12 +951,71 @@ module dcache (
             ~store_MSHR.valid
         ) begin
 
-            // fill in MSHR
-            next_store_MSHR.valid = 1'b1;
-            next_store_MSHR.fulfilled = 1'b0;
-            next_store_MSHR.block_addr = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr;
-            next_store_MSHR.block_offset = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset;
-            next_store_MSHR.store_word = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
+            // try to hit in cache:
+
+            // iterate over ways
+            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+
+                // check VTM
+                if (
+                    dcache_frame_by_way_by_set[i][store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index].valid
+                    &
+                    (
+                        dcache_frame_by_way_by_set[i][store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index].tag
+                        ==
+                        store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.tag
+                    )
+                ) begin
+
+                    // have hit
+                    store_hit_this_cycle = 1'b1;
+
+                    // perform write in dcache frame
+                    next_dcache_frame_by_way_by_set
+                    [i]
+                    [store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index]
+                    .block
+                    [store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset]
+                        = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
+
+                    // mark dcache frame dirty
+                    next_dcache_frame_by_way_by_set
+                    [i]
+                    [store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index]
+                    .dirty
+                        = 1'b1;
+
+                    // // set LRU opposite this way
+                    //     // this part assumes 2-way assoc, otherwise "LRU" is just not the last way touched
+                    //     // NMRU -> Not Most Recently Used
+                    // next_dcache_set_LRU[store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index] = ~i;
+                    // set LRU next way
+                        // still NMRU but at least don't just toggle between opposite ways
+                    next_dcache_set_LRU[store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index] = i + 1;
+
+                    // add hit for perf counter
+                        // do next in case load and store both hit
+                    next_hit_counter = next_hit_counter + 1;
+                    $display("dcache: hit #%d", next_hit_counter);
+                end
+            end
+
+            // check no hit after iter through ways
+            if (~store_hit_this_cycle) begin
+
+                // set store miss reg
+                next_new_store_miss_reg.valid = 1'b1;
+                next_new_store_miss_reg.block_addr = {store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.tag, store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index};
+                next_new_store_miss_reg.block_offset = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset;
+                next_new_store_miss_reg.store_word = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
+                
+                // fill in MSHR
+                next_store_MSHR.valid = 1'b1;
+                next_store_MSHR.fulfilled = 1'b0;
+                next_store_MSHR.block_addr = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr;
+                next_store_MSHR.block_offset = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset;
+                next_store_MSHR.store_word = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
+            end
 
             // invalidate store MSHR Q head entry
             next_store_MSHR_Q[store_MSHR_Q_head_ptr.index].valid = 1'b0;
@@ -1606,6 +1705,18 @@ module dcache (
             end
 
         endcase
+
+        ///////////
+        // misc: //
+        ///////////
+
+        // write req interface: 
+            // block if store MSHR Q (going to be) full
+        dcache_write_req_blocked = 
+            next_store_MSHR_Q_head_ptr.msb != next_store_MSHR_Q_tail_ptr.msb
+            &
+            next_store_MSHR_Q_head_ptr.index == next_store_MSHR_Q_tail_ptr.index
+        ;
 
     end
 
