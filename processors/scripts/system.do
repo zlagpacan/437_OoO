@@ -875,11 +875,11 @@ add wave -noupdate -expand -group {DCACHE0 Internal Signals} -expand -subitemcon
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_dcache_frame_by_way_by_set
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/dcache_set_LRU
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_dcache_set_LRU
-add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/load_MSHR_by_LQ_index
+add wave -noupdate -expand -group {DCACHE0 Internal Signals} -expand /system_tb/DUT/DCACHE0/load_MSHR_by_LQ_index
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_load_MSHR_by_LQ_index
-add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/store_MSHR
+add wave -noupdate -expand -group {DCACHE0 Internal Signals} -expand /system_tb/DUT/DCACHE0/store_MSHR
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_store_MSHR
-add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/store_MSHR_Q
+add wave -noupdate -expand -group {DCACHE0 Internal Signals} -expand /system_tb/DUT/DCACHE0/store_MSHR_Q
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_store_MSHR_Q
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/store_MSHR_Q_head_ptr
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_store_MSHR_Q_head_ptr
@@ -917,6 +917,9 @@ add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCAC
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_hit_counter
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/found_store_MSHR_Q_valid_entry
 add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/next_flushed
+add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/piggyback_bus_valid
+add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/piggyback_bus_block_addr
+add wave -noupdate -expand -group {DCACHE0 Internal Signals} /system_tb/DUT/DCACHE0/piggyback_bus_way
 add wave -noupdate -divider {MEM_CONTROLLER Signals}
 add wave -noupdate -expand -group {MEM_CONTROLLER Top Level Signals} /system_tb/DUT/MEM_CONTROLLER/DUT_error
 add wave -noupdate -expand -group {MEM_CONTROLLER Top Level Signals} /system_tb/DUT/MEM_CONTROLLER/imem_REN
@@ -959,7 +962,7 @@ add wave -noupdate -expand -group {MEM_CONTROLLER Internal Signals} /system_tb/D
 add wave -noupdate -expand -group {MEM_CONTROLLER Internal Signals} /system_tb/DUT/MEM_CONTROLLER/next_write_buffer_search_first_half_youngest_found_index
 add wave -noupdate -expand -group {MEM_CONTROLLER Internal Signals} /system_tb/DUT/MEM_CONTROLLER/write_buffer_search_data
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {432831 ps} 0}
+WaveRestoreCursors {{Cursor 1} {4377457 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 311
 configure wave -valuecolwidth 202
@@ -975,4 +978,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {109 ns} {748 ns}
+WaveRestoreZoom {4175 ns} {5414 ns}

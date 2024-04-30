@@ -195,13 +195,15 @@ module phys_reg_map_table (
                 .array[revert_dest_arch_reg_tag] = 
                 revert_safe_dest_phys_reg_tag;
 
-            // invalidate non-working columns
-            for (int i = 0; i < CHECKPOINT_COLUMNS; i++) begin
-                if (checkpoint_column_t'(i) != phys_reg_map_table_working_column) begin
-                    next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(i)]
-                        .valid = 1'b0;
-                end
-            end
+            // // invalidate non-working columns
+            // for (int i = 0; i < CHECKPOINT_COLUMNS; i++) begin
+            //     if (checkpoint_column_t'(i) != phys_reg_map_table_working_column) begin
+            //         next_phys_reg_map_table_columns_by_column_index[checkpoint_column_t'(i)]
+            //             .valid = 1'b0;
+            //     end
+            // end
+                // this not necessary, caused unnecessary dispatch unit DUT error where checkpoint
+                    // clear failed for prmt but succeeded for prfl
         end
 
         // restore
