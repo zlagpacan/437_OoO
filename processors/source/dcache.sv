@@ -168,6 +168,8 @@ module dcache (
     typedef struct packed {
         logic valid;
         logic fulfilled;
+        logic piggybacking;
+        logic [DCACHE_LOG_NUM_WAYS-1:0] piggybacking_way;
         // logic launched; // guarantee launch same cycle as when fill MSHR
         // logic [DCACHE_LOG_NUM_WAYS-1:0] way; // pick LRU way on return path
         // LQ_index_t LQ_index; // index of this MSHR follows LQ index
@@ -189,6 +191,8 @@ module dcache (
     typedef struct packed {
         logic valid;
         logic fulfilled;
+        logic piggybacking;
+        logic [DCACHE_LOG_NUM_WAYS-1:0] piggybacking_way;
         // logic launched; // guarantee launch same cycle as when add to store MSHR Q
         // logic [DCACHE_LOG_NUM_WAYS-1:0] way; // pick LRU way on return path
         dcache_block_addr_t block_addr;
@@ -339,6 +343,21 @@ module dcache (
     // flushed reg
     logic next_flushed;
 
+    // fill block addr broadcast
+        // TODO: add piggybacking
+            // should be rare case where need to piggyback else incorrect
+                // maybe load then store to same block, one has store val other doesn't?
+                // also load then load to same block, should only have one copy in cache
+                // can get ugly for snooping have have more than one copy of block in cache
+            // when MSHR is serviced, broadcast block addr and way to other MSHR's
+                // matching block addr piggybacking MSHR's set their piggybacking bits and if store it sets way
+                // when piggybacking MSHR's are serviced:
+                    // load: just send resp to core, don't fill block
+                    // store: write only this storing word to block, don't fill whole block
+    logic piggyback_bus_valid;
+    dcache_block_addr_t piggyback_bus_block_addr;
+    logic [DCACHE_LOG_NUM_WAYS-1:0] piggyback_bus_way;
+    
     // seq:
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
@@ -563,69 +582,92 @@ module dcache (
         // hit counter for perf
         next_hit_counter = hit_counter;
 
-        //////////////////////////
-        // load hit path logic: //
-        //////////////////////////
+        // //////////////////////////
+        // // load hit path logic: //
+        // //////////////////////////
 
-        // no load hit
-        load_hit_this_cycle = 1'b0;
+        // // no load hit
+        // load_hit_this_cycle = 1'b0;
 
-        // check have dcache read req
-        if (dcache_read_req_valid) begin
+        // // check have dcache read req
+        // if (dcache_read_req_valid) begin
 
-            // iterate over ways
-            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+        //     // iterate over ways
+        //     for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
 
-                // check VTM
-                if (
-                    dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].valid
-                    &
-                    (
-                        dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].tag
-                        ==
-                        dcache_read_req_addr_structed.tag
-                    )
-                ) begin
+        //         // check VTM
+        //         if (
+        //             dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].valid
+        //             &
+        //             (
+        //                 dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].tag
+        //                 ==
+        //                 dcache_read_req_addr_structed.tag
+        //             )
+        //         ) begin
 
-                    // have hit
-                    load_hit_this_cycle = 1'b1;
+        //             // have hit
+        //             load_hit_this_cycle = 1'b1;
 
-                    // set hit return
-                    next_load_hit_return.valid = 1'b1;
-                    next_load_hit_return.LQ_index = dcache_read_req_LQ_index;
-                    next_load_hit_return.data = 
-                        dcache_frame_by_way_by_set
-                        [i]
-                        [dcache_read_req_addr_structed.index]
-                        .block
-                        [dcache_read_req_addr_structed.block_offset]
-                    ;
+        //             // set hit return
+        //             next_load_hit_return.valid = 1'b1;
+        //             next_load_hit_return.LQ_index = dcache_read_req_LQ_index;
+        //             next_load_hit_return.data = 
+        //                 dcache_frame_by_way_by_set
+        //                 [i]
+        //                 [dcache_read_req_addr_structed.index]
+        //                 .block
+        //                 [dcache_read_req_addr_structed.block_offset]
+        //             ;
 
-                    // // set LRU opposite this way
-                    //     // this part assumes 2-way assoc, otherwise "LRU" is just not the last way touched
-                    //     // NMRU -> Not Most Recently Used
-                    // next_dcache_set_LRU[dcache_read_req_addr_structed.index] = ~i;
-                    // set LRU next way
-                        // still NMRU but at least don't just toggle between opposite ways
-                    next_dcache_set_LRU[dcache_read_req_addr_structed.index] = i + 1;
+        //             // // set LRU opposite this way
+        //             //     // this part assumes 2-way assoc, otherwise "LRU" is just not the last way touched
+        //             //     // NMRU -> Not Most Recently Used
+        //             // next_dcache_set_LRU[dcache_read_req_addr_structed.index] = ~i;
+        //             // set LRU next way
+        //                 // still NMRU but at least don't just toggle between opposite ways
+        //             next_dcache_set_LRU[dcache_read_req_addr_structed.index] = i + 1;
 
-                    // add hit for perf counter
-                        // do next in case load and store both hit
-                    next_hit_counter = next_hit_counter + 1;
-                    $display("dcache: hit #%d", next_hit_counter);
-                end
-            end
+        //             // add hit for perf counter
+        //                 // do next in case load and store both hit
+        //             next_hit_counter = next_hit_counter + 1;
+        //             $display("dcache: hit #%d", next_hit_counter);
+        //         end
+        //     end
 
-            // check no hit after iter through ways
-            if (~load_hit_this_cycle) begin
+        //     // check no hit after iter through ways
+        //     if (~load_hit_this_cycle) begin
 
-                // set load miss reg
-                next_new_load_miss_reg.valid = 1'b1;
-                next_new_load_miss_reg.LQ_index = dcache_read_req_LQ_index;
-                next_new_load_miss_reg.block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
-                next_new_load_miss_reg.block_offset = dcache_read_req_addr_structed.block_offset;
-            end
-        end
+        //         // set load miss reg
+        //         next_new_load_miss_reg.valid = 1'b1;
+        //         next_new_load_miss_reg.LQ_index = dcache_read_req_LQ_index;
+        //         next_new_load_miss_reg.block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
+        //         next_new_load_miss_reg.block_offset = dcache_read_req_addr_structed.block_offset;
+
+        //         // allocate load MSHR @ LQ_index
+        //         next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].valid = 1'b1;
+        //         next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b0;
+        //         // next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
+        //         next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
+        //         next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_offset = dcache_read_req_addr_structed.block_offset;
+
+        //         // special case: missing right when would be filling
+        //             // set as piggybacking if current piggyback broadcast matches block addr
+        //         if (
+        //             piggyback_bus_block_addr
+        //             ==
+        //             {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index}
+        //         ) begin
+        //             next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b1;
+        //         end
+
+        //         // otherwise, not piggybacking
+        //         else begin
+        //             next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
+        //         end
+        //     end
+        // end
+            // need to put at end now because of piggybacking
 
         ///////////////////////////
         // store hit path logic: //
@@ -704,17 +746,20 @@ module dcache (
         // load miss process logic: //
         //////////////////////////////
 
-        // check have load miss
-        if (new_load_miss_reg.valid) begin
+        // // check have load miss
+        // if (new_load_miss_reg.valid) begin
 
-            // allocate load MSHR @ LQ_index
-            next_load_MSHR_by_LQ_index[new_load_miss_reg.LQ_index].valid = 1'b1;
-            next_load_MSHR_by_LQ_index[new_load_miss_reg.LQ_index].fulfilled = 1'b0;
-            next_load_MSHR_by_LQ_index[new_load_miss_reg.LQ_index].block_addr = new_load_miss_reg.block_addr;
-            next_load_MSHR_by_LQ_index[new_load_miss_reg.LQ_index].block_offset = new_load_miss_reg.block_offset;
+        //     // allocate load MSHR @ LQ_index
+        //     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].valid = 1'b1;
+        //     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b0;
+        //     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
+        //     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
+        //     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_offset = dcache_read_req_addr_structed.block_offset;
 
-            // will check competing bus read req's later
-        end
+        //     // will check competing bus read req's later
+        // end
+            // can immediately alloc load miss
+                // prevents 1 cycle in-between where don't have MSHR to scoop up bus resp and already missed
 
         ///////////////////////////////
         // store miss process logic: //
@@ -1012,6 +1057,8 @@ module dcache (
                 // fill in MSHR
                 next_store_MSHR.valid = 1'b1;
                 next_store_MSHR.fulfilled = 1'b0;
+                next_store_MSHR.piggybacking = 1'b0;
+                next_store_MSHR.piggybacking_way = 0;
                 next_store_MSHR.block_addr = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr;
                 next_store_MSHR.block_offset = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset;
                 next_store_MSHR.store_word = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
@@ -1089,6 +1136,11 @@ module dcache (
             // if load, return value
             // deal with evictions
 
+        // init piggyback bus broadcast
+        piggyback_bus_valid = 1'b0;
+        piggyback_bus_block_addr = 13'h0;
+        piggyback_bus_way = 0;
+
         // find winning MSHR on 4x load MSHR's, 1x store MSHR
         
         // iterate through load MSHR's, picking one if exists
@@ -1108,190 +1160,206 @@ module dcache (
             end
         end
 
-        // check found MSHR, enQ single load MSHR chosen
+        // use load MSHR if found
         found_empty_way = 1'b0;
         empty_way = '0;
         if (found_load_MSHR_fulfilled) begin
 
-            // search for empty way
-            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+            // check if need to fill block (didn't piggyback)
+            if (~load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].piggybacking) begin
 
-                // check this entry invalid
-                if (
-                    ~dcache_frame_by_way_by_set
-                    // select way following CAM loop
-                    [i]
-                    // select set following LQ index MSHR index
+                // search for empty way
+                for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+
+                    // check this entry invalid
+                    if (
+                        ~dcache_frame_by_way_by_set
+                        // select way following CAM loop
+                        [i]
+                        // select set following LQ index MSHR index
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                        .valid
+                    ) begin
+
+                        // save empty way
+                        found_empty_way = 1'b1;
+                        empty_way = i;
+                    end
+                end
+
+                // have empty way
+                if (found_empty_way) begin
+
+                    // no eviction
+
+                    // fill empty way frame
+                        // valid
+                        // not dirty
+                        // tag from MSHR
+                        // block from MSHR
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     .valid
-                ) begin
+                        = 1'b1;
 
-                    // save empty way
-                    found_empty_way = 1'b1;
-                    empty_way = i;
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .dirty
+                        = 1'b0;
+
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .tag
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag;
+                    
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .block
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block;
+
+                    // update LRU
+                        // this found way + 1
+                    next_dcache_set_LRU
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                        = empty_way + 1;
+
+                    // // broadcast piggyback
+                    // piggyback_bus_valid = 1'b1;
+                    // piggyback_bus_block_addr = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr;
+                    // piggyback_bus_way = empty_way;
                 end
-            end
 
-            // have empty way
-            if (found_empty_way) begin
+                // otherwise, use LRU way
+                else begin
 
-                // no eviction
+                    // evict LRU @ found LQ index MSHR index if frame dirty
+                    if (
+                        dcache_frame_by_way_by_set
+                        // select way following LRU @ LQ index MSHR index
+                        [
+                            dcache_set_LRU
+                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                        ] 
+                        // select set following LQ index MSHR index
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                        .dirty
+                    ) begin
 
-                // fill empty way frame
-                    // valid
-                    // not dirty
-                    // tag from MSHR
-                    // block from MSHR
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .valid
-                    = 1'b1;
+                        // send dmem write req
+                            // valid
+                            // block addr follows (tag in frame, MSHR index)
+                            // data follows frame
+                        dmem_write_req_valid = 1'b1;
+                        dmem_write_req_block_addr = {
+                            // tag in frame:
+                            dcache_frame_by_way_by_set
+                            // select way following LRU @ LQ index MSHR index
+                            [
+                                dcache_set_LRU
+                                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                            ] 
+                            // select set following LQ index MSHR index
+                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                            .tag
+                            ,
+                            // MSHR index:
+                            load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index
+                        };
+                        dmem_write_req_data = 
+                            dcache_frame_by_way_by_set
+                            // select way following LRU @ LQ index MSHR index
+                            [
+                                dcache_set_LRU
+                                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                            ] 
+                            // select set following LQ index MSHR index
+                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                            .block
+                        ;
 
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .dirty
-                    = 1'b0;
+                        // send evict to core
+                            // valid
+                            // block addr follows (tag in frame, MSHR index)
+                        dcache_inv_valid = 1'b1;
+                        dcache_inv_block_addr = {
+                            // tag in frame:
+                            dcache_frame_by_way_by_set
+                            // select way following LRU @ LQ index MSHR index
+                            [
+                                dcache_set_LRU
+                                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                            ] 
+                            // select set following LQ index MSHR index
+                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                            .tag
+                            ,
+                            // MSHR index:
+                            load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index
+                        };
+                    end
 
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .tag
-                    = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag;
-                
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .block
-                    = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block;
-
-                // update LRU
-                    // this found way + 1
-                next_dcache_set_LRU
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                    = empty_way + 1;
-            end
-
-            // otherwise, use LRU way
-            else begin
-
-                // evict LRU @ found LQ index MSHR index if frame dirty
-                if (
-                    dcache_frame_by_way_by_set
-                    // select way following LRU @ LQ index MSHR index
+                    // fill LRU frame
+                        // valid
+                        // not dirty
+                        // tag from MSHR
+                        // block from MSHR
+                    next_dcache_frame_by_way_by_set
                     [
                         dcache_set_LRU
                         [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
                     ] 
-                    // select set following LQ index MSHR index
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .valid
+                        = 1'b1;
+
+                    next_dcache_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                    ] 
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     .dirty
-                ) begin
+                        = 1'b0;
 
-                    // send dmem write req
-                        // valid
-                        // block addr follows (tag in frame, MSHR index)
-                        // data follows frame
-                    dmem_write_req_valid = 1'b1;
-                    dmem_write_req_block_addr = {
-                        // tag in frame:
-                        dcache_frame_by_way_by_set
-                        // select way following LRU @ LQ index MSHR index
-                        [
-                            dcache_set_LRU
-                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                        ] 
-                        // select set following LQ index MSHR index
-                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                        .tag
-                        ,
-                        // MSHR index:
-                        load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index
-                    };
-                    dmem_write_req_data = 
-                        dcache_frame_by_way_by_set
-                        // select way following LRU @ LQ index MSHR index
-                        [
-                            dcache_set_LRU
-                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                        ] 
-                        // select set following LQ index MSHR index
-                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                        .block
-                    ;
+                    next_dcache_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                    ] 
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .tag
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag;
+                    
+                    next_dcache_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                    ] 
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .block
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block;
 
-                    // send evict to core
-                        // valid
-                        // block addr follows (tag in frame, MSHR index)
-                    dcache_inv_valid = 1'b1;
-                    dcache_inv_block_addr = {
-                        // tag in frame:
-                        dcache_frame_by_way_by_set
-                        // select way following LRU @ LQ index MSHR index
-                        [
-                            dcache_set_LRU
-                            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                        ] 
-                        // select set following LQ index MSHR index
-                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                        .tag
-                        ,
-                        // MSHR index:
-                        load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index
-                    };
+                    // update LRU
+                        // LRU + 1
+                    next_dcache_set_LRU
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    =
+                    dcache_set_LRU
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                    + 1;
+
+                    // // broadcast piggyback
+                    // piggyback_bus_valid = 1'b1;
+                    // piggyback_bus_block_addr = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr;
+                    // piggyback_bus_way = empty_way;
                 end
-
-                // fill LRU frame
-                    // valid
-                    // not dirty
-                    // tag from MSHR
-                    // block from MSHR
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                ] 
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .valid
-                    = 1'b1;
-
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                ] 
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .dirty
-                    = 1'b0;
-
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                ] 
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .tag
-                    = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag;
-                
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                ] 
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                .block
-                    = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block;
-
-                // update LRU
-                    // LRU + 1
-                next_dcache_set_LRU
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
-                =
-                dcache_set_LRU
-                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                + 1;
             end
+
+            // regardless of piggyback, inv MSHR and return to core
 
             // invalidate MSHR
             next_load_MSHR_by_LQ_index
@@ -1315,205 +1383,249 @@ module dcache (
             .LQ_index 
                 = found_load_MSHR_LQ_index;
 
-            next_load_miss_return_Q
-            [load_miss_return_Q_tail_ptr.index]
-            .data
-            = 
-            load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block
-            [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_offset]
-            ;
+            // if piggybacking, return val from way
+            if (load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].piggybacking) begin
+                next_load_miss_return_Q
+                [load_miss_return_Q_tail_ptr.index]
+                .data
+                = 
+                dcache_frame_by_way_by_set
+                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].piggybacking_way]
+                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                .block
+                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_offset]
+                ;
+            end
+            else begin
+                next_load_miss_return_Q
+                [load_miss_return_Q_tail_ptr.index]
+                .data
+                = 
+                load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block
+                [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_offset]
+                ;
+            end
+
+            // otherwise, take value from MSHR
 
             // increment load miss return Q tail
             next_load_miss_return_Q_tail_ptr = load_miss_return_Q_tail_ptr + 1;
+
+            // broadcast piggyback
+            piggyback_bus_valid = 1'b1;
+            piggyback_bus_block_addr = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr;
+            piggyback_bus_way = empty_way;
         end
 
         // otherwise, can service store MSHR if valid and fulfilled
         else if (store_MSHR.valid & store_MSHR.fulfilled) begin
 
-            // search for empty way
-            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+            // check if need to fill block (didn't piggyback)
+            if (~store_MSHR.piggybacking) begin
 
-                // check this entry invalid
-                if (
-                    ~dcache_frame_by_way_by_set
-                    // select way following CAM loop
-                    [i]
-                    // select set following store MSHR index
+                // search for empty way
+                for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+
+                    // check this entry invalid
+                    if (
+                        ~dcache_frame_by_way_by_set
+                        // select way following CAM loop
+                        [i]
+                        // select set following store MSHR index
+                        [store_MSHR.block_addr.index]
+                        .valid
+                    ) begin
+
+                        // save empty way
+                        found_empty_way = 1'b1;
+                        empty_way = i;
+                    end
+                end
+
+                // have empty way
+                if (found_empty_way) begin
+
+                    // no eviction
+
+                    // fill empty way frame
+                        // valid
+                        // dirty
+                        // tag from MSHR
+                        // block from MSHR
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
                     [store_MSHR.block_addr.index]
                     .valid
-                ) begin
+                        = 1'b1;
 
-                    // save empty way
-                    found_empty_way = 1'b1;
-                    empty_way = i;
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
+                    [store_MSHR.block_addr.index]
+                    .dirty
+                        = 1'b1;
+
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
+                    [store_MSHR.block_addr.index]
+                    .tag
+                        = store_MSHR.block_addr.tag;
+                    
+                    next_dcache_frame_by_way_by_set
+                    [empty_way]
+                    [store_MSHR.block_addr.index]
+                    .block
+                        = store_MSHR.read_block;
+
+                    // update LRU
+                        // this found way + 1
+                    next_dcache_set_LRU
+                    [store_MSHR.block_addr.index]
+                        = empty_way + 1;
                 end
-            end
 
-            // have empty way
-            if (found_empty_way) begin
+                // otherwise, use LRU way
+                else begin
 
-                // no eviction
+                    // evict LRU @ found store MSHR index if frame dirty
+                    if (
+                        dcache_frame_by_way_by_set
+                        // select way following LRU @ store MSHR index
+                        [
+                            dcache_set_LRU
+                            [store_MSHR.block_addr.index]
+                        ] 
+                        // select set following store MSHR index
+                        [store_MSHR.block_addr.index]
+                        .dirty
+                    ) begin
 
-                // fill empty way frame
-                    // valid
-                    // dirty
-                    // tag from MSHR
-                    // block from MSHR
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [store_MSHR.block_addr.index]
-                .valid
-                    = 1'b1;
+                        // send dmem write req
+                            // valid
+                            // block addr follows (tag in frame, MSHR index)
+                            // data follows frame
+                        dmem_write_req_valid = 1'b1;
+                        dmem_write_req_block_addr = {
+                            // tag in frame:
+                            dcache_frame_by_way_by_set
+                            // select way following LRU @ store MSHR index
+                            [
+                                dcache_set_LRU
+                                [store_MSHR.block_addr.index]
+                            ] 
+                            // select set following store MSHR index
+                            [store_MSHR.block_addr.index]
+                            .tag
+                            ,
+                            // MSHR index:
+                            store_MSHR.block_addr.index
+                        };
+                        dmem_write_req_data = 
+                            dcache_frame_by_way_by_set
+                            // select way following LRU @ store MSHR index
+                            [
+                                dcache_set_LRU
+                                [store_MSHR.block_addr.index]
+                            ] 
+                            // select set following store MSHR index
+                            [store_MSHR.block_addr.index]
+                            .block
+                        ;
 
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [store_MSHR.block_addr.index]
-                .dirty
-                    = 1'b1;
+                        // send evict to core
+                            // valid
+                            // block addr follows (tag in frame, MSHR index)
+                        dcache_inv_valid = 1'b1;
+                        dcache_inv_block_addr = {
+                            // tag in frame:
+                            dcache_frame_by_way_by_set
+                            // select way following LRU @ LQ index MSHR index
+                            [
+                                dcache_set_LRU
+                                [store_MSHR.block_addr.index]
+                            ] 
+                            // select set following LQ index MSHR index
+                            [store_MSHR.block_addr.index]
+                            .tag
+                            ,
+                            // MSHR index:
+                            store_MSHR.block_addr.index
+                        };
+                    end
 
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [store_MSHR.block_addr.index]
-                .tag
-                    = store_MSHR.block_addr.tag;
-                
-                next_dcache_frame_by_way_by_set
-                [empty_way]
-                [store_MSHR.block_addr.index]
-                .block
-                    = store_MSHR.read_block;
-
-                // update LRU
-                    // this found way + 1
-                next_dcache_set_LRU
-                [store_MSHR.block_addr.index]
-                    = empty_way + 1;
-            end
-
-            // otherwise, use LRU way
-            else begin
-
-                // evict LRU @ found store MSHR index if frame dirty
-                if (
-                    dcache_frame_by_way_by_set
-                    // select way following LRU @ store MSHR index
+                    // fill LRU frame
+                        // valid
+                        // dirty
+                        // tag from MSHR
+                        // block from MSHR
+                    next_dcache_frame_by_way_by_set
                     [
                         dcache_set_LRU
                         [store_MSHR.block_addr.index]
                     ] 
-                    // select set following store MSHR index
+                    [store_MSHR.block_addr.index]
+                    .valid
+                        = 1'b1;
+
+                    next_dcache_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [store_MSHR.block_addr.index]
+                    ] 
                     [store_MSHR.block_addr.index]
                     .dirty
-                ) begin
+                        = 1'b1;
 
-                    // send dmem write req
-                        // valid
-                        // block addr follows (tag in frame, MSHR index)
-                        // data follows frame
-                    dmem_write_req_valid = 1'b1;
-                    dmem_write_req_block_addr = {
-                        // tag in frame:
-                        dcache_frame_by_way_by_set
-                        // select way following LRU @ store MSHR index
-                        [
-                            dcache_set_LRU
-                            [store_MSHR.block_addr.index]
-                        ] 
-                        // select set following store MSHR index
+                    next_dcache_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
                         [store_MSHR.block_addr.index]
-                        .tag
-                        ,
-                        // MSHR index:
-                        store_MSHR.block_addr.index
-                    };
-                    dmem_write_req_data = 
-                        dcache_frame_by_way_by_set
-                        // select way following LRU @ store MSHR index
-                        [
-                            dcache_set_LRU
-                            [store_MSHR.block_addr.index]
-                        ] 
-                        // select set following store MSHR index
+                    ] 
+                    [store_MSHR.block_addr.index]
+                    .tag
+                        = store_MSHR.block_addr.tag;
+                    
+                    next_dcache_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
                         [store_MSHR.block_addr.index]
-                        .block
-                    ;
+                    ] 
+                    [store_MSHR.block_addr.index]
+                    .block
+                        = store_MSHR.read_block;
 
-                    // send evict to core
-                        // valid
-                        // block addr follows (tag in frame, MSHR index)
-                    dcache_inv_valid = 1'b1;
-                    dcache_inv_block_addr = {
-                        // tag in frame:
-                        dcache_frame_by_way_by_set
-                        // select way following LRU @ LQ index MSHR index
-                        [
-                            dcache_set_LRU
-                            [store_MSHR.block_addr.index]
-                        ] 
-                        // select set following LQ index MSHR index
-                        [store_MSHR.block_addr.index]
-                        .tag
-                        ,
-                        // MSHR index:
-                        store_MSHR.block_addr.index
-                    };
+                    // update LRU
+                        // LRU + 1
+                    next_dcache_set_LRU
+                    [store_MSHR.block_addr.index]
+                    =
+                    dcache_set_LRU
+                    [store_MSHR.block_addr.index]
+                    + 1;
                 end
+            end
 
-                // fill LRU frame
-                    // valid
-                    // dirty
-                    // tag from MSHR
-                    // block from MSHR
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [store_MSHR.block_addr.index]
-                ] 
-                [store_MSHR.block_addr.index]
-                .valid
-                    = 1'b1;
+            // otherwise if piggybacking, write store word
+            else begin
 
                 next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [store_MSHR.block_addr.index]
-                ] 
-                [store_MSHR.block_addr.index]
-                .dirty
-                    = 1'b1;
-
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [store_MSHR.block_addr.index]
-                ] 
-                [store_MSHR.block_addr.index]
-                .tag
-                    = store_MSHR.block_addr.tag;
-                
-                next_dcache_frame_by_way_by_set
-                [
-                    dcache_set_LRU
-                    [store_MSHR.block_addr.index]
-                ] 
+                [store_MSHR.piggybacking_way] 
                 [store_MSHR.block_addr.index]
                 .block
-                    = store_MSHR.read_block;
-
-                // update LRU
-                    // LRU + 1
-                next_dcache_set_LRU
-                [store_MSHR.block_addr.index]
-                =
-                dcache_set_LRU
-                [store_MSHR.block_addr.index]
-                + 1;
+                [store_MSHR.block_offset]
+                    = store_MSHR.store_word;
             end
+
+            // regardless of piggyback, inv MSHR
 
             // invalidate MSHR
             next_store_MSHR
             .valid
                 = 1'b0;
+
+            // broadcast piggyback
+            piggyback_bus_valid = 1'b1;
+            piggyback_bus_block_addr = store_MSHR.block_addr;
+            piggyback_bus_way = empty_way;
         end
 
         ////////////////////////
@@ -1705,6 +1817,146 @@ module dcache (
             end
 
         endcase
+
+        //////////////////////////
+        // load hit path logic: //
+        //////////////////////////
+            // has to be down here now since need to know piggyback bus block addr
+
+        // no load hit
+        load_hit_this_cycle = 1'b0;
+
+        // check have dcache read req
+        if (dcache_read_req_valid) begin
+
+            // iterate over ways
+            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+
+                // check VTM
+                if (
+                    dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].valid
+                    &
+                    (
+                        dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].tag
+                        ==
+                        dcache_read_req_addr_structed.tag
+                    )
+                ) begin
+
+                    // have hit
+                    load_hit_this_cycle = 1'b1;
+
+                    // set hit return
+                    next_load_hit_return.valid = 1'b1;
+                    next_load_hit_return.LQ_index = dcache_read_req_LQ_index;
+                    next_load_hit_return.data = 
+                        dcache_frame_by_way_by_set
+                        [i]
+                        [dcache_read_req_addr_structed.index]
+                        .block
+                        [dcache_read_req_addr_structed.block_offset]
+                    ;
+
+                    // // set LRU opposite this way
+                    //     // this part assumes 2-way assoc, otherwise "LRU" is just not the last way touched
+                    //     // NMRU -> Not Most Recently Used
+                    // next_dcache_set_LRU[dcache_read_req_addr_structed.index] = ~i;
+                    // set LRU next way
+                        // still NMRU but at least don't just toggle between opposite ways
+                    next_dcache_set_LRU[dcache_read_req_addr_structed.index] = i + 1;
+
+                    // add hit for perf counter
+                        // do next in case load and store both hit
+                    next_hit_counter = next_hit_counter + 1;
+                    $display("dcache: hit #%d", next_hit_counter);
+                end
+            end
+
+            // check no hit after iter through ways
+            if (~load_hit_this_cycle) begin
+
+                // allocate load MSHR @ LQ_index
+                next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].valid = 1'b1;
+                // next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b0;
+                // next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
+                next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking_way = 0;
+                next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
+                next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_offset = dcache_read_req_addr_structed.block_offset;
+
+                // special case: missing right when would be filling
+                    // set as piggybacking if current piggyback broadcast matches block addr
+                if (
+                    piggyback_bus_valid
+                    &
+                    (
+                        piggyback_bus_block_addr
+                        ==
+                        {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index}
+                    )
+                ) begin
+
+                    // if piggybacking now, automatically fulfill MSHR, don't need to send dmem read req
+                    next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b1;
+                    next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b1;
+                end
+
+                // otherwise, not piggybacking
+                else begin
+
+                    // not piggybacking, need to set load miss reg
+                    next_new_load_miss_reg.valid = 1'b1;
+                    next_new_load_miss_reg.LQ_index = dcache_read_req_LQ_index;
+                    next_new_load_miss_reg.block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
+                    next_new_load_miss_reg.block_offset = dcache_read_req_addr_structed.block_offset;
+
+                    // not piggybacking, not fulfilled
+                    next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b0;
+                    next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
+                end
+            end
+        end
+
+        //////////////////////////////////
+        // piggyback bus compare logic: //
+        //////////////////////////////////
+
+        // check have piggyback broadcast
+        if (piggyback_bus_valid) begin
+
+            // check all load MSHR's
+            for (int i = 0; i < LQ_DEPTH; i++) begin
+
+                // check block addr match
+                    // can safely mark piggybacking of if valid as long as block addr matches
+                if (
+                    load_MSHR_by_LQ_index[i].block_addr
+                    ==
+                    piggyback_bus_block_addr
+                ) begin
+
+                    // mark MSHR piggybacking
+                    next_load_MSHR_by_LQ_index[i].piggybacking = 1'b1;
+
+                    // set MSHR piggybacking way
+                    next_load_MSHR_by_LQ_index[i].piggybacking_way = piggyback_bus_way;
+                end
+            end
+
+            // check store MSHR
+                // can safely bring in load val regardless of if valid
+            if (
+                store_MSHR.block_addr
+                ==
+                piggyback_bus_block_addr
+            ) begin
+
+                // mark MSHR piggybacking
+                next_store_MSHR.piggybacking = 1'b1;
+
+                // set MSHR piggybacking way
+                next_store_MSHR.piggybacking_way = piggyback_bus_way;
+            end
+        end
 
         ///////////
         // misc: //
