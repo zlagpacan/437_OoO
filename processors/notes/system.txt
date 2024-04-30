@@ -71,8 +71,8 @@ Synthesized TB: testasm -s
 Design: done
 
 RTL TB: testasm
-    - LAT=0: all passing
-    - LAT=2: fib.asm failing
+    - LAT=0: hazard.RAW.MEM.asm, hazard.RAW.mix.asm failing
+    - LAT=2: mult_procedure.asm failing
     - LAT=6: fib.asm failing
     - LAT=10: fib.asm failing
 
