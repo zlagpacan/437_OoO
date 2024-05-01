@@ -1230,7 +1230,7 @@ module dcache (
                     // // broadcast piggyback
                     // piggyback_bus_valid = 1'b1;
                     // piggyback_bus_block_addr = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr;
-                    // piggyback_bus_way = empty_way;
+                    piggyback_bus_way = empty_way;
                 end
 
                 // otherwise, use LRU way
@@ -1355,8 +1355,21 @@ module dcache (
                     // // broadcast piggyback
                     // piggyback_bus_valid = 1'b1;
                     // piggyback_bus_block_addr = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr;
-                    // piggyback_bus_way = empty_way;
+                    piggyback_bus_way
+                    = 
+                    dcache_set_LRU
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index];
                 end
+            end
+
+            // otherwise, piggybacking
+            else begin
+
+                piggyback_bus_way
+                =
+                load_MSHR_by_LQ_index
+                [found_load_MSHR_LQ_index]
+                .piggybacking_way;
             end
 
             // regardless of piggyback, inv MSHR and return to core
@@ -1414,7 +1427,8 @@ module dcache (
             // broadcast piggyback
             piggyback_bus_valid = 1'b1;
             piggyback_bus_block_addr = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr;
-            piggyback_bus_way = empty_way;
+            // piggyback_bus_way = empty_way;
+                // set in blocks above for empty vs. LRU vs. saved piggybacking way
         end
 
         // otherwise, can service store MSHR if valid and fulfilled
@@ -1604,8 +1618,14 @@ module dcache (
                 end
             end
 
-            // otherwise if piggybacking, write store word
+            // otherwise if piggybacking, write store word, mark frame dirty
             else begin
+
+                next_dcache_frame_by_way_by_set
+                [store_MSHR.piggybacking_way] 
+                [store_MSHR.block_addr.index]
+                .dirty
+                    = 1'b1;
 
                 next_dcache_frame_by_way_by_set
                 [store_MSHR.piggybacking_way] 
@@ -1879,7 +1899,7 @@ module dcache (
                 next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].valid = 1'b1;
                 // next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b0;
                 // next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
-                next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking_way = 0;
+                // next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking_way = 0;
                 next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
                 next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].block_offset = dcache_read_req_addr_structed.block_offset;
 
@@ -1898,6 +1918,7 @@ module dcache (
                     // if piggybacking now, automatically fulfill MSHR, don't need to send dmem read req
                     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b1;
                     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b1;
+                    next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking_way = piggyback_bus_way;
                 end
 
                 // otherwise, not piggybacking
@@ -1912,6 +1933,7 @@ module dcache (
                     // not piggybacking, not fulfilled
                     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].fulfilled = 1'b0;
                     next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking = 1'b0;
+                    next_load_MSHR_by_LQ_index[dcache_read_req_LQ_index].piggybacking_way = 0;
                 end
             end
         end

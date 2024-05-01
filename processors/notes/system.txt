@@ -71,15 +71,51 @@ Synthesized TB: testasm -s
 Design: done
 
 RTL TB: testasm
-    - LAT=0: hazard.RAW.MEM.asm, hazard.RAW.mix.asm failing
-    - LAT=2: mult_procedure.asm failing
-    - LAT=6: fib.asm failing
-    - LAT=10: fib.asm failing
+    - LAT=0: all passing
+    - LAT=2: all passing
+    - LAT=6: all passing
+    - LAT=10: all passing
 
 Synthesis: done
 
     - critical paths are pretty much directly from mem controller to ram
     - can reasonably say hit freq limit because too big
+
+- with piggybacking:
+
+    - LAT = 2
+    +--------------------------------------------------------------------------------------+
+    ; Fitter Summary                                                                       ;
+    +------------------------------------+-------------------------------------------------+
+    ; Fitter Status                      ; Successful - Wed May  1 00:12:36 2024           ;
+    ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+    ; Revision Name                      ; system                                          ;
+    ; Top-level Entity Name              ; system                                          ;
+    ; Family                             ; Cyclone IV E                                    ;
+    ; Device                             ; EP4CE115F29C8                                   ;
+    ; Timing Models                      ; Final                                           ;
+    ; Total logic elements               ; 24,311 / 114,480 ( 21 % )                       ;
+    ;     Total combinational functions  ; 22,473 / 114,480 ( 20 % )                       ;
+    ;     Dedicated logic registers      ; 10,171 / 114,480 ( 9 % )                        ;
+    ; Total registers                    ; 10172                                           ;
+    ; Total pins                         ; 102 / 529 ( 19 % )                              ;
+    ; Total virtual pins                 ; 0                                               ;
+    ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
+    ; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+    ; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
+    +------------------------------------+-------------------------------------------------+
+
+    +-----------------------------------------------------------+
+    ; Slow 1200mV 85C Model Fmax Summary                        ;
+    +------------+-----------------+---------------------+------+
+    ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
+    +------------+-----------------+---------------------+------+
+    ; 50.23 MHz  ; 50.23 MHz       ; CPUCLK              ;      ;
+    ; 116.41 MHz ; 116.41 MHz      ; altera_reserved_tck ;      ;
+    ; 147.06 MHz ; 147.06 MHz      ; CLK                 ;      ;
+    +------------+-----------------+---------------------+------+
+
+    - no piggybacking:
 
     - LAT = 0:
     +--------------------------------------------------------------------------------------+
