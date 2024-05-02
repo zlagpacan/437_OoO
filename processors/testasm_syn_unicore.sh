@@ -1,1 +1,1 @@
-testasm -s branch break cache count empty fib forward halt hazard high load mult nop push qsort search simple stuff test.b test.h test.j test.l test.r  merge daxpy
+testasm -s branch break cache count empty fib forward halt hazard high load mult nop push qsort search simple stuff test.b test.h test.j test.l test.r  merge daxpy evil
