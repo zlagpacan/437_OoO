@@ -358,16 +358,34 @@ module snoop_dcache (
         dcache_block_addr_t block_addr;
     } dcache_simple_bus_req_t;
 
-    // bus req
+    // upgradable bus req
     typedef struct packed {
         logic valid;
         dcache_block_addr_t block_addr;
+        logic upgrading;
+        logic [DCACHE_LOG_NUM_WAYS-1:0] upgrading_way;
+            // upgrading: 
+                // simple: always replace upgrading way, regardless of if still there
+                    // may get non-LRU replacement in high set contention
+                        // whatever, more important to prevent need to check tags
+    } dcache_upgradable_bus_req_t;
+
+    // bus req
+    typedef struct packed {
+
+        logic valid;
+        dcache_block_addr_t block_addr;
+
         logic exclusive;
             // load: 0
             // store: 1
-        MOESI_state_t curr_state;
-            // load: I
-            // store: {OESI}
+
+        logic upgrading;
+        logic [DCACHE_LOG_NUM_WAYS-1:0] upgrading_way;
+            // upgrading: 
+                // simple: always replace upgrading way, regardless of if still there
+                    // may get non-LRU replacement in high set contention
+                        // whatever, more important to prevent need to check tags
     } dcache_bus_req_t;
 
     // load miss reg
@@ -375,8 +393,8 @@ module snoop_dcache (
     dcache_simple_bus_req_t next_new_load_miss_reg;
 
     // store miss reg
-    dcache_simple_bus_req_t new_store_miss_reg;
-    dcache_simple_bus_req_t next_new_store_miss_reg;
+    dcache_upgradable_bus_req_t new_store_miss_reg;
+    dcache_upgradable_bus_req_t next_new_store_miss_reg;
 
     // backlog Q bus read req
     dcache_bus_req_t [DCACHE_BUS_READ_REQ_BACKLOG_Q_DEPTH-1:0] backlog_Q_bus_read_req_by_entry;
@@ -459,6 +477,13 @@ module snoop_dcache (
     // multicore:
         // need state to see if store can piggyback
     MOESI_state_t piggyback_bus_new_state;
+
+    // upgrading store way
+    logic store_miss_upgrading;
+    logic [DCACHE_LOG_NUM_WAYS-1:0] store_miss_upgrading_way;
+
+    // snoop resp dcache access
+    logic snoop_resp_dcache_access;
 
     // snoop req Q:
     typedef struct packed {
@@ -613,8 +638,8 @@ module snoop_dcache (
             // invalid from load miss reg
         dbus_req_valid = 1'b0;
         dbus_req_block_addr = new_load_miss_reg.block_addr;
-        dbus_req_exclusive = new_load_miss_reg.exclusive;
-        dbus_req_curr_state = new_load_miss_reg.curr_state;
+        dbus_req_exclusive = 1'b0;
+        dbus_req_curr_state = MOESI_I;
 
         // dbus resp:
 
@@ -728,13 +753,15 @@ module snoop_dcache (
         next_new_load_miss_reg.block_addr = {dcache_read_req_addr_structed.tag, dcache_read_req_addr_structed.index};
 
         // store miss reg
-            // invalid from dcache write req interface
+            // invalid from dcache write req interface, not upgrading
             // NO: want invalid from store MSHR Q head
         next_new_store_miss_reg.valid = 1'b0;
         // next_new_store_miss_reg.block_addr = {store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.tag, store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index};
             // idk why this split the struct, should just be able to combine tag and index
                 // maybe back when needed offset?
         next_new_store_miss_reg.block_addr = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr;
+        next_new_store_miss_reg.upgrading = 1'b0;
+        next_new_store_miss_reg.upgrading_way = 0;
 
         // backlog Q bus read req
         next_backlog_Q_bus_read_req_by_entry = backlog_Q_bus_read_req_by_entry;
@@ -748,7 +775,7 @@ module snoop_dcache (
         next_load_hit_return.valid = 1'b0;
         next_load_hit_return.LQ_index = dcache_read_req_LQ_index;
         next_load_hit_return.data = 
-            dcache_frame_by_way_by_set
+            dcache_data_frame_by_way_by_set
             [0]
             [dcache_read_req_addr_structed.index]
             .block
@@ -764,6 +791,18 @@ module snoop_dcache (
 
         // hit counter for perf
         next_hit_counter = hit_counter;
+
+        // snoop resp dcache access
+            // set here, can be cleared throughout d$ logic
+            // check at end of d$ logic to see if can perform snoop resp
+        snoop_resp_dcache_access = 1'b1;
+
+        // snoop req Q
+        next_snoop_req_Q = snoop_req_Q;
+        
+        // snoop req Q ptr's
+        next_snoop_req_Q_head_ptr = snoop_req_Q_head_ptr;
+        next_snoop_req_Q_tail_ptr = snoop_req_Q_tail_ptr;
 
         // //////////////////////////
         // // load hit path logic: //
@@ -966,6 +1005,9 @@ module snoop_dcache (
         // store req process logic: //
         //////////////////////////////
             // directly enQ dcache write req into store MSHR Q
+            // multicore:
+                // no updates, only need to hold store information
+                // will get tag info when get to head of Q
 
         // check for dcache write req
         if (dcache_write_req_valid) begin
@@ -992,6 +1034,8 @@ module snoop_dcache (
         ///////////////////////////////
             // case combos on {head of backlog, new load miss, new store miss}
             // 2^3 = 8 cases
+            // multicore:
+                // also set dmem read req exclusive and curr_state fields
         
         case ({
             backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr].valid,
@@ -1002,27 +1046,110 @@ module snoop_dcache (
             3'b111:
             begin
                 // service backlog
-                dmem_read_req_valid = 1'b1;
-                dmem_read_req_block_addr = 
-                    backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].block_addr
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .block_addr
                 ;
+                dbus_req_exclusive = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .exclusive
+                ;
+                // if upgrading, do tag array read for state
+                if (
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .upgrading
+                ) begin
+                    dbus_req_curr_state =
+                        snoop_tag_frame_by_way_by_set
+                        // select way
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                            .upgrading_way
+                        ]
+                        // select set
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                        ]
+                        .state
+                    ;
+                end
+                // otherwise, guaranteed state = I
+                else begin
+                    dbus_req_curr_state = MOESI_I;
+                end
 
                 // deQ backlog
                     // invalidate head
                     // increment head pointer
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].valid = 1'b0;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_head_ptr.index]
+                .valid = 
+                    1'b0
+                ;
                 next_backlog_Q_bus_read_req_head_ptr = backlog_Q_bus_read_req_head_ptr + 1;
 
                 // enQ load miss @ backlog tail
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].valid = 1'b1;
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].block_addr =
+                    // guaranteed not exclusive
+                    // guaranteed not upgrading
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .valid = 
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .block_addr =
                     new_load_miss_reg.block_addr
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .exclusive =
+                    1'b0
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_by_entry.index]
+                .upgrading = 
+                    1'b0
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_by_entry.index]
+                .upgrading_way = 
+                    0
                 ;
 
                 // enQ store miss @ backlog tail + 1
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index + 1].valid = 1'b1;
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index + 1].block_addr =
+                    // guaranteed exclusive
+                    // follow store miss upgradding
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                .valid = 
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                .block_addr =
                     new_store_miss_reg.block_addr
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                .exclusive =
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                .upgrading =
+                    new_store_miss_reg.upgrading
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                .upgrading_way =
+                    new_store_miss_reg.upgrading_way
                 ;
 
                 // increment backlog tail + 2
@@ -1046,21 +1173,81 @@ module snoop_dcache (
             3'b110:
             begin
                 // service backlog
-                dmem_read_req_valid = 1'b1;
-                dmem_read_req_block_addr = 
-                    backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].block_addr
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .block_addr
                 ;
+                dbus_req_exclusive = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .exclusive
+                ;
+                // if upgrading, do tag array read for state
+                if (
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .upgrading
+                ) begin
+                    dbus_req_curr_state =
+                        snoop_tag_frame_by_way_by_set
+                        // select way
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                            .upgrading_way
+                        ]
+                        // select set
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                        ]
+                        .state
+                    ;
+                end
+                // otherwise, guaranteed state = I
+                else begin
+                    dbus_req_curr_state = MOESI_I;
+                end
 
                 // deQ backlog
                     // invalidate head
                     // increment head pointer
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].valid = 1'b0;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_head_ptr.index]
+                .valid = 
+                    1'b0
+                ;
                 next_backlog_Q_bus_read_req_head_ptr = backlog_Q_bus_read_req_head_ptr + 1;
 
                 // enQ load miss @ backlog tail
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].valid = 1'b1;
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].block_addr =
+                    // guaranteed not exclusive
+                    // guaranteed not upgrading
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .valid = 
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .block_addr =
                     new_load_miss_reg.block_addr
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .exclusive =
+                    1'b0
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_by_entry.index]
+                .upgrading = 
+                    1'b0
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_by_entry.index]
+                .upgrading_way = 
+                    0
                 ;
 
                 // increment backlog tail + 1
@@ -1075,16 +1262,72 @@ module snoop_dcache (
                     backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].block_addr
                 ;
 
-                // deQ backlog
-                    // invalidate head
-                    // increment head pointer
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].valid = 1'b0;
-                next_backlog_Q_bus_read_req_head_ptr = backlog_Q_bus_read_req_head_ptr + 1;
+                // service backlog
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .block_addr
+                ;
+                dbus_req_exclusive = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .exclusive
+                ;
+                // if upgrading, do tag array read for state
+                if (
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .upgrading
+                ) begin
+                    dbus_req_curr_state =
+                        snoop_tag_frame_by_way_by_set
+                        // select way
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                            .upgrading_way
+                        ]
+                        // select set
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                        ]
+                        .state
+                    ;
+                end
+                // otherwise, guaranteed state = I
+                else begin
+                    dbus_req_curr_state = MOESI_I;
+                end
 
                 // enQ store miss @ backlog tail
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].valid = 1'b1;
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].block_addr =
+                    // guaranteed exclusive
+                    // follow store miss upgradding
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .valid = 
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .block_addr =
                     new_store_miss_reg.block_addr
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .exclusive =
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .upgrading =
+                    new_store_miss_reg.upgrading
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .upgrading_way =
+                    new_store_miss_reg.upgrading_way
                 ;
 
                 // increment backlog tail + 1
@@ -1094,10 +1337,43 @@ module snoop_dcache (
             3'b100:
             begin
                 // service backlog
-                dmem_read_req_valid = 1'b1;
-                dmem_read_req_block_addr = 
-                    backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].block_addr
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .block_addr
                 ;
+                dbus_req_exclusive = 
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .exclusive
+                ;
+                // if upgrading, do tag array read for state
+                if (
+                    backlog_Q_bus_read_req_by_entry
+                    [backlog_Q_bus_read_req_head_ptr.index]
+                    .upgrading
+                ) begin
+                    dbus_req_curr_state =
+                        snoop_tag_frame_by_way_by_set
+                        // select way
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                            .upgrading_way
+                        ]
+                        // select set
+                        [
+                            backlog_Q_bus_read_req_by_entry
+                            [backlog_Q_bus_read_req_head_ptr.index]
+                        ]
+                        .state
+                    ;
+                end
+                // otherwise, guaranteed state = I
+                else begin
+                    dbus_req_curr_state = MOESI_I;
+                end
 
                 // deQ backlog
                     // invalidate head
@@ -1109,13 +1385,38 @@ module snoop_dcache (
             3'b011:
             begin
                 // service load miss
-                dmem_read_req_valid = 1'b1;
-                dmem_read_req_block_addr = new_load_miss_reg.block_addr;
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = new_load_miss_reg.block_addr;
+                dbus_req_exclusive = 1'b0;
+                dbus_req_curr_state = MOESI_I;
 
                 // enQ store miss @ backlog tail
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].valid = 1'b1;
-                next_backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_tail_ptr.index].block_addr =
+                    // guaranteed exclusive
+                    // follow store miss upgradding
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .valid = 
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .block_addr =
                     new_store_miss_reg.block_addr
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .exclusive =
+                    1'b1
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .upgrading =
+                    new_store_miss_reg.upgrading
+                ;
+                next_backlog_Q_bus_read_req_by_entry
+                [backlog_Q_bus_read_req_tail_ptr.index]
+                .upgrading_way =
+                    new_store_miss_reg.upgrading_way
                 ;
 
                 // increment backlog tail + 1
@@ -1125,15 +1426,37 @@ module snoop_dcache (
             3'b010:
             begin
                 // service load miss
-                dmem_read_req_valid = 1'b1;
-                dmem_read_req_block_addr = new_load_miss_reg.block_addr;
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = new_load_miss_reg.block_addr;
+                dbus_req_exclusive = 1'b0;
+                dbus_req_curr_state = MOESI_I;
             end
 
             3'b001:
             begin
                 // service store miss
-                dmem_read_req_valid = 1'b1;
-                dmem_read_req_block_addr = new_store_miss_reg.block_addr;
+                dbus_req_valid = 1'b1;
+                dbus_req_block_addr = new_store_miss_reg.block_addr;
+                dbus_req_exclusive = 1'b1;
+                // if upgrading, do tag array read for state
+                if (new_store_miss_reg.upgrading) begin
+                    dbus_req_curr_state =
+                        snoop_tag_frame_by_way_by_set
+                        // select way
+                        [
+                            new_store_miss_reg.upgrading_way
+                        ]
+                        // select set
+                        [
+                            new_store_miss_reg.block_addr.index
+                        ]
+                        .state
+                    ;
+                end
+                // otherwise, guaranteed state = I
+                else begin
+                    dbus_req_curr_state = MOESI_I;
+                end
             end
 
             default:
