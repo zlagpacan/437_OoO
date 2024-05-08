@@ -70,25 +70,44 @@ package mem_types_pkg;
     // mem controller: //
     /////////////////////
 
-    parameter MEM_CONTROLLER_READ_BUFFER_DEPTH = 4;
+    parameter MEM_CONTROLLER_READ_BUFFER_DEPTH = 8;
     parameter MEM_CONTROLLER_LOG_READ_BUFFER_DEPTH = $clog2(MEM_CONTROLLER_READ_BUFFER_DEPTH);
 
     parameter MEM_CONTROLLER_WRITE_BUFFER_DEPTH = 8;
     parameter MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH = $clog2(MEM_CONTROLLER_WRITE_BUFFER_DEPTH);
 
-    // for unicore
-    typedef enum logic {
-        MEM_RD,
-        MEM_WB
-    } mem_req_t;
+    //////////////////////////////
+    // bus controller/snooping: //
+    //////////////////////////////
 
-    // for multicore
-    typedef enum logic [1:0] {
-        BUS_RD,
-        BUS_RD_X,
-        BUS_UPGRADE,
-        BUS_WB
-    } bus_req_t;
+    parameter DCACHE_SNOOP_REQ_Q_DEPTH = 4;
+    parameter DCACHE_LOG_SNOOP_REQ_Q_DEPTH = $clog2(DCACHE_SNOOP_REQ_Q_DEPTH);
+
+    parameter BUS_CONTROLLER_DBUS_REQ_Q_DEPTH = 8;
+    parameter BUS_CONTROLLER_LOG_DBUS_REQ_Q_DEPTH = $clog2(BUS_CONTROLLER_DBUS_REQ_Q_DEPTH);
+
+    parameter BUS_CONTROLLER_CONFLICT_TABLE_NUM_SETS = 8;
+    parameter BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS = $clog2(BUS_CONTROLLER_CONFLICT_TABLE_NUM_SETS);
+
+    // static 2 way conflict table, way 1 accessed with lower index XOR upper index
+
+    typedef struct packed {
+        logic [BLOCK_ADDR_SPACE_WIDTH-2*BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:0] tag;
+        logic [2*BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS] upper_index;
+        logic [BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:0] lower_index;
+    } conflict_table_block_addr_t;
+
+    typedef struct packed {
+        logic valid;        // read permissions
+        logic exclusive;    // write permissions
+        logic dirty;        // writeback on eviction
+    } MOESI_state_t;
+
+    parameter MOESI_I = 3'b000;
+    parameter MOESI_S = 3'b100;
+    parameter MOESI_E = 3'b110;
+    parameter MOESI_O = 3'b101;
+    parameter MOESI_M = 3'b111;
 
 endpackage
 
