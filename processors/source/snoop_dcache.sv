@@ -482,8 +482,14 @@ module snoop_dcache (
     logic store_miss_upgrading;
     logic [DCACHE_LOG_NUM_WAYS-1:0] store_miss_upgrading_way;
 
-    // snoop resp dcache access
-    logic snoop_resp_dcache_access;
+    // snoop access allowed
+        // prevent same-cycle write and snoop hit which can new write value lost
+    logic snoop_access_allowed;
+
+    // snoop tag search results
+    logic snoop_search_VTM_success;
+    logic [DCACHE_LOG_NUM_WAYS-1:0] snoop_search_VTM_way;
+    logic snoop_search_VTM_state;
 
     // snoop req Q:
     typedef struct packed {
@@ -1066,7 +1072,8 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
-                    dbus_req_curr_state =
+                    // check no block addr match
+                    if (
                         snoop_tag_frame_by_way_by_set
                         // select way
                         [
@@ -1078,9 +1085,37 @@ module snoop_dcache (
                         [
                             backlog_Q_bus_read_req_by_entry
                             [backlog_Q_bus_read_req_head_ptr.index]
+                            .block_addr
+                            .index
                         ]
-                        .state
-                    ;
+                        .tag
+                        !=
+                        backlog_Q_bus_read_req_by_entry
+                        [backlog_Q_bus_read_req_head_ptr.index]
+                        .block_addr
+                        .tag
+                    ) begin
+                        // guaranteed state = I
+                        dbus_req_curr_state = MOESI_I;
+                    end
+                    // otherwise, follow state in tag array
+                    else begin
+                        dbus_req_curr_state =
+                            snoop_tag_frame_by_way_by_set
+                            // select way
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                                .upgrading_way
+                            ]
+                            // select set
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                            ]
+                            .state
+                        ;
+                    end
                 end
                 // otherwise, guaranteed state = I
                 else begin
@@ -1193,7 +1228,8 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
-                    dbus_req_curr_state =
+                    // check no block addr match
+                    if (
                         snoop_tag_frame_by_way_by_set
                         // select way
                         [
@@ -1205,9 +1241,37 @@ module snoop_dcache (
                         [
                             backlog_Q_bus_read_req_by_entry
                             [backlog_Q_bus_read_req_head_ptr.index]
+                            .block_addr
+                            .index
                         ]
-                        .state
-                    ;
+                        .tag
+                        !=
+                        backlog_Q_bus_read_req_by_entry
+                        [backlog_Q_bus_read_req_head_ptr.index]
+                        .block_addr
+                        .tag
+                    ) begin
+                        // guaranteed state = I
+                        dbus_req_curr_state = MOESI_I;
+                    end
+                    // otherwise, follow state in tag array
+                    else begin
+                        dbus_req_curr_state =
+                            snoop_tag_frame_by_way_by_set
+                            // select way
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                                .upgrading_way
+                            ]
+                            // select set
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                            ]
+                            .state
+                        ;
+                    end
                 end
                 // otherwise, guaranteed state = I
                 else begin
@@ -1277,7 +1341,8 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
-                    dbus_req_curr_state =
+                    // check no block addr match
+                    if (
                         snoop_tag_frame_by_way_by_set
                         // select way
                         [
@@ -1289,9 +1354,37 @@ module snoop_dcache (
                         [
                             backlog_Q_bus_read_req_by_entry
                             [backlog_Q_bus_read_req_head_ptr.index]
+                            .block_addr
+                            .index
                         ]
-                        .state
-                    ;
+                        .tag
+                        !=
+                        backlog_Q_bus_read_req_by_entry
+                        [backlog_Q_bus_read_req_head_ptr.index]
+                        .block_addr
+                        .tag
+                    ) begin
+                        // guaranteed state = I
+                        dbus_req_curr_state = MOESI_I;
+                    end
+                    // otherwise, follow state in tag array
+                    else begin
+                        dbus_req_curr_state =
+                            snoop_tag_frame_by_way_by_set
+                            // select way
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                                .upgrading_way
+                            ]
+                            // select set
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                            ]
+                            .state
+                        ;
+                    end
                 end
                 // otherwise, guaranteed state = I
                 else begin
@@ -1351,7 +1444,8 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
-                    dbus_req_curr_state =
+                    // check no block addr match
+                    if (
                         snoop_tag_frame_by_way_by_set
                         // select way
                         [
@@ -1363,9 +1457,37 @@ module snoop_dcache (
                         [
                             backlog_Q_bus_read_req_by_entry
                             [backlog_Q_bus_read_req_head_ptr.index]
+                            .block_addr
+                            .index
                         ]
-                        .state
-                    ;
+                        .tag
+                        !=
+                        backlog_Q_bus_read_req_by_entry
+                        [backlog_Q_bus_read_req_head_ptr.index]
+                        .block_addr
+                        .tag
+                    ) begin
+                        // guaranteed state = I
+                        dbus_req_curr_state = MOESI_I;
+                    end
+                    // otherwise, follow state in tag array
+                    else begin
+                        dbus_req_curr_state =
+                            snoop_tag_frame_by_way_by_set
+                            // select way
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                                .upgrading_way
+                            ]
+                            // select set
+                            [
+                                backlog_Q_bus_read_req_by_entry
+                                [backlog_Q_bus_read_req_head_ptr.index]
+                            ]
+                            .state
+                        ;
+                    end
                 end
                 // otherwise, guaranteed state = I
                 else begin
@@ -1437,7 +1559,8 @@ module snoop_dcache (
                 dbus_req_exclusive = 1'b1;
                 // if upgrading, do tag array read for state
                 if (new_store_miss_reg.upgrading) begin
-                    dbus_req_curr_state =
+                    // check no block addr match
+                    if (
                         snoop_tag_frame_by_way_by_set
                         // select way
                         [
@@ -1447,8 +1570,28 @@ module snoop_dcache (
                         [
                             new_store_miss_reg.block_addr.index
                         ]
-                        .state
-                    ;
+                        .tag
+                        !=
+                        new_store_miss_reg.block_addr.tag
+                    ) begin
+                        // guaranteed state = I
+                        dbus_req_curr_state = MOESI_I;
+                    end
+                    // otherwise, follow state in tag array
+                    else begin
+                        dbus_req_curr_state =
+                            snoop_tag_frame_by_way_by_set
+                            // select way
+                            [
+                                new_store_miss_reg.upgrading_way
+                            ]
+                            // select set
+                            [
+                                new_store_miss_reg.block_addr.index
+                            ]
+                            .state
+                        ;
+                    end
                 end
                 // otherwise, guaranteed state = I
                 else begin
@@ -2317,6 +2460,7 @@ module snoop_dcache (
             end
 
             // otherwise if piggybacking, write store word, mark frame dirty
+                // E->M or M->M
             else begin
 
                 next_dcache_tag_frame_by_way_by_set
@@ -2663,7 +2807,8 @@ module snoop_dcache (
         // piggyback bus compare logic: //
         //////////////////////////////////
             // multicore:
-            STOPPED HERE
+                // loads can piggyback anything
+                // store can only piggyback E and M -> exclusive
 
         // check have piggyback broadcast
         if (piggyback_bus_valid) begin
@@ -2688,11 +2833,19 @@ module snoop_dcache (
             end
 
             // check store MSHR
-                // can safely bring in load val regardless of if valid
+                // need piggyback E or M and block addr match
+                    // exclusive states
             if (
-                store_MSHR.block_addr
-                ==
-                piggyback_bus_block_addr
+                (
+                    piggyback_bus_new_state
+                    .exclusive
+                )
+                &
+                (
+                    store_MSHR.block_addr
+                    ==
+                    piggyback_bus_block_addr
+                )
             ) begin
 
                 // mark MSHR piggybacking
@@ -2703,9 +2856,9 @@ module snoop_dcache (
             end
         end
 
-        ///////////
-        // misc: //
-        ///////////
+        ///////////////////////////
+        // d$ write req blocked: //
+        ///////////////////////////
 
         // write req interface: 
             // block if store MSHR Q (going to be) full
@@ -2715,6 +2868,136 @@ module snoop_dcache (
             next_store_MSHR_Q_head_ptr.index == next_store_MSHR_Q_tail_ptr.index
         ;
 
+        //////////////////
+        // snoop req Q: //
+        //////////////////
+            // // snoop req:
+            // input logic snoop_req_valid,
+            // input block_addr_t snoop_req_block_addr,
+            // input logic snoop_req_exclusive,
+            // input MOESI_state_t snoop_req_curr_state,
+
+            // // snoop resp:
+            // output logic snoop_resp_valid,
+            // output block_addr_t snoop_resp_block_addr,
+            // output word_t [1:0] snoop_resp_data,
+            // output logic snoop_resp_present,
+            // output logic snoop_resp_need_block,
+            // output MOESI_state_t snoop_resp_new_state,
+
+        // snoop req enQ
+        if (snoop_req_valid) begin
+
+            // add snoop req @ snoop req Q tail
+            next_snoop_req_Q[snoop_req_Q_tail_ptr.index].valid = 1'b1;
+            next_snoop_req_Q[snoop_req_Q_tail_ptr.index].block_addr = snoop_req_block_addr;
+            next_snoop_req_Q[snoop_req_Q_tail_ptr.index].exclusive = snoop_req_exclusive;
+            next_snoop_req_Q[snoop_req_Q_tail_ptr.index].curr_state = snoop_req_curr_state;
+
+            // increment tail
+            next_snoop_req_Q_tail_ptr = snoop_req_Q_tail_ptr + 1;
+        end
+
+        // check for snoop req deQ
+        snoop_search_VTM_success = 1'b0;
+        snoop_search_VTM_way = 0;
+        snoop_search_VTM_state = MOESI_I;
+        if (snoop_req_Q[snoop_req_Q_head_ptr.index].valid) begin
+
+            // search through tag array
+            for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
+
+                // check for VTM
+                    // valid: MOES
+                        // check this since could have old invalid tag wrongfully winning CAM
+                    // TM: block addr match
+                if (
+                    dcache_tag_frame_by_way_by_set
+                    [i]
+                    [
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .index
+                    ]
+                    .state
+                    .valid
+                    &
+                    (
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .tag
+                        ==
+                        dcache_tag_frame_by_way_by_set
+                        [i]
+                        [
+                            snoop_req_Q
+                            [snoop_req_Q_head_ptr.index]
+                            .block_addr
+                            .index
+                        ]
+                        .tag
+                    )
+                ) begin
+
+                    // give search success
+                    snoop_search_VTM_success = 1'b1;
+                    snoop_search_VTM_way = i;
+                    snoop_search_VTM_state = 
+                        dcache_tag_frame_by_way_by_set
+                        [i]
+                        [
+                            snoop_req_Q
+                            [snoop_req_Q_head_ptr.index]
+                            .block_addr
+                            .index
+                        ]
+                        .state
+                    ;
+                end
+            end
+
+            // check for search fail
+            if (~snoop_search_VTM_success) begin
+
+                // return snoop not present
+                next_snoop_resp_valid = 1'b1;
+
+                // deQ snoop req Q
+                
+            end
+
+            // otherwise, check for non-modifying snoop
+                // 
+            else if (
+                snoop_search_VTM_state
+                .
+            ) begin
+
+                // deQ snoop req Q
+
+            end
+
+            // otherwise, modifying snoop, d$ side must not be editing frames
+            else if (snoop_access_allowed) begin
+
+                // deQ snoop req Q
+            end
+        end
+
+        // check if tail surpasses head
+            // next tail msb != next head msb
+            // next_tail index == next_head index + 1
+        if (
+            next_snoop_req_Q_tail_ptr.msb != next_store_MSHR_Q_head_ptr.msb
+            &
+            next_snoop_req_Q_tail_ptr.index == next_store_MSHR_Q_head_ptr.index + 1
+        ) begin
+            $display("dcache: ERROR: snoop req Q tail surpasses head");
+            $display("\t@: %0t",$realtime);
+            next_DUT_error = 1'b1;
+        end
     end
 
 endmodule
