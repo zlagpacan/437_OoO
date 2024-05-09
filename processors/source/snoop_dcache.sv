@@ -199,19 +199,21 @@ module snoop_dcache (
         logic [DCACHE_NUM_TAG_BITS-1:0] tag;
     } dcache_tag_frame_t;
 
-    typedef struct packed {`
+    typedef struct packed {
         word_t [1:0] block;
     } dcache_data_frame_t;
 
-    // create true dcache sets:
-        // true tag array
+    // create dcache sets:
+
+    // dcache tag array
     dcache_tag_frame_t [DCACHE_NUM_WAYS-1:0][DCACHE_NUM_SETS-1:0] dcache_tag_frame_by_way_by_set;
     dcache_tag_frame_t [DCACHE_NUM_WAYS-1:0][DCACHE_NUM_SETS-1:0] next_dcache_tag_frame_by_way_by_set;
-        // true data array
+    
+    // dcache data array
     dcache_data_frame_t [DCACHE_NUM_WAYS-1:0][DCACHE_NUM_SETS-1:0] dcache_data_frame_by_way_by_set;
     dcache_data_frame_t [DCACHE_NUM_WAYS-1:0][DCACHE_NUM_SETS-1:0] next_dcache_data_frame_by_way_by_set;
         
-    // create snoop tag sets:
+    // snoop tag array
     dcache_tag_frame_t [DCACHE_NUM_WAYS-1:0][DCACHE_NUM_SETS-1:0] snoop_tag_frame_by_way_by_set;
     dcache_tag_frame_t [DCACHE_NUM_WAYS-1:0][DCACHE_NUM_SETS-1:0] next_snoop_tag_frame_by_way_by_set;
 
@@ -655,20 +657,10 @@ module snoop_dcache (
             // invalid based on snoop req Q head for way 0
         next_snoop_resp_valid = 1'b0;
         next_snoop_resp_block_addr = snoop_req_Q[snoop_req_Q_head_ptr.index].block_addr;
-        next_snoop_resp_data = 
-            dcache_data_frame_by_way_by_set
-            [0]
-            [snoop_req_Q[snoop_req_Q_head_ptr.index].block_addr.index]
-            .block
-        ;
+        next_snoop_resp_data = {32'h0, 32'h0};
         next_snoop_resp_present = 1'b0;
-        nest_snoop_resp_need_block = 1'b0;
-        next_snoop_resp_new_state = 
-            snoop_tag_frame_by_way_by_set
-            [0]
-            [snoop_req_Q[snoop_req_Q_head_ptr.index].block_addr.index]
-            .state
-        ;
+        next_snoop_resp_need_block = 1'b0;
+        next_snoop_resp_new_state = MOESI_I;
 
         ///////////////////////////////
         // mem controller interface: 
@@ -677,32 +669,8 @@ module snoop_dcache (
             // invalid store MSHR req
                 // can't default to load MSHR req as need CAM search info
         dmem_write_req_valid = 1'b0;
-        dmem_write_req_block_addr = {
-            // tag in frame:
-            dcache_tag_frame_by_way_by_set
-            // select way following LRU @ store MSHR index
-            [
-                dcache_set_LRU
-                [store_MSHR.block_addr.index]
-            ] 
-            // select set following store MSHR index
-            [store_MSHR.block_addr.index]
-            .tag
-            ,
-            // MSHR index:
-            store_MSHR.block_addr.index
-        };
-        dmem_write_req_data = 
-            dcache_data_frame_by_way_by_set
-            // select way following LRU @ store MSHR index
-            [
-                dcache_set_LRU
-                [store_MSHR.block_addr.index]
-            ] 
-            // select set following store MSHR index
-            [store_MSHR.block_addr.index]
-            .block
-        ;
+        dmem_write_req_block_addr = 13'h0;
+        dmem_write_req_data = {32'h0, 32'h0};
 
         //////////////
         // flushed: 
@@ -729,7 +697,7 @@ module snoop_dcache (
         next_dcache_data_frame_by_way_by_set = dcache_data_frame_by_way_by_set;
 
         // snoop tag array
-        next_snoop_tag_frame_by_way_by_set;
+        next_snoop_tag_frame_by_way_by_set = snoop_tag_frame_by_way_by_set;
 
         // dcache set-wise LRU
         next_dcache_set_LRU = dcache_set_LRU;
@@ -780,13 +748,7 @@ module snoop_dcache (
             // inv from dcache read req, way 0
         next_load_hit_return.valid = 1'b0;
         next_load_hit_return.LQ_index = dcache_read_req_LQ_index;
-        next_load_hit_return.data = 
-            dcache_data_frame_by_way_by_set
-            [0]
-            [dcache_read_req_addr_structed.index]
-            .block
-            [dcache_read_req_addr_structed.block_offset]
-        ;
+        next_load_hit_return.data = 32'h0;
 
         // load miss return Q
         next_load_miss_return_Q = load_miss_return_Q;
@@ -798,10 +760,11 @@ module snoop_dcache (
         // hit counter for perf
         next_hit_counter = hit_counter;
 
-        // snoop resp dcache access
+        // snoop resp dcache access allowed
+            // atomic edits to tag array, don't miss new store value
             // set here, can be cleared throughout d$ logic
             // check at end of d$ logic to see if can perform snoop resp
-        snoop_resp_dcache_access = 1'b1;
+        snoop_access_allowed = 1'b1;
 
         // snoop req Q
         next_snoop_req_Q = snoop_req_Q;
@@ -1045,6 +1008,8 @@ module snoop_dcache (
                     // these can depend on if upgrading
                     // for store, upgrade means should read until as late as possible
                         // to make sure no tag update since this time
+            // multicore:
+                // no snoops while actively doing tag read for store
         
         case ({
             backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr].valid,
@@ -1072,6 +1037,9 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
+                    // accessing frames
+                    snoop_access_allowed = 1'b0;
+
                     // check no block addr match
                     if (
                         snoop_tag_frame_by_way_by_set
@@ -1151,12 +1119,12 @@ module snoop_dcache (
                     1'b0
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_by_entry.index]
+                [backlog_Q_bus_read_req_tail_ptr.index]
                 .upgrading = 
                     1'b0
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_by_entry.index]
+                [backlog_Q_bus_read_req_tail_ptr.index]
                 .upgrading_way = 
                     0
                 ;
@@ -1228,6 +1196,9 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
+                    // accessing frames
+                    snoop_access_allowed = 1'b0;
+                    
                     // check no block addr match
                     if (
                         snoop_tag_frame_by_way_by_set
@@ -1307,12 +1278,12 @@ module snoop_dcache (
                     1'b0
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_by_entry.index]
+                [backlog_Q_bus_read_req_tail_ptr.index]
                 .upgrading = 
                     1'b0
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_by_entry.index]
+                [backlog_Q_bus_read_req_tail_ptr.index]
                 .upgrading_way = 
                     0
                 ;
@@ -1341,6 +1312,9 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
+                    // accessing frames
+                    snoop_access_allowed = 1'b0;
+                    
                     // check no block addr match
                     if (
                         snoop_tag_frame_by_way_by_set
@@ -1444,6 +1418,9 @@ module snoop_dcache (
                     [backlog_Q_bus_read_req_head_ptr.index]
                     .upgrading
                 ) begin
+                    // accessing frames
+                    snoop_access_allowed = 1'b0;
+                    
                     // check no block addr match
                     if (
                         snoop_tag_frame_by_way_by_set
@@ -1559,6 +1536,8 @@ module snoop_dcache (
                 dbus_req_exclusive = 1'b1;
                 // if upgrading, do tag array read for state
                 if (new_store_miss_reg.upgrading) begin
+                    // accessing frames
+                    snoop_access_allowed = 1'b0;
                     // check no block addr match
                     if (
                         snoop_tag_frame_by_way_by_set
@@ -1648,6 +1627,9 @@ module snoop_dcache (
             ~store_MSHR.valid
         ) begin
 
+            // accessing frames
+            snoop_access_allowed = 1'b0;
+
             // try to hit in cache:
 
             // iterate over ways
@@ -1655,40 +1637,35 @@ module snoop_dcache (
 
                 // check hit
                     // exclusive state: E or M
+                        // valid and exclusive
                     // tag match
                 if (
                     (
-                        (
-                            dcache_frame_by_way_by_set
-                            [i]
-                            [
-                                store_MSHR_Q
-                                [store_MSHR_Q_head_ptr.index]
-                                .block_addr
-                                .index
-                            ]
-                            .state
-                            ==
-                            MOESI_E
-                        )
-                        |
-                        (
-                            dcache_frame_by_way_by_set
-                            [i]
-                            [
-                                store_MSHR_Q
-                                [store_MSHR_Q_head_ptr.index]
-                                .block_addr
-                                .index
-                            ]
-                            .state
-                            ==
-                            MOESI_M
-                        )
+                        dcache_tag_frame_by_way_by_set
+                        [i]
+                        [
+                            store_MSHR_Q
+                            [store_MSHR_Q_head_ptr.index]
+                            .block_addr
+                            .index
+                        ]
+                        .state
+                        .valid
+                        &
+                        dcache_tag_frame_by_way_by_set
+                        [i]
+                        [
+                            store_MSHR_Q
+                            [store_MSHR_Q_head_ptr.index]
+                            .block_addr
+                            .index
+                        ]
+                        .state
+                        .exclusive
                     )
                     &
                     (
-                        dcache_frame_by_way_by_set
+                        dcache_tag_frame_by_way_by_set
                         [i]
                         [
                             store_MSHR_Q
@@ -1718,7 +1695,14 @@ module snoop_dcache (
 
                     // state transition
                         // make dirty: M->M or E->M
+                        // modify dcache tag array and snoop tag array
                     next_dcache_tag_frame_by_way_by_set
+                    [i]
+                    [store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index]
+                    .state
+                    .dirty
+                        = 1'b1;
+                    next_snoop_tag_frame_by_way_by_set
                     [i]
                     [store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_addr.index]
                     .state
@@ -1741,40 +1725,35 @@ module snoop_dcache (
 
                 // otherwise, check upgrade miss
                     // not exclusive state: S or O
+                        // valid and ~exclusive
                     // tag match
                 else if (
                     (
-                        (
-                            dcache_frame_by_way_by_set
-                            [i]
-                            [
-                                store_MSHR_Q
-                                [store_MSHR_Q_head_ptr.index]
-                                .block_addr
-                                .index
-                            ]
-                            .state
-                            ==
-                            MOESI_S
-                        )
-                        |
-                        (
-                            dcache_frame_by_way_by_set
-                            [i]
-                            [
-                                store_MSHR_Q
-                                [store_MSHR_Q_head_ptr.index]
-                                .block_addr
-                                .index
-                            ]
-                            .state
-                            ==
-                            MOESI_O
-                        )
+                        dcache_tag_frame_by_way_by_set
+                        [i]
+                        [
+                            store_MSHR_Q
+                            [store_MSHR_Q_head_ptr.index]
+                            .block_addr
+                            .index
+                        ]
+                        .state
+                        .valid
+                        &
+                        ~dcache_tag_frame_by_way_by_set
+                        [i]
+                        [
+                            store_MSHR_Q
+                            [store_MSHR_Q_head_ptr.index]
+                            .block_addr
+                            .index
+                        ]
+                        .state
+                        .exclusive
                     )
                     &
                     (
-                        dcache_frame_by_way_by_set
+                        dcache_tag_frame_by_way_by_set
                         [i]
                         [
                             store_MSHR_Q
@@ -1815,7 +1794,7 @@ module snoop_dcache (
                 next_store_MSHR.block_offset = store_MSHR_Q[store_MSHR_Q_head_ptr.index].block_offset;
                 next_store_MSHR.store_word = store_MSHR_Q[store_MSHR_Q_head_ptr.index].store_word;
                 next_store_MSHR.read_block = 
-                    dcache_frame_by_way_by_set
+                    dcache_data_frame_by_way_by_set
                     // select way
                     [store_miss_upgrading_way]
                     // select set
@@ -1915,8 +1894,9 @@ module snoop_dcache (
                     ;
                 end
 
-                // fill in state
-                next_store_MSHR.new_state = dbus_resp_new_state;
+                // // fill in state
+                // next_store_MSHR.new_state = dbus_resp_new_state;
+                    // guaranteed new state = M
             end
         end
 
@@ -1955,6 +1935,9 @@ module snoop_dcache (
         found_empty_way = 1'b0;
         empty_way = '0;
         if (found_load_MSHR_fulfilled) begin
+            
+            // accessing frames
+            snoop_access_allowed = 1'b0;
 
             // check if need to fill block (didn't piggyback)
             if (~load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].piggybacking) begin
@@ -1989,7 +1972,14 @@ module snoop_dcache (
                         // state from MSHR
                         // tag from MSHR
                         // block from MSHR
+                        // modify dcache tag array and snoop tag array
                     next_dcache_tag_frame_by_way_by_set
+                    [empty_way]
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .state
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].new_state
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
                     [empty_way]
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     .state
@@ -1997,6 +1987,12 @@ module snoop_dcache (
                     ;
 
                     next_dcache_tag_frame_by_way_by_set
+                    [empty_way]
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .tag
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
                     [empty_way]
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     .tag
@@ -2097,7 +2093,17 @@ module snoop_dcache (
                         // state from MSHR
                         // tag from MSHR
                         // block from MSHR
+                        // modify dcache tag array and snoop tag array
                     next_dcache_tag_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                    ] 
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .state
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].new_state
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
                     [
                         dcache_set_LRU
                         [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
@@ -2114,7 +2120,17 @@ module snoop_dcache (
                     ] 
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     .tag
-                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag;
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                    ] 
+                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
+                    .tag
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.tag
+                    ;
                     
                     next_dcache_data_frame_by_way_by_set
                     [
@@ -2123,16 +2139,18 @@ module snoop_dcache (
                     ] 
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     .block
-                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block;
+                        = load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].read_block
+                    ;
 
                     // update LRU
                         // LRU + 1
                     next_dcache_set_LRU
                     [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index]
                     =
-                    dcache_set_LRU
-                    [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
-                    + 1;
+                        dcache_set_LRU
+                        [load_MSHR_by_LQ_index[found_load_MSHR_LQ_index].block_addr.index] 
+                        + 1
+                    ;
 
                     // set piggyback way
                     piggyback_bus_way = 
@@ -2220,6 +2238,9 @@ module snoop_dcache (
 
         // otherwise, can service store MSHR if valid and fulfilled
         else if (store_MSHR.valid & store_MSHR.fulfilled) begin
+            
+            // accessing frames
+            snoop_access_allowed = 1'b0;
 
             // check if upgrading and tag match at upgrading way
                 // upgrade successful
@@ -2239,24 +2260,41 @@ module snoop_dcache (
 
                 // fill upgrading way frame
                     // state from MSHR
+                        // guaranteed to be M
                     // tag from MSHR
                     // block from MSHR
-                next_dcache_frame_by_way_by_set
+                    // modify dcache tag array and snoop tag array
+                next_dcache_tag_frame_by_way_by_set
                 [store_MSHR.upgrading_way]
                 [store_MSHR.block_addr.index]
                 .state
                 =
-                    store_MSHR.new_state
+                    MOESI_M
+                ;
+                next_snoop_tag_frame_by_way_by_set
+                [store_MSHR.upgrading_way]
+                [store_MSHR.block_addr.index]
+                .state
+                =
+                    MOESI_M
                 ;
 
-                next_dcache_frame_by_way_by_set
+                next_dcache_tag_frame_by_way_by_set
                 [store_MSHR.upgrading_way]
                 [store_MSHR.block_addr.index]
                 .tag
-                    = store_MSHR.block_addr.tag
+                = 
+                    store_MSHR.block_addr.tag
+                ;
+                next_snoop_tag_frame_by_way_by_set
+                [store_MSHR.upgrading_way]
+                [store_MSHR.block_addr.index]
+                .tag
+                = 
+                    store_MSHR.block_addr.tag
                 ;
                 
-                next_dcache_frame_by_way_by_set
+                next_dcache_data_frame_by_way_by_set
                 [store_MSHR.upgrading_way]
                 [store_MSHR.block_addr.index]
                 .block
@@ -2305,24 +2343,39 @@ module snoop_dcache (
 
                     // fill empty way frame
                         // state from MSHR
+                            // guaranteed to be M
                         // tag from MSHR
                         // block from MSHR
-                    next_dcache_frame_by_way_by_set
+                        // modify dcache tag array and snoop tag array
+                    next_dcache_tag_frame_by_way_by_set
                     [empty_way]
                     [store_MSHR.block_addr.index]
                     .state
                     =
-                        store_MSHR.new_state
+                        MOESI_M
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [empty_way]
+                    [store_MSHR.block_addr.index]
+                    .state
+                    =
+                        MOESI_M
                     ;
 
-                    next_dcache_frame_by_way_by_set
+                    next_dcache_tag_frame_by_way_by_set
+                    [empty_way]
+                    [store_MSHR.block_addr.index]
+                    .tag
+                        = store_MSHR.block_addr.tag
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
                     [empty_way]
                     [store_MSHR.block_addr.index]
                     .tag
                         = store_MSHR.block_addr.tag
                     ;
                     
-                    next_dcache_frame_by_way_by_set
+                    next_dcache_data_frame_by_way_by_set
                     [empty_way]
                     [store_MSHR.block_addr.index]
                     .block
@@ -2413,8 +2466,10 @@ module snoop_dcache (
 
                     // fill LRU frame
                         // state from MSHR
+                            // guaranteed to be M
                         // tag from MSHR
                         // block from MSHR
+                        // modify dcache tag array and snoop tag array
                     next_dcache_tag_frame_by_way_by_set
                     [
                         dcache_set_LRU
@@ -2422,7 +2477,17 @@ module snoop_dcache (
                     ] 
                     [store_MSHR.block_addr.index]
                     .state
-                        = store_MSHR.new_state;
+                        = MOESI_M
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [store_MSHR.block_addr.index]
+                    ] 
+                    [store_MSHR.block_addr.index]
+                    .state
+                        = MOESI_M
+                    ;
 
                     next_dcache_tag_frame_by_way_by_set
                     [
@@ -2431,7 +2496,17 @@ module snoop_dcache (
                     ] 
                     [store_MSHR.block_addr.index]
                     .tag
-                        = store_MSHR.block_addr.tag;
+                        = store_MSHR.block_addr.tag
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [
+                        dcache_set_LRU
+                        [store_MSHR.block_addr.index]
+                    ] 
+                    [store_MSHR.block_addr.index]
+                    .tag
+                        = store_MSHR.block_addr.tag
+                    ;
                     
                     next_dcache_data_frame_by_way_by_set
                     [
@@ -2440,16 +2515,18 @@ module snoop_dcache (
                     ] 
                     [store_MSHR.block_addr.index]
                     .block
-                        = store_MSHR.read_block;
+                        = store_MSHR.read_block
+                    ;
 
                     // update LRU
                         // LRU + 1
                     next_dcache_set_LRU
                     [store_MSHR.block_addr.index]
                     =
-                    dcache_set_LRU
-                    [store_MSHR.block_addr.index]
-                    + 1;
+                        dcache_set_LRU
+                        [store_MSHR.block_addr.index]
+                        + 1
+                    ;
 
                     // set piggyback way
                     piggyback_bus_way = 
@@ -2461,9 +2538,17 @@ module snoop_dcache (
 
             // otherwise if piggybacking, write store word, mark frame dirty
                 // E->M or M->M
+                // modify dcache tag array and snoop tag array
             else begin
 
                 next_dcache_tag_frame_by_way_by_set
+                [store_MSHR.piggybacking_way] 
+                [store_MSHR.block_addr.index]
+                .state
+                .dirty
+                    = 1'b1
+                ;
+                next_snoop_tag_frame_by_way_by_set
                 [store_MSHR.piggybacking_way] 
                 [store_MSHR.block_addr.index]
                 .state
@@ -2496,7 +2581,8 @@ module snoop_dcache (
             piggyback_bus_block_addr = store_MSHR.block_addr;
             // piggyback_bus_way = empty_way;
                 // set in blocks above for upgrading vs. empty vs. LRU vs. saved piggybacking way
-            piggyback_bus_new_state = store_MSHR.new_state;
+            piggyback_bus_new_state = MOESI_M;
+                // guaranteed to be M
         end
 
         ////////////////////////
@@ -2626,18 +2712,21 @@ module snoop_dcache (
                 // otherwise, send dmem write req for this counter value if entry valid and dirty
                     // state M or O
                 else if (
-                    dcache_frame_by_way_by_set
+                    dcache_tag_frame_by_way_by_set
                     [flush_counter.way]
                     [flush_counter.index]
                     .state
                     .valid
                     &
-                    dcache_frame_by_way_by_set
+                    dcache_tag_frame_by_way_by_set
                     [flush_counter.way]
                     [flush_counter.index]
                     .state
                     .dirty
                 ) begin
+            
+                    // accessing frames
+                    snoop_access_allowed = 1'b0;
                     
                     // send dmem write req
                         // valid
@@ -2646,7 +2735,7 @@ module snoop_dcache (
                     dmem_write_req_valid = 1'b1;
                     dmem_write_req_block_addr = {
                         // tag in frame
-                        dcache_frame_by_way_by_set
+                        dcache_tag_frame_by_way_by_set
                         [flush_counter.way]
                         [flush_counter.index]
                         .tag
@@ -2655,18 +2744,25 @@ module snoop_dcache (
                         flush_counter.index
                     };
                     dmem_write_req_data = 
-                        dcache_frame_by_way_by_set
+                        dcache_data_frame_by_way_by_set
                         [flush_counter.way]
                         [flush_counter.index]
                         .block
                     ;
 
                     // invalidate frame
-                    next_dcache_frame_by_way_by_set
+                        // modify dcache tag array and snoop tag array
+                    next_dcache_tag_frame_by_way_by_set
                     [flush_counter.way]
                     [flush_counter.index]
                     .state
-                        =  MOESI_I
+                        = MOESI_I
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [flush_counter.way]
+                    [flush_counter.index]
+                    .state
+                        = MOESI_I
                     ;
 
                     // increment counter
@@ -2713,14 +2809,14 @@ module snoop_dcache (
                         // all valid states
                         // no state transitions for any MOES
                 if (
-                    dcache_frame_by_way_by_set
+                    dcache_tag_frame_by_way_by_set
                     [i]
                     [dcache_read_req_addr_structed.index]
                     .state
                     .valid
                     &
                     (
-                        dcache_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].tag
+                        dcache_tag_frame_by_way_by_set[i][dcache_read_req_addr_structed.index].tag
                         ==
                         dcache_read_req_addr_structed.tag
                     )
@@ -2733,7 +2829,7 @@ module snoop_dcache (
                     next_load_hit_return.valid = 1'b1;
                     next_load_hit_return.LQ_index = dcache_read_req_LQ_index;
                     next_load_hit_return.data = 
-                        dcache_frame_by_way_by_set
+                        dcache_data_frame_by_way_by_set
                         [i]
                         [dcache_read_req_addr_structed.index]
                         .block
@@ -2912,7 +3008,7 @@ module snoop_dcache (
                         // check this since could have old invalid tag wrongfully winning CAM
                     // TM: block addr match
                 if (
-                    dcache_tag_frame_by_way_by_set
+                    snoop_tag_frame_by_way_by_set
                     [i]
                     [
                         snoop_req_Q
@@ -2929,7 +3025,7 @@ module snoop_dcache (
                         .block_addr
                         .tag
                         ==
-                        dcache_tag_frame_by_way_by_set
+                        snoop_tag_frame_by_way_by_set
                         [i]
                         [
                             snoop_req_Q
@@ -2945,7 +3041,7 @@ module snoop_dcache (
                     snoop_search_VTM_success = 1'b1;
                     snoop_search_VTM_way = i;
                     snoop_search_VTM_state = 
-                        dcache_tag_frame_by_way_by_set
+                        snoop_tag_frame_by_way_by_set
                         [i]
                         [
                             snoop_req_Q
@@ -2961,28 +3057,166 @@ module snoop_dcache (
             // check for search fail
             if (~snoop_search_VTM_success) begin
 
+                // snoop exclusive:
+                    // snoopee stay inv
+                        // I->I
+                    // snooper M
+                        // O->M, S->M, I->M
+                // snoop ~exclusive:
+                    // snoopee stay inv
+                        // I->I
+                    // snooper E
+                        // I->E
+
                 // return snoop not present
                 next_snoop_resp_valid = 1'b1;
+                next_snoop_resp_block_addr = snoop_req_Q[snoop_req_Q_head_ptr.index].block_addr;
+                next_snoop_resp_data = {32'h0, 32'h0};
+                next_snoop_resp_present = 1'b0;
+                // need block if old state was I
+                if (snoop_req_Q[snoop_req_Q_head_ptr.index].curr_state == MOESI_I) begin
+                    next_snoop_resp_need_block = 1'b1;
+                end
+                else begin
+                    next_snoop_resp_need_block = 1'b0;
+                end
+                // give exclusive version of request
+                    // store/exclusive req -> M
+                    // load/~exclusive req -> E
+                if (snoop_req_Q[snoop_req_Q_head_ptr.index].exclusive) begin
+                    next_snoop_resp_new_state = MOESI_M;
+                end
+                else begin
+                    next_snoop_resp_new_state = MOESI_E;
+                end
 
                 // deQ snoop req Q
-                
+                    // invalidate head
+                    // increment head ptr
+                next_snoop_req_Q[snoop_req_Q_head_ptr.index].valid = 1'b0;
+                next_snoop_req_Q_head_ptr = snoop_req_Q_head_ptr + 1;
             end
 
-            // otherwise, check for non-modifying snoop
-                // 
-            else if (
-                snoop_search_VTM_state
-                .
-            ) begin
-
-                // deQ snoop req Q
-
-            end
-
-            // otherwise, modifying snoop, d$ side must not be editing frames
+            // otherwise, need access to dcache to allow atomic edits
             else if (snoop_access_allowed) begin
 
+                // snoop exclusive:
+                    // snoopee invalidated
+                        // MOES->I
+                    // snooper M
+                        // O->M, S->M, I->M
+                // snoop ~exclusive:
+                    // snoopee exclusive cleared
+                        // M->O, O->O, E->S, S->S
+                    // snooper S
+                        // I->S
+
+                // exclusive tag array edit
+                if (snoop_req_Q[snoop_req_Q_head_ptr.index].exclusive) begin
+
+                    // MOES->I
+                        // modify dcache tag array and snoop tag array
+                    next_dcache_tag_frame_by_way_by_set
+                    [snoop_search_VTM_way]
+                    [
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .index
+                    ]
+                    .state
+                        = MOESI_I
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [snoop_search_VTM_way]
+                    [
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .index
+                    ]
+                    .state
+                        = MOESI_I
+                    ;
+
+                    // send inv to core
+                    dcache_inv_valid = 1'b1;
+                    dcache_inv_block_addr = 
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                    ;
+                end
+
+                // otherwise, ~exclusive tag array edit
+                else begin
+
+                    // snoopee exclusive cleared
+                        // M->O, O->O, E->S, S->S
+                        // modify dcache tag array and snoop tag array
+                    next_dcache_tag_frame_by_way_by_set
+                    [snoop_search_VTM_way]
+                    [
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .index
+                    ]
+                    .state
+                    .exclusive
+                        = 1'b0
+                    ;
+                    next_snoop_tag_frame_by_way_by_set
+                    [snoop_search_VTM_way]
+                    [
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .index
+                    ]
+                    .state
+                    .exclusive
+                        = 1'b0
+                    ;
+                end
+
+                // return snoop present
+                next_snoop_resp_valid = 1'b1;
+                next_snoop_resp_block_addr = snoop_req_Q[snoop_req_Q_head_ptr.index].block_addr;
+                next_snoop_resp_data = 
+                    dcache_data_frame_by_way_by_set
+                    [snoop_search_VTM_way]
+                    [
+                        snoop_req_Q
+                        [snoop_req_Q_head_ptr.index]
+                        .block_addr
+                        .index
+                    ]
+                    .block
+                ;
+                next_snoop_resp_present = 1'b1;
+                // need block if old state was I
+                if (snoop_req_Q[snoop_req_Q_head_ptr.index].curr_state == MOESI_I) begin
+                    next_snoop_resp_need_block = 1'b1;
+                end
+                else begin
+                    next_snoop_resp_need_block = 1'b0;
+                end
+                // give non-exclusive version of request
+                    // store/exclusive req -> M
+                    // load/~exclusive req -> S
+                if (snoop_req_Q[snoop_req_Q_head_ptr.index].exclusive) begin
+                    next_snoop_resp_new_state = MOESI_M;
+                end
+                else begin
+                    next_snoop_resp_new_state = MOESI_S;
+                end
+
                 // deQ snoop req Q
+                    // invalidate head
+                    // increment head ptr
+                next_snoop_req_Q[snoop_req_Q_head_ptr.index].valid = 1'b0;
+                next_snoop_req_Q_head_ptr = snoop_req_Q_head_ptr + 1;
             end
         end
 
