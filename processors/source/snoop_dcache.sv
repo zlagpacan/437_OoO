@@ -6,7 +6,7 @@
     Instantiation Hierarchy: system -> snoop_dcache
     Description:
 
-        The dcache interacts with the core and the memory controller, translating core requests
+        The snoop_dcache interacts with the core and the bus controller, translating core requests
         into responses with memory fetched values (potentially cached). 
 
         Memory fetches are at block granularity. Core requests are at word granularity.
@@ -3230,6 +3230,15 @@ module snoop_dcache (
             next_snoop_req_Q_tail_ptr.index == next_store_MSHR_Q_head_ptr.index + 1
         ) begin
             $display("dcache: ERROR: snoop req Q tail surpasses head");
+            $display("\t@: %0t",$realtime);
+            next_DUT_error = 1'b1;
+        end
+
+        // dcache tag array and snoop tag array check
+            // only need for debug
+            // definitely remove if critical path or hurts area too much
+        if (dcache_tag_frame_by_way_by_set != snoop_tag_frame_by_way_by_set) begin
+            $display("dcache: ERROR: dcache tag array != snoop tag array");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
         end

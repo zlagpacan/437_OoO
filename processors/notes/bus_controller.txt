@@ -1,0 +1,8 @@
+Design: done
+
+RTL TB: TODO
+    - lazy for now, just plug and play into testasm
+
+Synthesis: done
+
+Synthesized TB: TODO

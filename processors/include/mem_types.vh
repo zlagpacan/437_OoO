@@ -86,16 +86,23 @@ package mem_types_pkg;
     parameter BUS_CONTROLLER_DBUS_REQ_Q_DEPTH = 8;
     parameter BUS_CONTROLLER_LOG_DBUS_REQ_Q_DEPTH = $clog2(BUS_CONTROLLER_DBUS_REQ_Q_DEPTH);
 
+    // static 2 way conflict table
+        // way 0 accessed with lower index
+        // way 1 accessed with upper index XOR lower index
+
+    parameter BUS_CONTROLLER_CONFLICT_TABLE_COUNT_BIT_WIDTH = 2;
+
     parameter BUS_CONTROLLER_CONFLICT_TABLE_NUM_SETS = 8;
     parameter BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS = $clog2(BUS_CONTROLLER_CONFLICT_TABLE_NUM_SETS);
-
-    // static 2 way conflict table, way 1 accessed with lower index XOR upper index
 
     typedef struct packed {
         logic [BLOCK_ADDR_SPACE_WIDTH-2*BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:0] tag;
         logic [2*BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS] upper_index;
         logic [BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:0] lower_index;
     } conflict_table_block_addr_t;
+
+    parameter BUS_CONTROLLER_DMEM_READ_RESP_Q_DEPTH = 8;
+    parameter BUS_CONTROLLER_LOG_DMEM_READ_RESP_Q_DEPTH = $clog2(BUS_CONTROLLER_DMEM_READ_RESP_Q_DEPTH);
 
     typedef struct packed {
         logic valid;        // read permissions
