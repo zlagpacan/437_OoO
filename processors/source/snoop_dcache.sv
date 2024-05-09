@@ -1911,6 +1911,7 @@ module snoop_dcache (
         piggyback_bus_valid = 1'b0;
         piggyback_bus_block_addr = 13'h0;
         piggyback_bus_way = 0;
+        piggyback_bus_new_state = MOESI_I;
 
         // find winning MSHR on 4x load MSHR's, 1x store MSHR
         
