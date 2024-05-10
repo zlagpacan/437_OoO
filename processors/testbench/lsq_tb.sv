@@ -247,6 +247,9 @@ module lsq_tb ();
 
 	logic tb_dcache_inv_valid;
 	block_addr_t tb_dcache_inv_block_addr;
+	
+	logic tb_dcache_evict_valid;
+	block_addr_t tb_dcache_evict_block_addr;
 
     // halt interface:
     //      - halt
@@ -494,6 +497,9 @@ module lsq_tb ();
 
 		.dcache_inv_valid(tb_dcache_inv_valid),
 		.dcache_inv_block_addr(tb_dcache_inv_block_addr),
+
+		.dcache_evict_valid(tb_dcache_evict_valid),
+		.dcache_evict_block_addr(tb_dcache_evict_block_addr),
 
 	    // halt interface:
 	    //      - halt
@@ -764,6 +770,9 @@ module lsq_tb ();
 
 		.dcache_inv_valid(tb_dcache_inv_valid),
 		.dcache_inv_block_addr(tb_dcache_inv_block_addr),
+
+		.dcache_evict_valid(tb_dcache_evict_valid),
+		.dcache_evict_block_addr(tb_dcache_evict_block_addr),
 
 	    // halt interface:
 	    //      - halt
@@ -1197,6 +1206,8 @@ module lsq_tb ();
 	    //      - inv address
 		tb_dcache_inv_valid = 1'b0;
 		tb_dcache_inv_block_addr = 13'h0;
+		tb_dcache_evict_valid = 1'b0;
+		tb_dcache_evict_block_addr = 13'h0;
 	    // halt interface:
 	    //      - halt
 	    ///////////////////

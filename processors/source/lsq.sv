@@ -50,6 +50,7 @@
                     - latch inv instr
                     - latch evict isntr
                     - search isntr
+                - age logic head: ROB_LQ_retire_ROB_index
 
         TODO: LL and SC
             - LL
@@ -1664,12 +1665,29 @@ module lsq (
     // dcache evict
     logic LQ_restart_dcache_evict_valid;
     LQ_index_t LQ_restart_dcache_evict_LQ_index;
-    ROB_index_t LQ_restart_dcache_inv_ROB_index;
+    ROB_index_t LQ_restart_dcache_evict_ROB_index;
 
     // combined dcache inv + evict
     logic LQ_restart_combined_dcache_inv_evict_valid;
+    logic next_LQ_restart_combined_dcache_inv_evict_valid;
     LQ_index_t LQ_restart_combined_dcache_inv_evict_LQ_index;
+    LQ_index_t next_LQ_restart_combined_dcache_inv_evict_LQ_index;
     ROB_index_t LQ_restart_combined_dcache_inv_evict_ROB_index;
+    ROB_index_t next_LQ_restart_combined_dcache_inv_evict_ROB_index;
+
+    // seq:
+    always_ff @ (posedge CLK, negedge nRST) begin
+        if (~nRST) begin
+            LQ_restart_combined_dcache_inv_evict_valid <= 1'b0;
+            LQ_restart_combined_dcache_inv_evict_LQ_index <= LQ_index_t'(0);
+            LQ_restart_combined_dcache_inv_evict_ROB_index <= ROB_index_t'(0);
+        end
+        else begin
+            LQ_restart_combined_dcache_inv_evict_valid <= next_LQ_restart_combined_dcache_inv_evict_valid;
+            LQ_restart_combined_dcache_inv_evict_LQ_index <= next_LQ_restart_combined_dcache_inv_evict_LQ_index;
+            LQ_restart_combined_dcache_inv_evict_ROB_index <= next_LQ_restart_combined_dcache_inv_evict_ROB_index;
+        end
+    end
 
     /////////////////////////
     // SQ complete to ROB: //
@@ -2687,11 +2705,17 @@ module lsq (
         // default: no dcache inv restart
         LQ_restart_dcache_inv_valid = 1'b0;
         LQ_restart_dcache_inv_LQ_index = LQ_index_t'(0);
-        LQ_restart_dcache_inv_ROB_index = ROB_index_t'(0);
+        LQ_restart_dcache_inv_ROB_index = ROB_LQ_retire_ROB_index - 1;
+            // safe init value for search is youngest possible -> head - 1
 
-        LQ_restart_dcache_inv_valid = 1'b0;
-        LQ_restart_dcache_inv_LQ_index = LQ_index_t'(0);
-        LQ_restart_dcache_inv_ROB_index = ROB_index_t'(0);
+        LQ_restart_dcache_evict_valid = 1'b0;
+        LQ_restart_dcache_evict_LQ_index = LQ_index_t'(0);
+        LQ_restart_dcache_evict_ROB_index = ROB_LQ_retire_ROB_index - 1;
+            // safe init value for search is youngest possible -> head - 1
+
+        next_LQ_restart_combined_dcache_inv_evict_valid = 1'b0;
+        next_LQ_restart_combined_dcache_inv_evict_LQ_index = LQ_index_t'(0);
+        next_LQ_restart_combined_dcache_inv_evict_ROB_index = ROB_index_t'(0);
 
         // check for invalidation due to dcache inv
         if (dcache_inv_valid) begin
@@ -2699,7 +2723,7 @@ module lsq (
             // CAM search for addr match
             for (int i = 0; i < LQ_DEPTH; i++) begin
 
-                // check for entry valid and block addr match
+                // check for entry valid and block addr match and older than last found
                 if (
                     LQ_array[i].valid
                     &
@@ -2707,6 +2731,12 @@ module lsq (
                         dcache_inv_block_addr
                         ==
                         LQ_array[i].read_addr[13:1]
+                    )
+                    &
+                    (
+                        LQ_array[i].ROB_index - ROB_LQ_retire_ROB_index
+                        <
+                        LQ_restart_dcache_inv_ROB_index - ROB_LQ_retire_ROB_index
                     )
                 ) begin
 
@@ -2744,7 +2774,7 @@ module lsq (
             // CAM search for addr match
             for (int i = 0; i < LQ_DEPTH; i++) begin
 
-                // check for entry valid and block addr match
+                // check for entry valid and block addr match and older than last found
                 if (
                     LQ_array[i].valid
                     &
@@ -2752,6 +2782,12 @@ module lsq (
                         dcache_evict_block_addr
                         ==
                         LQ_array[i].read_addr[13:1]
+                    )
+                    &
+                    (
+                        LQ_array[i].ROB_index - ROB_LQ_retire_ROB_index
+                        <
+                        LQ_restart_dcache_evict_ROB_index - ROB_LQ_retire_ROB_index
                     )
                 ) begin
 
@@ -2772,9 +2808,9 @@ module lsq (
                     if (~LQ_array[i].SQ_loaded & LQ_array[i].dcache_loaded) begin
 
                         // have dcache inv restart
-                        LQ_restart_dcache_inv_valid = 1'b1;
-                        LQ_restart_dcache_inv_LQ_index = LQ_index_t'(i);
-                        LQ_restart_dcache_inv_ROB_index = LQ_array[i].ROB_index;
+                        LQ_restart_dcache_evict_valid = 1'b1;
+                        LQ_restart_dcache_evict_LQ_index = LQ_index_t'(i);
+                        LQ_restart_dcache_evict_ROB_index = LQ_array[i].ROB_index;
 
                         // invalidate entry
                         next_LQ_array[i].valid = 1'b0;
@@ -2783,15 +2819,57 @@ module lsq (
             end
         end
 
+        // register older of dcache inv and dcache evict:
+        
+        // check simultaneous dcache inv and dcache evict
+        if (LQ_restart_dcache_inv_valid & LQ_restart_dcache_evict_valid) begin
+
+            // register older
+            if (
+                LQ_restart_dcache_inv_ROB_index - ROB_LQ_retire_ROB_index
+                <
+                LQ_restart_dcache_evict_ROB_index - ROB_LQ_retire_ROB_index
+            ) begin
+                // register dcache inv
+                next_LQ_restart_combined_dcache_inv_evict_valid = 1'b1;
+                next_LQ_restart_combined_dcache_inv_evict_LQ_index = LQ_restart_dcache_inv_LQ_index;
+                next_LQ_restart_combined_dcache_inv_evict_ROB_index = LQ_restart_dcache_inv_ROB_index;
+            end
+            else begin
+                // register dcache evict
+                next_LQ_restart_combined_dcache_inv_evict_valid = 1'b1;
+                next_LQ_restart_combined_dcache_inv_evict_LQ_index = LQ_restart_dcache_evict_LQ_index;
+                next_LQ_restart_combined_dcache_inv_evict_ROB_index = LQ_restart_dcache_evict_ROB_index;
+            end
+        end
+
+        // otherwise, check solo dcache inv
+        else if (LQ_restart_dcache_inv_valid) begin
+
+            // register dcache inv
+            next_LQ_restart_combined_dcache_inv_evict_valid = 1'b1;
+            next_LQ_restart_combined_dcache_inv_evict_LQ_index = LQ_restart_dcache_inv_LQ_index;
+            next_LQ_restart_combined_dcache_inv_evict_ROB_index = LQ_restart_dcache_inv_ROB_index;
+        end
+
+        // otherwise, check solo dcache evict
+        else if (LQ_restart_dcache_evict_valid) begin
+
+            // register dcache evict
+            next_LQ_restart_combined_dcache_inv_evict_valid = 1'b1;
+            next_LQ_restart_combined_dcache_inv_evict_LQ_index = LQ_restart_dcache_evict_LQ_index;
+            next_LQ_restart_combined_dcache_inv_evict_ROB_index = LQ_restart_dcache_evict_ROB_index;
+        end
+
         // default: no top level restart
         next_ROB_LQ_restart_valid = 1'b0;
         next_ROB_LQ_restart_after_instr = 1'b0;
         next_ROB_LQ_restart_ROB_index = ROB_index_t'(0);
 
-        // need to select b/w potential invalidation due to d$ inv vs. missed SQ forward
+        // need to select b/w potential invalidation due to latched combined dcache inv/evict vs. missed SQ forward
             // if both valid, pick older instr
             // set LQ tail to restarting instr
-        if (LQ_restart_dcache_inv_valid & LQ_restart_missed_SQ_forward_valid) begin
+        if (LQ_restart_combined_dcache_inv_evict_valid & LQ_restart_missed_SQ_forward_valid) begin
 
             // definitely valid
             next_ROB_LQ_restart_valid = 1'b1;
@@ -2802,25 +2880,25 @@ module lsq (
 
             // check d$ inv older
             if (
-                LQ_restart_dcache_inv_ROB_index - ROB_LQ_retire_ROB_index
+                LQ_restart_combined_dcache_inv_evict_ROB_index - ROB_LQ_retire_ROB_index
                 <
                 LQ_restart_missed_SQ_forward_ROB_index - ROB_LQ_retire_ROB_index
             ) begin
 
                 // restart d$ inv
                 next_ROB_LQ_restart_after_instr = 1'b0;
-                next_ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
+                next_ROB_LQ_restart_ROB_index = LQ_restart_combined_dcache_inv_evict_ROB_index;
 
                 // tail follows d$ inv
                     // adjust msb still greater than head as expect
                     // if new tail index >= old tail index, then need to flip msb to undo wraparound
                 next_LQ_tail_ptr = {
-                    (LQ_restart_dcache_inv_LQ_index >= LQ_tail_ptr.index) ? 
+                    (LQ_restart_combined_dcache_inv_evict_LQ_index >= LQ_tail_ptr.index) ? 
                         ~LQ_tail_ptr.msb
                         :    
                         LQ_tail_ptr.msb
                     , 
-                    LQ_restart_dcache_inv_LQ_index
+                    LQ_restart_combined_dcache_inv_evict_LQ_index
                 };
             end
 
@@ -2837,25 +2915,25 @@ module lsq (
         end
 
         // otherwise, follow lone dcache inv
-        else if (LQ_restart_dcache_inv_valid) begin
+        else if (LQ_restart_combined_dcache_inv_evict_valid) begin
 
             // still valid (really just OR)
             next_ROB_LQ_restart_valid = 1'b1;
 
             // restart d$ inv
             next_ROB_LQ_restart_after_instr = 1'b0;
-            next_ROB_LQ_restart_ROB_index = LQ_restart_dcache_inv_ROB_index;
+            next_ROB_LQ_restart_ROB_index = LQ_restart_combined_dcache_inv_evict_ROB_index;
 
             // tail follows d$ inv
                 // adjust msb still greater than head as expect
                 // if new tail index >= old tail index, then need to flip msb to undo wraparound
             next_LQ_tail_ptr = {
-                (LQ_restart_dcache_inv_LQ_index >= LQ_tail_ptr.index) ? 
+                (LQ_restart_combined_dcache_inv_evict_LQ_index >= LQ_tail_ptr.index) ? 
                     ~LQ_tail_ptr.msb
                     :    
                     LQ_tail_ptr.msb
                 , 
-                LQ_restart_dcache_inv_LQ_index
+                LQ_restart_combined_dcache_inv_evict_LQ_index
             };
         end
 
