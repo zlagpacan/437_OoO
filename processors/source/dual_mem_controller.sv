@@ -96,7 +96,8 @@ module dual_mem_controller (
 
     // dmem1 read resp:
     output logic dmem1_read_resp_valid,
-    output word_t [1:0] dmem1_read_resp_data,
+    // output word_t [1:0] dmem1_read_resp_data,
+    output logic dmem1_read_resp_data,
     
     ////////////////////////////////
     // dmem write req interfaces: //
