@@ -10,14 +10,10 @@ add wave -noupdate -divider {Top Level Signals}
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {DUT error} /lsq_tb/DUT/next_DUT_error
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {DUT error} /lsq_tb/DUT_DUT_error
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {DUT error} /lsq_tb/expected_DUT_error
-add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/DUT_dispatch_unit_LQ_tail_index
-add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/expected_dispatch_unit_LQ_tail_index
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/DUT_dispatch_unit_LQ_full
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/expected_dispatch_unit_LQ_full
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/tb_dispatch_unit_LQ_task_valid
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/tb_dispatch_unit_LQ_task_struct
-add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/DUT_dispatch_unit_SQ_tail_index
-add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/expected_dispatch_unit_SQ_tail_index
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/DUT_dispatch_unit_SQ_full
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/expected_dispatch_unit_SQ_full
 add wave -noupdate -expand -group {Top Level Signals} -group {dispatch unit interface} /lsq_tb/tb_dispatch_unit_SQ_task_valid
@@ -91,6 +87,8 @@ add wave -noupdate -expand -group {Top Level Signals} -group {d$ write req} /lsq
 add wave -noupdate -expand -group {Top Level Signals} -group {d$ write req} /lsq_tb/tb_dcache_write_req_blocked
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {d$ inv} /lsq_tb/tb_dcache_inv_valid
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {d$ inv} /lsq_tb/tb_dcache_inv_block_addr
+add wave -noupdate -expand -group {Top Level Signals} -expand -group {d$ inv} /lsq_tb/tb_dcache_evict_valid
+add wave -noupdate -expand -group {Top Level Signals} -expand -group {d$ inv} /lsq_tb/tb_dcache_evict_block_addr
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {d$ halt} /lsq_tb/DUT_dcache_halt
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {d$ halt} /lsq_tb/expected_dcache_halt
 add wave -noupdate -expand -group {Top Level Signals} -expand -group {complete buses} /lsq_tb/tb_complete_bus_0_tag_valid
@@ -222,7 +220,7 @@ add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update s
 add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update stage} /lsq_tb/DUT/next_LQ_operand_update_stage_read_addr
 add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update stage} /lsq_tb/DUT/LQ_operand_update_stage_LQ_index
 add wave -noupdate -expand -group {Internal Signals} -group {LQ operand update stage} /lsq_tb/DUT/next_LQ_operand_update_stage_LQ_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/LQ_array[3]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/LQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/LQ_array[3].linked} {-color Gold} {/lsq_tb/DUT/LQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/LQ_array[3].SQ_searched} {-color Gold} {/lsq_tb/DUT/LQ_array[3].SQ_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[3].dcache_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/LQ_array[3].SQ_index} {-color Gold} {/lsq_tb/DUT/LQ_array[3].read_addr} {-color Gold} {/lsq_tb/DUT/LQ_array[3].dest_phys_reg_tag} {-color Gold} {/lsq_tb/DUT/LQ_array[2]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[1]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[0]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[0].valid} {-color Gold} {/lsq_tb/DUT/LQ_array[0].ready} {-color Gold} {/lsq_tb/DUT/LQ_array[0].linked} {-color Gold} {/lsq_tb/DUT/LQ_array[0].conditional} {-color Gold} {/lsq_tb/DUT/LQ_array[0].SQ_searched} {-color Gold} {/lsq_tb/DUT/LQ_array[0].SQ_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[0].dcache_loaded} {-color Gold} {/lsq_tb/DUT/LQ_array[0].ROB_index} {-color Gold} {/lsq_tb/DUT/LQ_array[0].SQ_index} {-color Gold} {/lsq_tb/DUT/LQ_array[0].read_addr} {-color Gold} {/lsq_tb/DUT/LQ_array[0].dest_phys_reg_tag} {-color Gold}} /lsq_tb/DUT/LQ_array
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/LQ_array[3]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[2]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[1]} {-color Gold -height 16} {/lsq_tb/DUT/LQ_array[0]} {-color Gold -height 16}} /lsq_tb/DUT/LQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ array} -color Gold /lsq_tb/DUT/next_LQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/LQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/next_LQ_head_ptr
@@ -234,7 +232,9 @@ add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/next_LQ_full
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/LQ_empty
 add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ pointers} /lsq_tb/DUT/next_LQ_empty
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/SQ_array[3]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[2]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[2].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[2].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[1]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[1].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[1].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[0]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[0].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[0].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[0].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[0].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[0].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[0].write_data} {-color Gold}} /lsq_tb/DUT/SQ_array
+add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} /lsq_tb/DUT/dcache_evict_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} /lsq_tb/DUT/dcache_evict_block_addr
+add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} -color Gold -expand -subitemconfig {{/lsq_tb/DUT/SQ_array[3]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[3].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[3].written} {-color Gold} {/lsq_tb/DUT/SQ_array[3].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[3].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[3].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[2]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[2].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[2].written} {-color Gold} {/lsq_tb/DUT/SQ_array[2].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[2].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[2].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[1]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[1].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[1].written} {-color Gold} {/lsq_tb/DUT/SQ_array[1].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[1].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[1].write_data} {-color Gold} {/lsq_tb/DUT/SQ_array[0]} {-color Gold -height 16 -expand} {/lsq_tb/DUT/SQ_array[0].valid} {-color Gold} {/lsq_tb/DUT/SQ_array[0].ready} {-color Gold} {/lsq_tb/DUT/SQ_array[0].written} {-color Gold} {/lsq_tb/DUT/SQ_array[0].conditional} {-color Gold} {/lsq_tb/DUT/SQ_array[0].ROB_index} {-color Gold} {/lsq_tb/DUT/SQ_array[0].write_addr} {-color Gold} {/lsq_tb/DUT/SQ_array[0].write_data} {-color Gold}} /lsq_tb/DUT/SQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ array} -color Gold /lsq_tb/DUT/next_SQ_array
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ pointers} /lsq_tb/DUT/SQ_head_ptr
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ pointers} /lsq_tb/DUT/next_SQ_head_ptr
@@ -252,9 +252,6 @@ add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} 
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_req_read_addr
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_req_SQ_index
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_CAM_ambiguous
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_CAM_present
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_CAM_youngest_older_index
-add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_CAM_youngest_older_data
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_resp_valid
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/next_SQ_search_resp_valid
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/SQ_search_resp_present
@@ -263,12 +260,22 @@ add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} 
 add wave -noupdate -expand -group {Internal Signals} -expand -group {SQ search} /lsq_tb/DUT/next_SQ_search_resp_data
 add wave -noupdate -expand -group {Internal Signals} -group {this complete bus} /lsq_tb/DUT/next_this_complete_bus_data_valid
 add wave -noupdate -expand -group {Internal Signals} -group {this complete bus} /lsq_tb/DUT/next_this_complete_bus_data
-add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb/DUT/LQ_restart_missed_SQ_forward_valid
-add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb/DUT/LQ_restart_missed_SQ_forward_ROB_index
-add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_valid
-add wave -noupdate -expand -group {Internal Signals} -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_missed_SQ_forward_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_missed_SQ_forward_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_inv_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_evict_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_evict_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_dcache_evict_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_combined_dcache_inv_evict_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/next_LQ_restart_combined_dcache_inv_evict_valid
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_combined_dcache_inv_evict_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/next_LQ_restart_combined_dcache_inv_evict_LQ_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/LQ_restart_combined_dcache_inv_evict_ROB_index
+add wave -noupdate -expand -group {Internal Signals} -expand -group {LQ restart} /lsq_tb/DUT/next_LQ_restart_combined_dcache_inv_evict_ROB_index
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {578800 ps} 0}
+WaveRestoreCursors {{Cursor 1} {609800 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 370
 configure wave -valuecolwidth 100
@@ -284,4 +291,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {474200 ps} {722500 ps}
+WaveRestoreZoom {0 ps} {777 ns}
