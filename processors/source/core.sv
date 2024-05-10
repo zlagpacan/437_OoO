@@ -28,6 +28,9 @@
         handling and control flow handling is largely handled by the rob getting information from the 
         the bru_pipeline and lsq and communicating that back to the fetch_unit and dispatch_unit, and 
         the execution pipelines as required. 
+
+		multicore updates:
+			- d$ inv port + evict port
 */
 
 `include "core_types.vh"
@@ -87,6 +90,8 @@ module core #(
     // invalidation interface:
     input logic dcache_inv_valid,
     input block_addr_t dcache_inv_block_addr,
+    input logic dcache_evict_valid,
+    input block_addr_t dcache_evict_block_addr,
 
     // halt interface:
     output logic dcache_halt
@@ -1297,6 +1302,8 @@ module core #(
 
 	logic LSQ_dcache_inv_valid;
 	block_addr_t LSQ_dcache_inv_block_addr;
+	logic LSQ_dcache_evict_valid;
+	block_addr_t LSQ_dcache_evict_block_addr;
 
     // halt interface:
     //      - halt
@@ -1540,6 +1547,8 @@ module core #(
 
 		.dcache_inv_valid(LSQ_dcache_inv_valid),
 		.dcache_inv_block_addr(LSQ_dcache_inv_block_addr),
+		.dcache_evict_valid(LSQ_dcache_evict_valid),
+		.dcache_evict_block_addr(LSQ_dcache_evict_block_addr),
 
 	    // halt interface:
 	    //      - halt
@@ -1965,6 +1974,8 @@ module core #(
 		// invalidation interface:
 		LSQ_dcache_inv_valid = dcache_inv_valid;
 		LSQ_dcache_inv_block_addr = dcache_inv_block_addr;
+		LSQ_dcache_evict_valid = dcache_evict_valid;
+		LSQ_dcache_evict_block_addr = dcache_evict_block_addr;
 
 		// halt interface:
 		dcache_halt = LSQ_dcache_halt;
