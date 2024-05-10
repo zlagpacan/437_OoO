@@ -304,227 +304,240 @@ module system (input logic CLK, nRST, system_if.sys syif);
 
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	// unicore with caches + mem controller
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// // unicore with caches + mem controller
 
-	// DUT error's
-	logic core_DUT_error;
-	logic icache_DUT_error;
-	logic dcache_DUT_error;
-	logic mem_controller_DUT_error;
+	// // DUT error's
+	// logic core_DUT_error;
+	// logic icache_DUT_error;
+	// logic dcache_DUT_error;
+	// logic mem_controller_DUT_error;
 	
-	// core <-> i$ interface:
-	logic icache_hit;
-	word_t icache_load;
-	logic icache_REN;
-	word_t icache_addr;
-	logic icache_halt;
+	// // core <-> i$ interface:
+	// logic icache_hit;
+	// word_t icache_load;
+	// logic icache_REN;
+	// word_t icache_addr;
+	// logic icache_halt;
 
-	// core <-> d$ interface:
+	// // core <-> d$ interface:
 
-	// read req interface
-	logic dcache_read_req_valid;
-	LQ_index_t dcache_read_req_LQ_index;
-	daddr_t dcache_read_req_addr;
-	logic dcache_read_req_linked;
-	logic dcache_read_req_conditional;
-	logic dcache_read_req_blocked;
+	// // read req interface
+	// logic dcache_read_req_valid;
+	// LQ_index_t dcache_read_req_LQ_index;
+	// daddr_t dcache_read_req_addr;
+	// logic dcache_read_req_linked;
+	// logic dcache_read_req_conditional;
+	// logic dcache_read_req_blocked;
 
-	// read resp interface
-	logic dcache_read_resp_valid;
-	LQ_index_t dcache_read_resp_LQ_index;
-	word_t dcache_read_resp_data;
+	// // read resp interface
+	// logic dcache_read_resp_valid;
+	// LQ_index_t dcache_read_resp_LQ_index;
+	// word_t dcache_read_resp_data;
 
-	// write req interface
-	logic dcache_write_req_valid;
-	daddr_t dcache_write_req_addr;
-	word_t dcache_write_req_data;
-	logic dcache_write_req_conditional;
-	logic dcache_write_req_blocked;
+	// // write req interface
+	// logic dcache_write_req_valid;
+	// daddr_t dcache_write_req_addr;
+	// word_t dcache_write_req_data;
+	// logic dcache_write_req_conditional;
+	// logic dcache_write_req_blocked;
 
-	// read kill interface x2:
-    logic dcache_read_kill_0_valid;
-    LQ_index_t dcache_read_kill_0_LQ_index;
-    logic dcache_read_kill_1_valid;
-    LQ_index_t dcache_read_kill_1_LQ_index;
+	// // read kill interface x2:
+    // logic dcache_read_kill_0_valid;
+    // LQ_index_t dcache_read_kill_0_LQ_index;
+    // logic dcache_read_kill_1_valid;
+    // LQ_index_t dcache_read_kill_1_LQ_index;
 
-    // invalidation interface:
-    logic dcache_inv_valid;
-    block_addr_t dcache_inv_block_addr;
+    // // invalidation interface:
+    // logic dcache_inv_valid;
+    // block_addr_t dcache_inv_block_addr;
 
-    // halt interface:
-   	logic dcache_halt;
+    // // halt interface:
+   	// logic dcache_halt;
 
-	// i$ <-> mem controller interface:
-	logic imem_REN;
-    block_addr_t imem_block_addr;
-    logic imem_hit;
-    word_t [1:0] imem_load;
+	// // i$ <-> mem controller interface:
+	// logic imem_REN;
+    // block_addr_t imem_block_addr;
+    // logic imem_hit;
+    // word_t [1:0] imem_load;
 
-	// d$ <-> mem controller interface:
+	// // d$ <-> mem controller interface:
 
-	// dmem read req:
-    logic dmem_read_req_valid;
-    block_addr_t dmem_read_req_block_addr;
+	// // dmem read req:
+    // logic dmem_read_req_valid;
+    // block_addr_t dmem_read_req_block_addr;
 
-    // dmem read resp:
-    logic dmem_read_resp_valid;
-    block_addr_t dmem_read_resp_block_addr;
-    word_t [1:0] dmem_read_resp_data;
+    // // dmem read resp:
+    // logic dmem_read_resp_valid;
+    // block_addr_t dmem_read_resp_block_addr;
+    // word_t [1:0] dmem_read_resp_data;
 
-    // dmem write req:
-    logic dmem_write_req_valid;
-    block_addr_t dmem_write_req_block_addr;
-    word_t [1:0] dmem_write_req_data;
-	logic dmem_write_req_slow_down;
+    // // dmem write req:
+    // logic dmem_write_req_valid;
+    // block_addr_t dmem_write_req_block_addr;
+    // word_t [1:0] dmem_write_req_data;
+	// logic dmem_write_req_slow_down;
 
-	// flushed:
-	logic dcache_flushed;
-	logic mem_controller_flushed;
+	// // flushed:
+	// logic dcache_flushed;
+	// logic mem_controller_flushed;
 
-	// core
-	core CORE0 (
-		.CLK(CPUCLK),
-		.nRST(nRST),
+	// // core
+	// core CORE0 (
+	// 	.CLK(CPUCLK),
+	// 	.nRST(nRST),
 
-		.DUT_error(core_DUT_error),
+	// 	.DUT_error(core_DUT_error),
 
-		.icache_hit(icache_hit),
-		.icache_load(icache_load),
-		.icache_REN(icache_REN),
-		.icache_addr(icache_addr),
-		.icache_halt(icache_halt),
+	// 	.icache_hit(icache_hit),
+	// 	.icache_load(icache_load),
+	// 	.icache_REN(icache_REN),
+	// 	.icache_addr(icache_addr),
+	// 	.icache_halt(icache_halt),
 		
-		.dcache_read_req_valid(dcache_read_req_valid),
-		.dcache_read_req_LQ_index(dcache_read_req_LQ_index),
-		.dcache_read_req_addr(dcache_read_req_addr),
-		.dcache_read_req_linked(dcache_read_req_linked),
-		.dcache_read_req_conditional(dcache_read_req_conditional),
-		.dcache_read_req_blocked(dcache_read_req_blocked),
+	// 	.dcache_read_req_valid(dcache_read_req_valid),
+	// 	.dcache_read_req_LQ_index(dcache_read_req_LQ_index),
+	// 	.dcache_read_req_addr(dcache_read_req_addr),
+	// 	.dcache_read_req_linked(dcache_read_req_linked),
+	// 	.dcache_read_req_conditional(dcache_read_req_conditional),
+	// 	.dcache_read_req_blocked(dcache_read_req_blocked),
 
-		.dcache_read_resp_valid(dcache_read_resp_valid),
-		.dcache_read_resp_LQ_index(dcache_read_resp_LQ_index),
-		.dcache_read_resp_data(dcache_read_resp_data),
+	// 	.dcache_read_resp_valid(dcache_read_resp_valid),
+	// 	.dcache_read_resp_LQ_index(dcache_read_resp_LQ_index),
+	// 	.dcache_read_resp_data(dcache_read_resp_data),
 
-		.dcache_write_req_valid(dcache_write_req_valid),
-		.dcache_write_req_addr(dcache_write_req_addr),
-		.dcache_write_req_data(dcache_write_req_data),
-		.dcache_write_req_conditional(dcache_write_req_conditional),
-		.dcache_write_req_blocked(dcache_write_req_blocked),
+	// 	.dcache_write_req_valid(dcache_write_req_valid),
+	// 	.dcache_write_req_addr(dcache_write_req_addr),
+	// 	.dcache_write_req_data(dcache_write_req_data),
+	// 	.dcache_write_req_conditional(dcache_write_req_conditional),
+	// 	.dcache_write_req_blocked(dcache_write_req_blocked),
 
-		.dcache_read_kill_0_valid(dcache_read_kill_0_valid),
-		.dcache_read_kill_0_LQ_index(dcache_read_kill_0_LQ_index),
-		.dcache_read_kill_1_valid(dcache_read_kill_1_valid),
-		.dcache_read_kill_1_LQ_index(dcache_read_kill_1_LQ_index),
+	// 	.dcache_read_kill_0_valid(dcache_read_kill_0_valid),
+	// 	.dcache_read_kill_0_LQ_index(dcache_read_kill_0_LQ_index),
+	// 	.dcache_read_kill_1_valid(dcache_read_kill_1_valid),
+	// 	.dcache_read_kill_1_LQ_index(dcache_read_kill_1_LQ_index),
 
-		.dcache_inv_valid(dcache_inv_valid),
-		.dcache_inv_block_addr(dcache_inv_block_addr),
+	// 	.dcache_inv_valid(dcache_inv_valid),
+	// 	.dcache_inv_block_addr(dcache_inv_block_addr),
 
-		.dcache_halt(dcache_halt)
-	);
+	// 	.dcache_halt(dcache_halt)
+	// );
 
-	// icache
-	icache ICACHE0 (
-		.CLK(CPUCLK),
-		.nRST(nRST),
+	// // icache
+	// icache ICACHE0 (
+	// 	.CLK(CPUCLK),
+	// 	.nRST(nRST),
 
-		.DUT_error(icache_DUT_error),
+	// 	.DUT_error(icache_DUT_error),
 
-		.icache_REN(icache_REN),
-		.icache_addr(icache_addr),
-		.icache_halt(icache_halt),
-		.icache_hit(icache_hit),
-		.icache_load(icache_load),
+	// 	.icache_REN(icache_REN),
+	// 	.icache_addr(icache_addr),
+	// 	.icache_halt(icache_halt),
+	// 	.icache_hit(icache_hit),
+	// 	.icache_load(icache_load),
 
-		.imem_REN(imem_REN),
-		.imem_block_addr(imem_block_addr),
-		.imem_hit(imem_hit),
-		.imem_load(imem_load)
-	);
+	// 	.imem_REN(imem_REN),
+	// 	.imem_block_addr(imem_block_addr),
+	// 	.imem_hit(imem_hit),
+	// 	.imem_load(imem_load)
+	// );
 
-	// dcache
-	dcache DCACHE0 (
-		.CLK(CPUCLK),
-		.nRST(nRST),
+	// // dcache
+	// dcache DCACHE0 (
+	// 	.CLK(CPUCLK),
+	// 	.nRST(nRST),
 
-		.DUT_error(dcache_DUT_error),
+	// 	.DUT_error(dcache_DUT_error),
 
-		.dcache_read_req_valid(dcache_read_req_valid),
-		.dcache_read_req_LQ_index(dcache_read_req_LQ_index),
-		.dcache_read_req_addr(dcache_read_req_addr),
-		.dcache_read_req_linked(dcache_read_req_linked),
-		.dcache_read_req_conditional(dcache_read_req_conditional),
-		.dcache_read_req_blocked(dcache_read_req_blocked),
+	// 	.dcache_read_req_valid(dcache_read_req_valid),
+	// 	.dcache_read_req_LQ_index(dcache_read_req_LQ_index),
+	// 	.dcache_read_req_addr(dcache_read_req_addr),
+	// 	.dcache_read_req_linked(dcache_read_req_linked),
+	// 	.dcache_read_req_conditional(dcache_read_req_conditional),
+	// 	.dcache_read_req_blocked(dcache_read_req_blocked),
 
-		.dcache_read_resp_valid(dcache_read_resp_valid),
-		.dcache_read_resp_LQ_index(dcache_read_resp_LQ_index),
-		.dcache_read_resp_data(dcache_read_resp_data),
+	// 	.dcache_read_resp_valid(dcache_read_resp_valid),
+	// 	.dcache_read_resp_LQ_index(dcache_read_resp_LQ_index),
+	// 	.dcache_read_resp_data(dcache_read_resp_data),
 
-		.dcache_write_req_valid(dcache_write_req_valid),
-		.dcache_write_req_addr(dcache_write_req_addr),
-		.dcache_write_req_data(dcache_write_req_data),
-		.dcache_write_req_conditional(dcache_write_req_conditional),
-		.dcache_write_req_blocked(dcache_write_req_blocked),
+	// 	.dcache_write_req_valid(dcache_write_req_valid),
+	// 	.dcache_write_req_addr(dcache_write_req_addr),
+	// 	.dcache_write_req_data(dcache_write_req_data),
+	// 	.dcache_write_req_conditional(dcache_write_req_conditional),
+	// 	.dcache_write_req_blocked(dcache_write_req_blocked),
 
-		.dcache_read_kill_0_valid(dcache_read_kill_0_valid),
-		.dcache_read_kill_0_LQ_index(dcache_read_kill_0_LQ_index),
-		.dcache_read_kill_1_valid(dcache_read_kill_1_valid),
-		.dcache_read_kill_1_LQ_index(dcache_read_kill_1_LQ_index),
+	// 	.dcache_read_kill_0_valid(dcache_read_kill_0_valid),
+	// 	.dcache_read_kill_0_LQ_index(dcache_read_kill_0_LQ_index),
+	// 	.dcache_read_kill_1_valid(dcache_read_kill_1_valid),
+	// 	.dcache_read_kill_1_LQ_index(dcache_read_kill_1_LQ_index),
 
-		.dcache_inv_valid(dcache_inv_valid),
-		.dcache_inv_block_addr(dcache_inv_block_addr),
+	// 	.dcache_inv_valid(dcache_inv_valid),
+	// 	.dcache_inv_block_addr(dcache_inv_block_addr),
 
-		.dcache_halt(dcache_halt),
+	// 	.dcache_halt(dcache_halt),
 
-		.dmem_read_req_valid(dmem_read_req_valid),
-		.dmem_read_req_block_addr(dmem_read_req_block_addr),
+	// 	.dmem_read_req_valid(dmem_read_req_valid),
+	// 	.dmem_read_req_block_addr(dmem_read_req_block_addr),
 
-		.dmem_read_resp_valid(dmem_read_resp_valid),
-		.dmem_read_resp_block_addr(dmem_read_resp_block_addr),
-		.dmem_read_resp_data(dmem_read_resp_data),
+	// 	.dmem_read_resp_valid(dmem_read_resp_valid),
+	// 	.dmem_read_resp_block_addr(dmem_read_resp_block_addr),
+	// 	.dmem_read_resp_data(dmem_read_resp_data),
 		
-		.dmem_write_req_valid(dmem_write_req_valid),
-		.dmem_write_req_block_addr(dmem_write_req_block_addr),
-		.dmem_write_req_data(dmem_write_req_data),
-		.dmem_write_req_slow_down(dmem_write_req_slow_down),
+	// 	.dmem_write_req_valid(dmem_write_req_valid),
+	// 	.dmem_write_req_block_addr(dmem_write_req_block_addr),
+	// 	.dmem_write_req_data(dmem_write_req_data),
+	// 	.dmem_write_req_slow_down(dmem_write_req_slow_down),
 
-		.flushed(dcache_flushed)
-	);
+	// 	.flushed(dcache_flushed)
+	// );
 
-	// mem controller
-	mem_controller MEM_CONTROLLER (
-		.CLK(CPUCLK),
-		.nRST(nRST),
+	// // mem controller
+	// mem_controller MEM_CONTROLLER (
+	// 	.CLK(CPUCLK),
+	// 	.nRST(nRST),
 
-		.DUT_error(mem_controller_DUT_error),
+	// 	.DUT_error(mem_controller_DUT_error),
 
-		.prif(prif),
+	// 	.prif(prif),
 
-		.imem_REN(imem_REN),
-		.imem_block_addr(imem_block_addr),
-		.imem_hit(imem_hit),
-		.imem_load(imem_load),
+	// 	.imem_REN(imem_REN),
+	// 	.imem_block_addr(imem_block_addr),
+	// 	.imem_hit(imem_hit),
+	// 	.imem_load(imem_load),
 
-		.dmem_read_req_valid(dmem_read_req_valid),
-		.dmem_read_req_block_addr(dmem_read_req_block_addr),
+	// 	.dmem_read_req_valid(dmem_read_req_valid),
+	// 	.dmem_read_req_block_addr(dmem_read_req_block_addr),
 
-		.dmem_read_resp_valid(dmem_read_resp_valid),
-		.dmem_read_resp_block_addr(dmem_read_resp_block_addr),
-		.dmem_read_resp_data(dmem_read_resp_data),
+	// 	.dmem_read_resp_valid(dmem_read_resp_valid),
+	// 	.dmem_read_resp_block_addr(dmem_read_resp_block_addr),
+	// 	.dmem_read_resp_data(dmem_read_resp_data),
 		
-		.dmem_write_req_valid(dmem_write_req_valid),
-		.dmem_write_req_block_addr(dmem_write_req_block_addr),
-		.dmem_write_req_data(dmem_write_req_data),
-		.dmem_write_req_slow_down(dmem_write_req_slow_down),
+	// 	.dmem_write_req_valid(dmem_write_req_valid),
+	// 	.dmem_write_req_block_addr(dmem_write_req_block_addr),
+	// 	.dmem_write_req_data(dmem_write_req_data),
+	// 	.dmem_write_req_slow_down(dmem_write_req_slow_down),
 
-		.dcache_flushed(dcache_flushed),
-		.mem_controller_flushed(mem_controller_flushed)
-	);
+	// 	.dcache_flushed(dcache_flushed),
+	// 	.mem_controller_flushed(mem_controller_flushed)
+	// );
 
-	// system interface connections
-	assign syif.halt = mem_controller_flushed;
+	// // system interface connections
+	// assign syif.halt = mem_controller_flushed;
+
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// multicore:
+		// 2 cores
+		// 2 icaches
+		// 2 snoop dcaches
+		// bus controller
+		// dual mem controller
+
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// system tb connections: 
 
 	assign syif.load = prif.ramload;
 

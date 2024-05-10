@@ -36,6 +36,21 @@
             - dcache is non-blocking
                 - take req's in single cycle (if D$ has space)
 
+        multicore updates:
+            - have dcache inv and dcache evict port
+            - broadcast by block_addr for simplicity
+            - technically means restart at whoever wins CAM
+                - old version didn't check age
+                    - technically may not be oldest instr if multiple block addr matches
+                    - age logic was only checked between inv instr found here and search instr
+            - new version:
+                - CAM search for oldest inv, latch value
+                - CAM search for oldest evict, latch value
+                - age logic to pick oldest of these three: 
+                    - latch inv instr
+                    - latch evict isntr
+                    - search isntr
+
         TODO: LL and SC
             - LL
                 - can have link reg in core, reuse funcitonality that passes inv's into core to 
@@ -293,6 +308,9 @@ module lsq (
 
     input logic dcache_inv_valid,
     input block_addr_t dcache_inv_block_addr,
+
+    input logic dcache_evict_valid,
+    input block_addr_t dcache_evict_block_addr,
 
     // halt interface:
     //      - halt
@@ -1633,11 +1651,25 @@ module lsq (
 
     // need to select b/w potential invalidation due to dcache inv vs. missed SQ forward
         // if both valid, pick older instr
+
+    // SQ forward
     logic LQ_restart_missed_SQ_forward_valid;
     ROB_index_t LQ_restart_missed_SQ_forward_ROB_index;
+
+    // dcache inv
     logic LQ_restart_dcache_inv_valid;
     LQ_index_t LQ_restart_dcache_inv_LQ_index;
     ROB_index_t LQ_restart_dcache_inv_ROB_index;
+
+    // dcache evict
+    logic LQ_restart_dcache_evict_valid;
+    LQ_index_t LQ_restart_dcache_evict_LQ_index;
+    ROB_index_t LQ_restart_dcache_inv_ROB_index;
+
+    // combined dcache inv + evict
+    logic LQ_restart_combined_dcache_inv_evict_valid;
+    LQ_index_t LQ_restart_combined_dcache_inv_evict_LQ_index;
+    ROB_index_t LQ_restart_combined_dcache_inv_evict_ROB_index;
 
     /////////////////////////
     // SQ complete to ROB: //
@@ -2657,6 +2689,10 @@ module lsq (
         LQ_restart_dcache_inv_LQ_index = LQ_index_t'(0);
         LQ_restart_dcache_inv_ROB_index = ROB_index_t'(0);
 
+        LQ_restart_dcache_inv_valid = 1'b0;
+        LQ_restart_dcache_inv_LQ_index = LQ_index_t'(0);
+        LQ_restart_dcache_inv_ROB_index = ROB_index_t'(0);
+
         // check for invalidation due to dcache inv
         if (dcache_inv_valid) begin
 
@@ -2669,6 +2705,51 @@ module lsq (
                     &
                     (
                         dcache_inv_block_addr
+                        ==
+                        LQ_array[i].read_addr[13:1]
+                    )
+                ) begin
+
+                    // only restart if this entry grabbed value from d$ load
+                        // NOT SQ loaded, YES dcache loaded
+                            // don't care if forwarding SQ value
+                            // if haven't loaded from dcache yet, means 
+
+                        // TODO: verify
+                            // this behavior may have tricky edge case bugs which don't guarantee SeqC
+                                // e.g.:
+                                //  SW X
+                                //  LW Y
+                                //  LW X
+                                //  inv Y
+                                    // although here, would restart at invalidated LW Y, so
+                                    //  LW X would get another try, potentially forward or not from SW X 
+                    if (~LQ_array[i].SQ_loaded & LQ_array[i].dcache_loaded) begin
+
+                        // have dcache inv restart
+                        LQ_restart_dcache_inv_valid = 1'b1;
+                        LQ_restart_dcache_inv_LQ_index = LQ_index_t'(i);
+                        LQ_restart_dcache_inv_ROB_index = LQ_array[i].ROB_index;
+
+                        // invalidate entry
+                        next_LQ_array[i].valid = 1'b0;
+                    end
+                end
+            end
+        end
+
+        // check for invalidation due to dcache evict
+        if (dcache_evict_valid) begin
+
+            // CAM search for addr match
+            for (int i = 0; i < LQ_DEPTH; i++) begin
+
+                // check for entry valid and block addr match
+                if (
+                    LQ_array[i].valid
+                    &
+                    (
+                        dcache_evict_block_addr
                         ==
                         LQ_array[i].read_addr[13:1]
                     )
