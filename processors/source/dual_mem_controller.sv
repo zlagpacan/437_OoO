@@ -608,6 +608,7 @@ module dual_mem_controller (
                 end
 
                 // check have simultaneous imem0 and imem1 read
+                    // follow imem LRU
                 else if (imem0_REN & imem1_REN) begin
 
                     // update working req
@@ -625,6 +626,9 @@ module dual_mem_controller (
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b0;
 
+                    // toggle imem LRU
+                    next_imem_LRU = ~imem_LRU;
+
                     // goto ACCESS 0
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_0;
                 end
@@ -640,6 +644,9 @@ module dual_mem_controller (
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b0;
 
+                    // reverse imem LRU 0->1
+                    next_imem_LRU = 1'b1;
+
                     // goto ACCESS 0
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_0;
                 end
@@ -654,6 +661,9 @@ module dual_mem_controller (
                     next_working_req.dmem0_read = 1'b0;
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b0;
+
+                    // reverse imem LRU 1->0
+                    next_imem_LRU = 1'b0;
 
                     // goto ACCESS 0
                     next_mem_controller_state = MEM_CONTROLLER_ACCESS_0;
