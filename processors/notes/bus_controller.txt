@@ -6,7 +6,7 @@ RTL TB: TODO
 Synthesis: done
 
     - full version had too many IO pins
-    - had to reduce dem0_read_resp_data to single logic
+    - had to reduce dem1_read_resp_data to single logic
         - this is realistic change as dmem0 and dmem1 would share resp data bus from mem_controller
 
 +--------------------------------------------------------------------------------------+
