@@ -5,4 +5,39 @@ RTL TB: TODO
 
 Synthesis: done
 
+    - full version had too many IO pins
+    - had to reduce dem0_read_resp_data to single logic
+        - this is realistic change as dmem0 and dmem1 would share resp data bus from mem_controller
+
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Fri May 10 00:22:13 2024           ;
+; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+; Revision Name                      ; bus_controller                                  ;
+; Top-level Entity Name              ; bus_controller                                  ;
+; Family                             ; Cyclone IV E                                    ;
+; Device                             ; EP4CE115F29C8                                   ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 1,266 / 114,480 ( 1 % )                         ;
+;     Total combinational functions  ; 1,124 / 114,480 ( < 1 % )                       ;
+;     Dedicated logic registers      ; 452 / 114,480 ( < 1 % )                         ;
+; Total registers                    ; 681                                             ;
+; Total pins                         ; 500 / 529 ( 95 % )                              ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                           ;
+; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
++------------------------------------+-------------------------------------------------+
+
++-------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary              ;
++-----------+-----------------+------------+------+
+; Fmax      ; Restricted Fmax ; Clock Name ; Note ;
++-----------+-----------------+------------+------+
+; 54.26 MHz ; 54.26 MHz       ; CLK        ;      ;
++-----------+-----------------+------------+------+
+
+    - critical path is conflict table
+
 Synthesized TB: TODO
