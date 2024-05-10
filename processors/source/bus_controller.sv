@@ -197,6 +197,33 @@ module bus_controller (
     conflict_table_count_t [1:0][BUS_CONTROLLER_CONFLICT_TABLE_NUM_SETS-1:0] conflict_table_count_by_way_by_set;
     conflict_table_count_t [1:0][BUS_CONTROLLER_CONFLICT_TABLE_NUM_SETS-1:0] next_conflict_table_count_by_way_by_set;
 
+    // hashing:
+
+    // // upper index and lower index:
+    // typedef struct packed {
+    //     logic [BLOCK_ADDR_SPACE_WIDTH-2*BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:0] tag;
+    //     logic [2*BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS] upper_index;
+    //     logic [BUS_CONTROLLER_CONFLICT_TABLE_NUM_INDEX_BITS-1:0] lower_index;
+    // } conflict_table_block_addr_t;
+        // conflicts too common, 7 tag bits all ignored
+    
+    // upper and lower 1 XOR'd, upper and lower 0 XOR'd
+    typedef struct packed {
+        logic tag;
+        logic [2:0] upper1;
+        logic [2:0] lower1;
+        logic [2:0] upper0;
+        logic [2:0] lower0;
+    } conflict_table_block_addr_t;
+
+    function way1_hash(conflict_table_block_addr_t addr);
+        return addr.upper1 ^ addr.lower1;
+    endfunction
+
+    function way0_hash(conflict_table_block_addr_t addr);
+        return addr.upper0 ^ addr.lower0;
+    endfunction
+
     // conflicts:
     conflict_table_block_addr_t dbus0_req_conflict_block_addr;
     conflict_table_block_addr_t dbus1_req_conflict_block_addr;
@@ -258,10 +285,10 @@ module bus_controller (
             snoop0_req_exclusive <= next_snoop0_req_exclusive;
             snoop0_req_curr_state <= next_snoop0_req_curr_state;
 
-            snoop1_req_valid <= next_snoop0_req_valid;
-            snoop1_req_block_addr <= next_snoop0_req_block_addr;
-            snoop1_req_exclusive <= next_snoop0_req_exclusive;
-            snoop1_req_curr_state <= next_snoop0_req_curr_state;
+            snoop1_req_valid <= next_snoop1_req_valid;
+            snoop1_req_block_addr <= next_snoop1_req_block_addr;
+            snoop1_req_exclusive <= next_snoop1_req_exclusive;
+            snoop1_req_curr_state <= next_snoop1_req_curr_state;
         end
     end
 
@@ -481,7 +508,7 @@ module bus_controller (
                 (
                     conflict_table_count_by_way_by_set
                     [0]
-                    [dbus0_req_conflict_block_addr.lower_index]
+                    [way0_hash(dbus0_req_conflict_block_addr)]
                     !=
                     '0
                 )
@@ -489,11 +516,7 @@ module bus_controller (
                 (
                     conflict_table_count_by_way_by_set
                     [1]
-                    [
-                        dbus0_req_conflict_block_addr.upper_index
-                        ^
-                        dbus0_req_conflict_block_addr.lower_index
-                    ]
+                    [way1_hash(dbus0_req_conflict_block_addr)]
                     !=
                     '0
                 )
@@ -506,7 +529,7 @@ module bus_controller (
                 (
                     conflict_table_count_by_way_by_set
                     [0]
-                    [dbus0_req_conflict_block_addr.lower_index]
+                    [way0_hash(dbus0_req_conflict_block_addr)]
                     ==
                     '1
                 )
@@ -514,11 +537,7 @@ module bus_controller (
                 (
                     conflict_table_count_by_way_by_set
                     [1]
-                    [
-                        dbus0_req_conflict_block_addr.upper_index
-                        ^
-                        dbus0_req_conflict_block_addr.lower_index
-                    ]
+                    [way1_hash(dbus0_req_conflict_block_addr)]
                     ==
                     '1
                 )
@@ -538,30 +557,22 @@ module bus_controller (
                 // increment way 0 count
                 next_conflict_table_count_by_way_by_set
                 [0]
-                [dbus0_req_conflict_block_addr.lower_index]
+                [way0_hash(dbus0_req_conflict_block_addr)]
                 =
                     conflict_table_count_by_way_by_set
                     [0]
-                    [dbus0_req_conflict_block_addr.lower_index]
+                    [way0_hash(dbus0_req_conflict_block_addr)]
                     + 1
                 ;
 
                 // increment way 1 count
                 next_conflict_table_count_by_way_by_set
                 [1]
-                [
-                    dbus0_req_conflict_block_addr.upper_index
-                    ^
-                    dbus0_req_conflict_block_addr.lower_index
-                ]
+                [way1_hash(dbus0_req_conflict_block_addr)]
                     =
                     conflict_table_count_by_way_by_set
                     [1]
-                    [
-                        dbus0_req_conflict_block_addr.upper_index
-                        ^
-                        dbus0_req_conflict_block_addr.lower_index
-                    ]
+                    [way1_hash(dbus0_req_conflict_block_addr)]
                     + 1
                 ;
 
@@ -593,7 +604,7 @@ module bus_controller (
                 (
                     next_conflict_table_count_by_way_by_set
                     [0]
-                    [dbus1_req_conflict_block_addr.lower_index]
+                    [way0_hash(dbus1_req_conflict_block_addr)]
                     !=
                     '0
                 )
@@ -601,11 +612,7 @@ module bus_controller (
                 (
                     next_conflict_table_count_by_way_by_set
                     [1]
-                    [
-                        dbus1_req_conflict_block_addr.upper_index
-                        ^
-                        dbus1_req_conflict_block_addr.lower_index
-                    ]
+                    [way1_hash(dbus1_req_conflict_block_addr)]
                     !=
                     '0
                 )
@@ -618,7 +625,7 @@ module bus_controller (
                 (
                     next_conflict_table_count_by_way_by_set
                     [0]
-                    [dbus1_req_conflict_block_addr.lower_index]
+                    [way0_hash(dbus1_req_conflict_block_addr)]
                     ==
                     '1
                 )
@@ -626,11 +633,7 @@ module bus_controller (
                 (
                     next_conflict_table_count_by_way_by_set
                     [1]
-                    [
-                        dbus1_req_conflict_block_addr.upper_index
-                        ^
-                        dbus1_req_conflict_block_addr.lower_index
-                    ]
+                    [way1_hash(dbus1_req_conflict_block_addr)]
                     ==
                     '1
                 )
@@ -650,30 +653,22 @@ module bus_controller (
                 // increment way 0 count
                 next_conflict_table_count_by_way_by_set
                 [0]
-                [dbus1_req_conflict_block_addr.lower_index]
+                [way0_hash(dbus1_req_conflict_block_addr)]
                 =
                     next_conflict_table_count_by_way_by_set
                     [0]
-                    [dbus1_req_conflict_block_addr.lower_index]
+                    [way0_hash(dbus1_req_conflict_block_addr)]
                     + 1
                 ;
 
                 // increment way 1 count
                 next_conflict_table_count_by_way_by_set
                 [1]
-                [
-                    dbus1_req_conflict_block_addr.upper_index
-                    ^
-                    dbus1_req_conflict_block_addr.lower_index
-                ]
+                [way1_hash(dbus1_req_conflict_block_addr)]
                     =
                     next_conflict_table_count_by_way_by_set
                     [1]
-                    [
-                        dbus1_req_conflict_block_addr.upper_index
-                        ^
-                        dbus1_req_conflict_block_addr.lower_index
-                    ]
+                    [way1_hash(dbus1_req_conflict_block_addr)]
                     + 1
                 ;
 
@@ -699,30 +694,22 @@ module bus_controller (
             // decrement way 0
             next_conflict_table_count_by_way_by_set
             [0]
-            [dbus0_resp_conflict_block_addr.lower_index]
+            [way0_hash(dbus0_resp_conflict_block_addr)]
             =
                 next_conflict_table_count_by_way_by_set
                 [0]
-                [dbus0_resp_conflict_block_addr.lower_index]
+                [way0_hash(dbus0_resp_conflict_block_addr)]
                 - 1
             ;
 
             // decrement way 1
             next_conflict_table_count_by_way_by_set
             [1]
-            [
-                dbus0_resp_conflict_block_addr.upper_index
-                ^
-                dbus0_resp_conflict_block_addr.lower_index
-            ]
+            [way1_hash(dbus0_resp_conflict_block_addr)]
             =
                 next_conflict_table_count_by_way_by_set
                 [1]
-                [
-                    dbus0_resp_conflict_block_addr.upper_index
-                    ^
-                    dbus0_resp_conflict_block_addr.lower_index
-                ]
+                [way1_hash(dbus0_resp_conflict_block_addr)]
                 - 1
             ;
         end
@@ -733,30 +720,22 @@ module bus_controller (
             // decrement way 0
             next_conflict_table_count_by_way_by_set
             [0]
-            [dbus1_resp_conflict_block_addr.lower_index]
+            [way0_hash(dbus1_resp_conflict_block_addr)]
             =
                 next_conflict_table_count_by_way_by_set
                 [0]
-                [dbus1_resp_conflict_block_addr.lower_index]
+                [way0_hash(dbus1_resp_conflict_block_addr)]
                 - 1
             ;
 
             // decrement way 1
             next_conflict_table_count_by_way_by_set
             [1]
-            [
-                dbus1_resp_conflict_block_addr.upper_index
-                ^
-                dbus1_resp_conflict_block_addr.lower_index
-            ]
+            [way1_hash(dbus1_resp_conflict_block_addr)]
             =
                 next_conflict_table_count_by_way_by_set
                 [1]
-                [
-                    dbus1_resp_conflict_block_addr.upper_index
-                    ^
-                    dbus1_resp_conflict_block_addr.lower_index
-                ]
+                [way1_hash(dbus1_resp_conflict_block_addr)]
                 - 1
             ;
         end
@@ -1102,7 +1081,7 @@ module bus_controller (
             // accept dmem read resp data
             next_dmem0_read_resp_Q
             [dmem0_read_resp_Q_return_head_ptr.index]
-            .returned
+            .data
             = 
                 dmem0_read_resp_data
             ;
@@ -1129,7 +1108,7 @@ module bus_controller (
             // accept dmem read resp data
             next_dmem1_read_resp_Q
             [dmem1_read_resp_Q_return_head_ptr.index]
-            .returned
+            .data
             = 
                 dmem1_read_resp_data
             ;
@@ -1214,7 +1193,7 @@ module bus_controller (
         // dbus1 resp:
             // priority:
                 // snoop0 resp reg ready now 
-                // dmem0 read resp Q if valid and returned
+                // dmem1 read resp Q if valid and returned
 
         // check snoop0 resp reg ready now
         if (snoop0_resp_reg_ready_now) begin
@@ -1225,14 +1204,14 @@ module bus_controller (
             dbus1_resp_new_state = snoop0_resp_reg_new_state;            
         end
 
-        // otherwise, check dmem0 read resp Q resp head valid and returned
+        // otherwise, check dmem1 read resp Q resp head valid and returned
         else if (
-            dmem0_read_resp_Q
-            [dmem0_read_resp_Q_resp_head_ptr.index]
+            dmem1_read_resp_Q
+            [dmem1_read_resp_Q_resp_head_ptr.index]
             .valid
             &
-            dmem0_read_resp_Q
-            [dmem0_read_resp_Q_resp_head_ptr.index]
+            dmem1_read_resp_Q
+            [dmem1_read_resp_Q_resp_head_ptr.index]
             .returned
         ) begin
 
@@ -1243,14 +1222,14 @@ module bus_controller (
             ;
             dbus1_resp_block_addr 
             =
-                dmem0_read_resp_Q
-                [dmem0_read_resp_Q_resp_head_ptr.index]
+                dmem1_read_resp_Q
+                [dmem1_read_resp_Q_resp_head_ptr.index]
                 .block_addr
             ;
             dbus1_resp_data 
             =
-                dmem0_read_resp_Q
-                [dmem0_read_resp_Q_resp_head_ptr.index]
+                dmem1_read_resp_Q
+                [dmem1_read_resp_Q_resp_head_ptr.index]
                 .data
             ;
             dbus1_resp_need_block 
@@ -1259,21 +1238,21 @@ module bus_controller (
             ;
             dbus1_resp_new_state 
             =
-                dmem0_read_resp_Q
-                [dmem0_read_resp_Q_resp_head_ptr.index]
+                dmem1_read_resp_Q
+                [dmem1_read_resp_Q_resp_head_ptr.index]
                 .new_state
             ;
 
-            // invalidate dmem0 read resp Q entry
-            next_dmem0_read_resp_Q
-            [dmem0_read_resp_Q_resp_head_ptr.index]
+            // invalidate dmem1 read resp Q entry
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_resp_head_ptr.index]
             .valid
             =
                 1'b0
             ;
 
-            // increment dmem0 read resp Q resp head
-            next_dmem0_read_resp_Q_resp_head_ptr = dmem0_read_resp_Q_resp_head_ptr + 1;
+            // increment dmem1 read resp Q resp head
+            next_dmem1_read_resp_Q_resp_head_ptr = dmem1_read_resp_Q_resp_head_ptr + 1;
         end
 
         ///////////////////////////
@@ -1288,7 +1267,7 @@ module bus_controller (
         if (
             next_dmem0_read_resp_Q_tail_ptr.msb != next_dmem0_read_resp_Q_resp_head_ptr.msb
             &
-            next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_resp_head_ptr.index
+            next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_resp_head_ptr.index + 1
         ) begin
             $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
             $display("\t@: %0t",$realtime);
@@ -1301,35 +1280,35 @@ module bus_controller (
         if (
             next_dmem1_read_resp_Q_tail_ptr.msb != next_dmem1_read_resp_Q_resp_head_ptr.msb
             &
-            next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_resp_head_ptr.index
+            next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_resp_head_ptr.index + 1
         ) begin
-            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("bus_controller: ERROR: dmem1 read resp Q tail surpasses resp head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
         end
 
-        // check dmem0 read resp Q tail surpasses resp head
-            // next tail msb != next resp head msb
-            // next tail index == next resp head index + 1
+        // check dmem0 read return Q tail surpasses return head
+            // next tail msb != next return head msb
+            // next tail index == next return head index + 1
         if (
             next_dmem0_read_resp_Q_tail_ptr.msb != next_dmem0_read_resp_Q_return_head_ptr.msb
             &
-            next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_return_head_ptr.index
+            next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_return_head_ptr.index + 1
         ) begin
-            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("bus_controller: ERROR: dmem0 read return Q tail surpasses return head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
         end
 
-        // check dmem1 read resp Q tail surpasses resp head
-            // next tail msb != next resp head msb
-            // next tail index == next resp head index + 1
+        // check dmem1 read return Q tail surpasses return head
+            // next tail msb != next return head msb
+            // next tail index == next return head index + 1
         if (
             next_dmem1_read_resp_Q_tail_ptr.msb != next_dmem1_read_resp_Q_return_head_ptr.msb
             &
-            next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_return_head_ptr.index
+            next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_return_head_ptr.index + 1
         ) begin
-            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("bus_controller: ERROR: dmem1 read return Q tail surpasses return head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
         end
