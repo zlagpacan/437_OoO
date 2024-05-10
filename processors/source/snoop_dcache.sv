@@ -2932,24 +2932,35 @@ module snoop_dcache (
             // check store MSHR
                 // need piggyback E or M and block addr match
                     // exclusive states
+                // otherwise, can mark as upgrading
             if (
-                (
-                    piggyback_bus_new_state
-                    .exclusive
-                )
-                &
-                (
-                    store_MSHR.block_addr
-                    ==
-                    piggyback_bus_block_addr
-                )
+                store_MSHR.block_addr
+                ==
+                piggyback_bus_block_addr
             ) begin
 
-                // mark MSHR piggybacking
-                next_store_MSHR.piggybacking = 1'b1;
+                // check piggybackable
+                if (
+                    piggyback_bus_new_state
+                    .exclusive
+                ) begin
 
-                // set MSHR piggybacking way
-                next_store_MSHR.piggybacking_way = piggyback_bus_way;
+                    // mark MSHR piggybacking
+                    next_store_MSHR.piggybacking = 1'b1;
+
+                    // set MSHR piggybacking way
+                    next_store_MSHR.piggybacking_way = piggyback_bus_way;
+                end
+
+                // otherwise, can upgrade
+                else begin
+
+                    // mark MSHR upgrading
+                    next_store_MSHR.upgrading = 1'b1;
+
+                    // set MSHR upgrading way
+                    next_store_MSHR.upgrading_way = piggyback_bus_way;
+                end
             end
         end
 
