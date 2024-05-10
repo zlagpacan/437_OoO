@@ -1,0 +1,1 @@
+testasm -s -d multi test.coh example.asm dual palgorithm

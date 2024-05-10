@@ -534,7 +534,583 @@ module system (input logic CLK, nRST, system_if.sys syif);
 		// bus controller
 		// dual mem controller
 
+	// DUT error's:
+	logic core0_DUT_error;
+	logic icache0_DUT_error;
+	logic snoop_dcache0_DUT_error;
 
+	logic core1_DUT_error;
+	logic icache1_DUT_error;
+	logic snoop_dcache1_DUT_error;
+
+	logic bus_controller_DUT_error;
+	logic dual_mem_controller_DUT_error;
+
+	// core <-> i$ interfaces:
+	logic icache0_hit;
+	word_t icache0_load;
+	logic icache0_REN;
+	word_t icache0_addr;
+	logic icache0_halt;
+
+	logic icache1_hit;
+	word_t icache1_load;
+	logic icache1_REN;
+	word_t icache1_addr;
+	logic icache1_halt;
+
+	// core <-> d$ interfaces:
+
+	// read req interface
+	logic dcache0_read_req_valid;
+	LQ_index_t dcache0_read_req_LQ_index;
+	daddr_t dcache0_read_req_addr;
+	logic dcache0_read_req_linked;
+	logic dcache0_read_req_conditional;
+	logic dcache0_read_req_blocked;
+
+	logic dcache1_read_req_valid;
+	LQ_index_t dcache1_read_req_LQ_index;
+	daddr_t dcache1_read_req_addr;
+	logic dcache1_read_req_linked;
+	logic dcache1_read_req_conditional;
+	logic dcache1_read_req_blocked;
+
+	// read resp interface
+	logic dcache0_read_resp_valid;
+	LQ_index_t dcache0_read_resp_LQ_index;
+	word_t dcache0_read_resp_data;
+
+	logic dcache1_read_resp_valid;
+	LQ_index_t dcache1_read_resp_LQ_index;
+	word_t dcache1_read_resp_data;
+
+	// write req interface
+	logic dcache0_write_req_valid;
+	daddr_t dcache0_write_req_addr;
+	word_t dcache0_write_req_data;
+	logic dcache0_write_req_conditional;
+	logic dcache0_write_req_blocked;
+
+	logic dcache1_write_req_valid;
+	daddr_t dcache1_write_req_addr;
+	word_t dcache1_write_req_data;
+	logic dcache1_write_req_conditional;
+	logic dcache1_write_req_blocked;
+
+	// read kill interface x2:
+    logic dcache0_read_kill_0_valid;
+    LQ_index_t dcache0_read_kill_0_LQ_index;
+    logic dcache0_read_kill_1_valid;
+    LQ_index_t dcache0_read_kill_1_LQ_index;
+
+    logic dcache1_read_kill_0_valid;
+    LQ_index_t dcache1_read_kill_0_LQ_index;
+    logic dcache1_read_kill_1_valid;
+    LQ_index_t dcache1_read_kill_1_LQ_index;
+
+    // invalidation interface:
+    logic dcache0_inv_valid;
+    block_addr_t dcache0_inv_block_addr;
+	logic dcache0_evict_valid;
+    block_addr_t dcache0_evict_block_addr;
+
+    logic dcache1_inv_valid;
+    block_addr_t dcache1_inv_block_addr;
+	logic dcache1_evict_valid;
+    block_addr_t dcache1_evict_block_addr;
+
+    // halt interface:
+   	logic dcache0_halt;
+   	logic dcache1_halt;
+
+	// imem interfaces:
+
+	// imem0:
+	logic imem0_REN;
+    block_addr_t imem0_block_addr;
+    logic imem0_hit;
+    word_t [1:0] imem0_load;
+
+	// imem1:
+	logic imem1_REN;
+    block_addr_t imem1_block_addr;
+    logic imem1_hit;
+    word_t [1:0] imem1_load;
+
+	// dbus interfaces:
+
+	// dbus0 req:
+	logic dbus0_req_valid;
+	block_addr_t dbus0_req_block_addr;
+	logic dbus0_req_exclusive;
+	MOESI_state_t dbus0_req_curr_state;
+
+    // dbus0 resp:
+    logic dbus0_resp_valid;
+    block_addr_t dbus0_resp_block_addr;
+    word_t [1:0] dbus0_resp_data;
+    logic dbus0_resp_need_block;
+    MOESI_state_t dbus0_resp_new_state;
+    
+	// dbus1 req:
+    logic dbus1_req_valid;
+    block_addr_t dbus1_req_block_addr;
+    logic dbus1_req_exclusive;
+    MOESI_state_t dbus1_req_curr_state;
+    
+	// dbus1 resp:
+    logic dbus1_resp_valid;
+    block_addr_t dbus1_resp_block_addr;
+    word_t [1:0] dbus1_resp_data;
+    logic dbus1_resp_need_block;
+    MOESI_state_t dbus1_resp_new_state;
+
+    // snoop0 req:
+    logic snoop0_req_valid;
+    block_addr_t snoop0_req_block_addr;
+    logic snoop0_req_exclusive;
+    MOESI_state_t snoop0_req_curr_state;
+
+    // snoop0 resp:
+    logic snoop0_resp_valid;
+    block_addr_t snoop0_resp_block_addr;
+    word_t [1:0] snoop0_resp_data;
+    logic snoop0_resp_present;
+    logic snoop0_resp_need_block;
+    MOESI_state_t snoop0_resp_new_state;
+
+    // snoop1 req:
+    logic snoop1_req_valid;
+    block_addr_t snoop1_req_block_addr;
+    logic snoop1_req_exclusive;
+    MOESI_state_t snoop1_req_curr_state;
+
+    // snoop1 resp:
+    logic snoop1_resp_valid;
+    block_addr_t snoop1_resp_block_addr;
+    word_t [1:0] snoop1_resp_data;
+    logic snoop1_resp_present;
+    logic snoop1_resp_need_block;
+    MOESI_state_t snoop1_resp_new_state;
+
+	// dmem interfaces:
+
+    // dmem0 read req;
+    logic dmem0_read_req_valid;
+    block_addr_t dmem0_read_req_block_addr;
+
+    // dmem0 read resp:
+    logic dmem0_read_resp_valid;
+    word_t [1:0] dmem0_read_resp_data;
+
+    // dmem1 read req:
+    logic dmem1_read_req_valid;
+    block_addr_t dmem1_read_req_block_addr;
+
+    // dmem1 read resp:
+    logic dmem1_read_resp_valid;
+    word_t [1:0] dmem1_read_resp_data;
+
+    // dmem0 write req:
+    logic dmem0_write_req_valid;
+    block_addr_t dmem0_write_req_block_addr;
+    word_t [1:0] dmem0_write_req_data;
+    logic dmem0_write_req_slow_down;
+
+    // dmem1 write req:
+    logic dmem1_write_req_valid;
+    block_addr_t dmem1_write_req_block_addr;
+    word_t [1:0] dmem1_write_req_data;
+    logic dmem1_write_req_slow_down;
+
+	// flushed:
+    logic snoop_dcache0_flushed;
+    logic snoop_dcache1_flushed;
+    logic dual_mem_controller_flushed;
+
+	// core0:
+	core #(
+		.PC_RESET_VAL(16'h0000)
+	) CORE0 ( 
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(core0_DUT_error),
+
+		.icache_hit(icache0_hit),
+		.icache_load(icache0_load),
+		.icache_REN(icache0_REN),
+		.icache_addr(icache0_addr),
+		.icache_halt(icache0_halt),
+		
+		.dcache_read_req_valid(dcache0_read_req_valid),
+		.dcache_read_req_LQ_index(dcache0_read_req_LQ_index),
+		.dcache_read_req_addr(dcache0_read_req_addr),
+		.dcache_read_req_linked(dcache0_read_req_linked),
+		.dcache_read_req_conditional(dcache0_read_req_conditional),
+		.dcache_read_req_blocked(dcache0_read_req_blocked),
+
+		.dcache_read_resp_valid(dcache0_read_resp_valid),
+		.dcache_read_resp_LQ_index(dcache0_read_resp_LQ_index),
+		.dcache_read_resp_data(dcache0_read_resp_data),
+
+		.dcache_write_req_valid(dcache0_write_req_valid),
+		.dcache_write_req_addr(dcache0_write_req_addr),
+		.dcache_write_req_data(dcache0_write_req_data),
+		.dcache_write_req_conditional(dcache0_write_req_conditional),
+		.dcache_write_req_blocked(dcache0_write_req_blocked),
+
+		.dcache_read_kill_0_valid(dcache0_read_kill_0_valid),
+		.dcache_read_kill_0_LQ_index(dcache0_read_kill_0_LQ_index),
+		.dcache_read_kill_1_valid(dcache0_read_kill_1_valid),
+		.dcache_read_kill_1_LQ_index(dcache0_read_kill_1_LQ_index),
+
+		.dcache_inv_valid(dcache0_inv_valid),
+		.dcache_inv_block_addr(dcache0_inv_block_addr),
+
+		.dcache_evict_valid(dcache0_evict_valid),
+		.dcache_evict_block_addr(dcache0_evict_block_addr),
+
+		.dcache_halt(dcache0_halt)
+	);
+
+	// icache0
+	icache ICACHE0 (
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(icache0_DUT_error),
+
+		.icache_REN(icache0_REN),
+		.icache_addr(icache0_addr),
+		.icache_halt(icache0_halt),
+		.icache_hit(icache0_hit),
+		.icache_load(icache0_load),
+
+		.imem_REN(imem0_REN),
+		.imem_block_addr(imem0_block_addr),
+		.imem_hit(imem0_hit),
+		.imem_load(imem0_load)
+	);
+
+	// snoop_dcache0
+	snoop_dcache SNOOP_DCACHE0 (
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(snoop_dcache0_DUT_error),
+
+		.dcache_read_req_valid(dcache0_read_req_valid),
+		.dcache_read_req_LQ_index(dcache0_read_req_LQ_index),
+		.dcache_read_req_addr(dcache0_read_req_addr),
+		.dcache_read_req_linked(dcache0_read_req_linked),
+		.dcache_read_req_conditional(dcache0_read_req_conditional),
+		.dcache_read_req_blocked(dcache0_read_req_blocked),
+
+		.dcache_read_resp_valid(dcache0_read_resp_valid),
+		.dcache_read_resp_LQ_index(dcache0_read_resp_LQ_index),
+		.dcache_read_resp_data(dcache0_read_resp_data),
+
+		.dcache_write_req_valid(dcache0_write_req_valid),
+		.dcache_write_req_addr(dcache0_write_req_addr),
+		.dcache_write_req_data(dcache0_write_req_data),
+		.dcache_write_req_conditional(dcache0_write_req_conditional),
+		.dcache_write_req_blocked(dcache0_write_req_blocked),
+
+		.dcache_read_kill_0_valid(dcache0_read_kill_0_valid),
+		.dcache_read_kill_0_LQ_index(dcache0_read_kill_0_LQ_index),
+		.dcache_read_kill_1_valid(dcache0_read_kill_1_valid),
+		.dcache_read_kill_1_LQ_index(dcache0_read_kill_1_LQ_index),
+
+		.dcache_inv_valid(dcache0_inv_valid),
+		.dcache_inv_block_addr(dcache0_inv_block_addr),
+
+		.dcache_evict_valid(dcache0_evict_valid),
+		.dcache_evict_block_addr(dcache0_evict_block_addr),
+
+		.dcache_halt(dcache0_halt),
+
+		.dbus_req_valid(dbus0_req_valid),
+		.dbus_req_block_addr(dbus0_req_block_addr),
+		.dbus_req_exclusive(dbus0_req_exclusive),
+		.dbus_req_curr_state(dbus0_req_curr_state),
+
+		.dbus_resp_valid(dbus0_resp_valid),
+		.dbus_resp_block_addr(dbus0_resp_block_addr),
+		.dbus_resp_data(dbus0_resp_data),
+		.dbus_resp_need_block(dbus0_resp_need_block),
+		.dbus_resp_new_state(dbus0_resp_new_state),
+
+		.snoop_req_valid(snoop0_req_valid),
+		.snoop_req_block_addr(snoop0_req_block_addr),
+		.snoop_req_exclusive(snoop0_req_exclusive),
+		.snoop_req_curr_state(snoop0_req_curr_state),
+
+		.snoop_resp_valid(snoop0_resp_valid),
+		.snoop_resp_block_addr(snoop0_resp_block_addr),
+		.snoop_resp_data(snoop0_resp_data),
+		.snoop_resp_present(snoop0_resp_present),
+		.snoop_resp_need_block(snoop0_resp_need_block),
+		.snoop_resp_new_state(snoop0_resp_new_state),
+
+		.dmem_write_req_valid(dmem0_write_req_valid),
+		.dmem_write_req_block_addr(dmem0_write_req_block_addr),
+		.dmem_write_req_data(dmem0_write_req_data),
+		.dmem_write_req_slow_down(dmem0_write_req_slow_down),
+
+		.flushed(snoop_dcache0_flushed)
+	);
+
+	// core1:
+	core #(
+		.PC_RESET_VAL(16'h0200)
+	) CORE1 ( 
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(core1_DUT_error),
+
+		.icache_hit(icache1_hit),
+		.icache_load(icache1_load),
+		.icache_REN(icache1_REN),
+		.icache_addr(icache1_addr),
+		.icache_halt(icache1_halt),
+		
+		.dcache_read_req_valid(dcache1_read_req_valid),
+		.dcache_read_req_LQ_index(dcache1_read_req_LQ_index),
+		.dcache_read_req_addr(dcache1_read_req_addr),
+		.dcache_read_req_linked(dcache1_read_req_linked),
+		.dcache_read_req_conditional(dcache1_read_req_conditional),
+		.dcache_read_req_blocked(dcache1_read_req_blocked),
+
+		.dcache_read_resp_valid(dcache1_read_resp_valid),
+		.dcache_read_resp_LQ_index(dcache1_read_resp_LQ_index),
+		.dcache_read_resp_data(dcache1_read_resp_data),
+
+		.dcache_write_req_valid(dcache1_write_req_valid),
+		.dcache_write_req_addr(dcache1_write_req_addr),
+		.dcache_write_req_data(dcache1_write_req_data),
+		.dcache_write_req_conditional(dcache1_write_req_conditional),
+		.dcache_write_req_blocked(dcache1_write_req_blocked),
+
+		.dcache_read_kill_0_valid(dcache1_read_kill_0_valid),
+		.dcache_read_kill_0_LQ_index(dcache1_read_kill_0_LQ_index),
+		.dcache_read_kill_1_valid(dcache1_read_kill_1_valid),
+		.dcache_read_kill_1_LQ_index(dcache1_read_kill_1_LQ_index),
+
+		.dcache_inv_valid(dcache1_inv_valid),
+		.dcache_inv_block_addr(dcache1_inv_block_addr),
+
+		.dcache_evict_valid(dcache1_evict_valid),
+		.dcache_evict_block_addr(dcache1_evict_block_addr),
+
+		.dcache_halt(dcache1_halt)
+	);
+
+	// icache1
+	icache ICACHE1 (
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(icache1_DUT_error),
+
+		.icache_REN(icache1_REN),
+		.icache_addr(icache1_addr),
+		.icache_halt(icache1_halt),
+		.icache_hit(icache1_hit),
+		.icache_load(icache1_load),
+
+		.imem_REN(imem1_REN),
+		.imem_block_addr(imem1_block_addr),
+		.imem_hit(imem1_hit),
+		.imem_load(imem1_load)
+	);
+
+	// snoop_dcache1
+	snoop_dcache SNOOP_DCACHE1 (
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(snoop_dcache1_DUT_error),
+
+		.dcache_read_req_valid(dcache1_read_req_valid),
+		.dcache_read_req_LQ_index(dcache1_read_req_LQ_index),
+		.dcache_read_req_addr(dcache1_read_req_addr),
+		.dcache_read_req_linked(dcache1_read_req_linked),
+		.dcache_read_req_conditional(dcache1_read_req_conditional),
+		.dcache_read_req_blocked(dcache1_read_req_blocked),
+
+		.dcache_read_resp_valid(dcache1_read_resp_valid),
+		.dcache_read_resp_LQ_index(dcache1_read_resp_LQ_index),
+		.dcache_read_resp_data(dcache1_read_resp_data),
+
+		.dcache_write_req_valid(dcache1_write_req_valid),
+		.dcache_write_req_addr(dcache1_write_req_addr),
+		.dcache_write_req_data(dcache1_write_req_data),
+		.dcache_write_req_conditional(dcache1_write_req_conditional),
+		.dcache_write_req_blocked(dcache1_write_req_blocked),
+
+		.dcache_read_kill_0_valid(dcache1_read_kill_0_valid),
+		.dcache_read_kill_0_LQ_index(dcache1_read_kill_0_LQ_index),
+		.dcache_read_kill_1_valid(dcache1_read_kill_1_valid),
+		.dcache_read_kill_1_LQ_index(dcache1_read_kill_1_LQ_index),
+
+		.dcache_inv_valid(dcache1_inv_valid),
+		.dcache_inv_block_addr(dcache1_inv_block_addr),
+
+		.dcache_evict_valid(dcache1_evict_valid),
+		.dcache_evict_block_addr(dcache1_evict_block_addr),
+
+		.dcache_halt(dcache1_halt),
+
+		.dbus_req_valid(dbus1_req_valid),
+		.dbus_req_block_addr(dbus1_req_block_addr),
+		.dbus_req_exclusive(dbus1_req_exclusive),
+		.dbus_req_curr_state(dbus1_req_curr_state),
+
+		.dbus_resp_valid(dbus1_resp_valid),
+		.dbus_resp_block_addr(dbus1_resp_block_addr),
+		.dbus_resp_data(dbus1_resp_data),
+		.dbus_resp_need_block(dbus1_resp_need_block),
+		.dbus_resp_new_state(dbus1_resp_new_state),
+
+		.snoop_req_valid(snoop1_req_valid),
+		.snoop_req_block_addr(snoop1_req_block_addr),
+		.snoop_req_exclusive(snoop1_req_exclusive),
+		.snoop_req_curr_state(snoop1_req_curr_state),
+
+		.snoop_resp_valid(snoop1_resp_valid),
+		.snoop_resp_block_addr(snoop1_resp_block_addr),
+		.snoop_resp_data(snoop1_resp_data),
+		.snoop_resp_present(snoop1_resp_present),
+		.snoop_resp_need_block(snoop1_resp_need_block),
+		.snoop_resp_new_state(snoop1_resp_new_state),
+
+		.dmem_write_req_valid(dmem1_write_req_valid),
+		.dmem_write_req_block_addr(dmem1_write_req_block_addr),
+		.dmem_write_req_data(dmem1_write_req_data),
+		.dmem_write_req_slow_down(dmem1_write_req_slow_down),
+
+		.flushed(snoop_dcache1_flushed)
+	);
+
+	// bus controller
+	bus_controller BUS_CONTROLLER (
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(bus_controller_DUT_error),
+
+		.dbus0_req_valid(dbus0_req_valid),
+		.dbus0_req_block_addr(dbus0_req_block_addr),
+		.dbus0_req_exclusive(dbus0_req_exclusive),
+		.dbus0_req_curr_state(dbus0_req_curr_state),
+
+		.dbus0_resp_valid(dbus0_resp_valid),
+		.dbus0_resp_block_addr(dbus0_resp_block_addr),
+		.dbus0_resp_data(dbus0_resp_data),
+		.dbus0_resp_need_block(dbus0_resp_need_block),
+		.dbus0_resp_new_state(dbus0_resp_new_state),
+
+		.dbus1_req_valid(dbus1_req_valid),
+		.dbus1_req_block_addr(dbus1_req_block_addr),
+		.dbus1_req_exclusive(dbus1_req_exclusive),
+		.dbus1_req_curr_state(dbus1_req_curr_state),
+
+		.dbus1_resp_valid(dbus1_resp_valid),
+		.dbus1_resp_block_addr(dbus1_resp_block_addr),
+		.dbus1_resp_data(dbus1_resp_data),
+		.dbus1_resp_need_block(dbus1_resp_need_block),
+		.dbus1_resp_new_state(dbus1_resp_new_state),
+
+		.snoop0_req_valid(snoop0_req_valid),
+		.snoop0_req_block_addr(snoop0_req_block_addr),
+		.snoop0_req_exclusive(snoop0_req_exclusive),
+		.snoop0_req_curr_state(snoop0_req_curr_state),
+
+		.snoop0_resp_valid(snoop0_resp_valid),
+		.snoop0_resp_block_addr(snoop0_resp_block_addr),
+		.snoop0_resp_data(snoop0_resp_data),
+		.snoop0_resp_present(snoop0_resp_present),
+		.snoop0_resp_need_block(snoop0_resp_need_block),
+		.snoop0_resp_new_state(snoop0_resp_new_state),
+
+		.snoop1_req_valid(snoop1_req_valid),
+		.snoop1_req_block_addr(snoop1_req_block_addr),
+		.snoop1_req_exclusive(snoop1_req_exclusive),
+		.snoop1_req_curr_state(snoop1_req_curr_state),
+
+		.snoop1_resp_valid(snoop1_resp_valid),
+		.snoop1_resp_block_addr(snoop1_resp_block_addr),
+		.snoop1_resp_data(snoop1_resp_data),
+		.snoop1_resp_present(snoop1_resp_present),
+		.snoop1_resp_need_block(snoop1_resp_need_block),
+		.snoop1_resp_new_state(snoop1_resp_new_state),
+
+		.dmem0_read_req_valid(dmem0_read_req_valid),
+		.dmem0_read_req_block_addr(dmem0_read_req_block_addr),
+
+		.dmem0_read_resp_valid(dmem0_read_resp_valid),
+		.dmem0_read_resp_data(dmem0_read_resp_data),
+
+		.dmem1_read_req_valid(dmem1_read_req_valid),
+		.dmem1_read_req_block_addr(dmem1_read_req_block_addr),
+
+		.dmem1_read_resp_valid(dmem1_read_resp_valid),
+		.dmem1_read_resp_data(dmem1_read_resp_data)
+	);
+
+	// dual mem controller
+	dual_mem_controller DUAL_MEM_CONTROLLER (
+		.CLK(CPUCLK),
+		.nRST(nRST),
+
+		.DUT_error(dual_mem_controller_DUT_error),
+
+		.prif(prif),
+
+		.imem0_REN(imem0_REN),
+		.imem0_block_addr(imem0_block_addr),
+		.imem0_hit(imem0_hit),
+		.imem0_load(imem0_load),
+
+		.imem1_REN(imem1_REN),
+		.imem1_block_addr(imem1_block_addr),
+		.imem1_hit(imem1_hit),
+		.imem1_load(imem1_load),
+
+		.dmem0_read_req_valid(dmem0_read_req_valid),
+		.dmem0_read_req_block_addr(dmem0_read_req_block_addr),
+
+		.dmem1_read_req_valid(dmem1_read_req_valid),
+		.dmem1_read_req_block_addr(dmem1_read_req_block_addr),
+
+		.dmem0_read_resp_valid(dmem0_read_resp_valid),
+		.dmem0_read_resp_data(dmem0_read_resp_data),
+
+		.dmem1_read_resp_valid(dmem1_read_resp_valid),
+		.dmem1_read_resp_data(dmem1_read_resp_data),
+
+		.dmem0_write_req_valid(dmem0_write_req_valid),
+		.dmem0_write_req_block_addr(dmem0_write_req_block_addr),
+		.dmem0_write_req_data(dmem0_write_req_data),
+		.dmem0_write_req_slow_down(dmem0_write_req_slow_down),
+
+		.dmem1_write_req_valid(dmem1_write_req_valid),
+		.dmem1_write_req_block_addr(dmem1_write_req_block_addr),
+		.dmem1_write_req_data(dmem1_write_req_data),
+		.dmem1_write_req_slow_down(dmem1_write_req_slow_down),
+
+		.dcache0_flushed(snoop_dcache0_flushed),
+		.dcache1_flushed(snoop_dcache1_flushed),
+		.mem_controller_flushed(dual_mem_controller_flushed)
+	);
+
+	// system interface connections
+	assign syif.halt = dual_mem_controller_flushed;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// system tb connections: 
