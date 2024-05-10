@@ -27,6 +27,10 @@
                     - direct to dbus resp or dmem read req + dmem read resp Q
                 - return dbus resp or dmem read resp @ dmem read resp Q resp head
                 - accept dmem read resp @ dmem resp Q return head
+
+        A given request follows:
+            - dbus0 req -> snoop1 req -> snoop1 resp -> (dmem0 req -> dmem0 resp) -> dbus0 resp
+            - dbus1 req -> snoop0 req -> snoop0 resp -> (dmem1 req -> dmem1 resp) -> dbus1 resp
 */
 
 `include "core_types.vh"
@@ -123,7 +127,7 @@ module bus_controller (
 
     // dmem1 read resp:
     input logic dmem1_read_resp_valid,
-    input word_t [1:0] dmem1_read_resp_data,
+    input word_t [1:0] dmem1_read_resp_data
 );
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // DUT error:
@@ -138,6 +142,16 @@ module bus_controller (
         else begin
             DUT_error <= next_DUT_error;
         end
+    end
+
+    // need separate grand and resp DUT_error's since separate comb blocks
+    logic grant_DUT_error;
+    logic resp_DUT_error;
+
+    always_comb begin
+
+        // follow grant and resp DUT_error's
+        next_DUT_error = grant_DUT_error | resp_DUT_error;
     end
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,11 +272,14 @@ module bus_controller (
         // default outputs: //
         //////////////////////
 
+        // DUT error
+        grant_DUT_error = 1'b0;
+
         // dbus0 req Q:
         next_dbus0_req_Q = dbus0_req_Q;
 
         // dbus1 req Q:
-        next_dbus1_req_Q = dbus1_req_Q:
+        next_dbus1_req_Q = dbus1_req_Q;
 
         // dbus0 req Q ptr's:
         next_dbus0_req_Q_head_ptr = dbus0_req_Q_head_ptr;
@@ -337,13 +354,59 @@ module bus_controller (
             // dbus1 req Q:
                 // check snoop1 resp for standard snoop state transition
                 // check snoop0 resp for inv piggybackable
+            // inv piggybackable:
+                // load/~exclusive: any new_state piggybackable
+                // store/exclusive: new_state E or M piggybackable
+                // this is a perf feature, prevent redundant bus ops
 
         // snoop0 resp:
             // check dbus0 req Q for standard snoop state transition
             // check dbus1 req Q for inv piggybackable
         if (snoop0_resp_valid) begin
 
-            
+            // check dbus0 req Q for standard snoop state transition
+            for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
+
+                // check block addr match
+                if (dbus0_req_Q[i].block_addr == snoop0_resp_block_addr) begin
+
+                    // if new snooper state M, invalidate curr_state
+                    if (snoop0_resp_new_state == MOESI_M) begin
+                        next_dbus0_req_Q[i].curr_state = MOESI_I;
+                    end
+                end
+            end
+
+            // check dbus1 req Q for inv piggybackable
+            for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
+
+                // check block addr match
+                if (dbus1_req_Q[i].block_addr == snoop0_resp_block_addr) begin
+
+                    // store/exclusive: new_state E or M piggybackable
+                    if (dbus1_req_Q[i].exclusive) begin
+
+                        // check exclusive states
+                        if (snoop0_resp_new_state.exclusive) begin
+
+                            // invalidate entry
+                            next_dbus1_req_Q[i].valid = 1'b0;
+                        end
+
+                        // otherwise, can update new_state
+                        else begin
+                            next_dbus1_req_Q[i].curr_state = snoop0_resp_new_state;
+                        end
+                    end
+
+                    // otherwise, load/~exclusive: any new_state piggybackable
+                    else begin
+
+                        // invalidate entry
+                        next_dbus1_req_Q[i].valid = 1'b0;
+                    end
+                end
+            end
         end
         
         // snoop1 resp:
@@ -351,6 +414,49 @@ module bus_controller (
             // check dbus0 req Q for inv piggybackable
         if (snoop1_resp_valid) begin
 
+            // check dbus1 req Q for standard snoop state transition
+            for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
+
+                // check block addr match
+                if (dbus1_req_Q[i].block_addr == snoop1_resp_block_addr) begin
+
+                    // if new snooper state M, invalidate curr_state
+                    if (snoop1_resp_new_state == MOESI_M) begin
+                        next_dbus1_req_Q[i].curr_state = MOESI_I;
+                    end
+                end
+            end
+
+            // check dbus0 req Q for inv piggybackable
+            for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
+
+                // check block addr match
+                if (dbus0_req_Q[i].block_addr == snoop1_resp_block_addr) begin
+
+                    // store/exclusive: new_state E or M piggybackable
+                    if (dbus0_req_Q[i].exclusive) begin
+
+                        // check exclusive states
+                        if (snoop1_resp_new_state.exclusive) begin
+
+                            // invalidate entry
+                            next_dbus0_req_Q[i].valid = 1'b0;
+                        end
+
+                        // otherwise, can update new_state
+                        else begin
+                            next_dbus0_req_Q[i].curr_state = snoop1_resp_new_state;
+                        end
+                    end
+
+                    // otherwise, load/~exclusive: any new_state piggybackable
+                    else begin
+
+                        // invalidate entry
+                        next_dbus0_req_Q[i].valid = 1'b0;
+                    end
+                end
+            end
         end
 
         //////////////////
@@ -661,11 +767,11 @@ module bus_controller (
         if (
             next_dbus0_req_Q_tail_ptr.msb != next_dbus0_req_Q_head_ptr.msb
             &
-            next_dbus0_req_Q_tail_ptr.index != next_dbus0_req_Q_head_ptr.index + 1
+            next_dbus0_req_Q_tail_ptr.index == next_dbus0_req_Q_head_ptr.index + 1
         ) begin
             $display("bus_controller: ERROR: dbus0 req Q tail surpasses head");
             $display("\t@: %0t",$realtime);
-            next_DUT_error = 1'b1;
+            grant_DUT_error = 1'b1;
         end
 
         // check dbus1 req Q tail surpasses head
@@ -674,11 +780,11 @@ module bus_controller (
         if (
             next_dbus1_req_Q_tail_ptr.msb != next_dbus1_req_Q_head_ptr.msb
             &
-            next_dbus1_req_Q_tail_ptr.index != next_dbus1_req_Q_head_ptr.index + 1
+            next_dbus1_req_Q_tail_ptr.index == next_dbus1_req_Q_head_ptr.index + 1
         ) begin
             $display("bus_controller: ERROR: dbus1 req Q tail surpasses head");
             $display("\t@: %0t",$realtime);
-            next_DUT_error = 1'b1;
+            grant_DUT_error = 1'b1;
         end
     end
 
@@ -709,14 +815,18 @@ module bus_controller (
     } dmem_read_resp_Q_ptr_t;
 
     // dmem0 read resp Q ptr's
-    dmem_read_resp_Q_ptr_t dmem0_read_resp_Q_head_ptr;
-    dmem_read_resp_Q_ptr_t next_dmem0_read_resp_Q_head_ptr;
+    dmem_read_resp_Q_ptr_t dmem0_read_resp_Q_resp_head_ptr;
+    dmem_read_resp_Q_ptr_t next_dmem0_read_resp_Q_resp_head_ptr;
+    dmem_read_resp_Q_ptr_t dmem0_read_resp_Q_return_head_ptr;
+    dmem_read_resp_Q_ptr_t next_dmem0_read_resp_Q_return_head_ptr;
     dmem_read_resp_Q_ptr_t dmem0_read_resp_Q_tail_ptr;
     dmem_read_resp_Q_ptr_t next_dmem0_read_resp_Q_tail_ptr;
 
     // dmem1 read resp Q ptr's
-    dmem_read_resp_Q_ptr_t dmem1_read_resp_Q_head_ptr;
-    dmem_read_resp_Q_ptr_t next_dmem1_read_resp_Q_head_ptr;
+    dmem_read_resp_Q_ptr_t dmem1_read_resp_Q_resp_head_ptr;
+    dmem_read_resp_Q_ptr_t next_dmem1_read_resp_Q_resp_head_ptr;
+    dmem_read_resp_Q_ptr_t dmem1_read_resp_Q_return_head_ptr;
+    dmem_read_resp_Q_ptr_t next_dmem1_read_resp_Q_return_head_ptr;
     dmem_read_resp_Q_ptr_t dmem1_read_resp_Q_tail_ptr;
     dmem_read_resp_Q_ptr_t next_dmem1_read_resp_Q_tail_ptr;
 
@@ -754,9 +864,11 @@ module bus_controller (
             dmem0_read_resp_Q <= '0;
             dmem1_read_resp_Q <= '0;
 
-            dmem0_read_resp_Q_head_ptr <= '0;
+            dmem0_read_resp_Q_resp_head_ptr <= '0;
+            dmem0_read_resp_Q_return_head_ptr <= '0;
             dmem0_read_resp_Q_tail_ptr <= '0;
-            dmem1_read_resp_Q_head_ptr <= '0;
+            dmem1_read_resp_Q_resp_head_ptr <= '0;
+            dmem1_read_resp_Q_return_head_ptr <= '0;
             dmem1_read_resp_Q_tail_ptr <= '0;
 
             snoop0_resp_reg_ready_now <= 1'b0;
@@ -777,9 +889,11 @@ module bus_controller (
             dmem0_read_resp_Q <= next_dmem0_read_resp_Q;
             dmem1_read_resp_Q <= next_dmem1_read_resp_Q;
 
-            dmem0_read_resp_Q_head_ptr <= next_dmem0_read_resp_Q_head_ptr;
+            dmem0_read_resp_Q_resp_head_ptr <= next_dmem0_read_resp_Q_resp_head_ptr;
+            dmem0_read_resp_Q_return_head_ptr <= next_dmem0_read_resp_Q_return_head_ptr;
             dmem0_read_resp_Q_tail_ptr <= next_dmem0_read_resp_Q_tail_ptr;
-            dmem1_read_resp_Q_head_ptr <= next_dmem1_read_resp_Q_head_ptr;
+            dmem1_read_resp_Q_resp_head_ptr <= next_dmem1_read_resp_Q_resp_head_ptr;
+            dmem1_read_resp_Q_return_head_ptr <= next_dmem1_read_resp_Q_return_head_ptr;
             dmem1_read_resp_Q_tail_ptr <= next_dmem1_read_resp_Q_tail_ptr;
 
             snoop0_resp_reg_ready_now <= next_snoop0_resp_reg_ready_now;
@@ -805,11 +919,420 @@ module bus_controller (
         // default outputs: //
         //////////////////////
 
+        // DUT error
+        resp_DUT_error = 1'b0;
+
         // dbus0 resp:
             // invalid from snoop1 resp reg
         dbus0_resp_valid = 1'b0;
         dbus0_resp_block_addr = snoop1_resp_reg_block_addr;
-        dbus0_resp_
+        dbus0_resp_data = snoop1_resp_reg_data;
+        dbus0_resp_need_block = snoop1_resp_reg_need_block;
+        dbus0_resp_new_state = snoop1_resp_reg_new_state;
+
+        // dbus1 resp:
+            // invalid from snoop0 resp reg
+        dbus1_resp_valid = 1'b0;
+        dbus1_resp_block_addr = snoop0_resp_reg_block_addr;
+        dbus1_resp_data = snoop0_resp_reg_data;
+        dbus1_resp_need_block = snoop0_resp_reg_need_block;
+        dbus1_resp_new_state = snoop0_resp_reg_new_state;
+
+        // dmem0 read req:
+            // take from snoop1 resp reg
+        dmem0_read_req_valid = snoop1_resp_reg_need_mem;
+        dmem0_read_req_block_addr = snoop1_resp_reg_block_addr;
+
+        // dmem1 read req:
+            // take from snoop0 resp reg
+        dmem1_read_req_valid = snoop0_resp_reg_need_mem;
+        dmem1_read_req_block_addr = snoop0_resp_reg_block_addr;
+
+        // dmem0 read resp Q
+        next_dmem0_read_resp_Q = dmem0_read_resp_Q;
+
+        // dmem1 read resp Q
+        next_dmem1_read_resp_Q = dmem1_read_resp_Q;
+
+        // dmem0 read resp Q ptr's
+        next_dmem0_read_resp_Q_resp_head_ptr = dmem0_read_resp_Q_resp_head_ptr;
+        next_dmem0_read_resp_Q_return_head_ptr = dmem0_read_resp_Q_return_head_ptr;
+        next_dmem0_read_resp_Q_tail_ptr = dmem0_read_resp_Q_tail_ptr;
+
+        // dmem1 read resp Q ptr's
+        next_dmem1_read_resp_Q_resp_head_ptr = dmem1_read_resp_Q_resp_head_ptr;
+        next_dmem1_read_resp_Q_return_head_ptr = dmem1_read_resp_Q_return_head_ptr;
+        next_dmem1_read_resp_Q_tail_ptr = dmem1_read_resp_Q_tail_ptr;
+
+        // latched snoop0 resp
+            // ready now if valid AND (present OR don't need block)
+            // otherwise need mem
+            // everything else comes from snoop resp itself
+        if (snoop0_resp_valid) begin
+            if (snoop0_resp_present | ~snoop0_resp_need_block) begin
+                next_snoop0_resp_reg_ready_now = 1'b1;
+                next_snoop0_resp_reg_need_mem = 1'b0;
+            end
+            else begin
+                next_snoop0_resp_reg_ready_now = 1'b0;
+                next_snoop0_resp_reg_need_mem = 1'b1;
+            end
+        end
+        else begin
+            next_snoop0_resp_reg_ready_now = 1'b0;
+            next_snoop0_resp_reg_need_mem = 1'b0;
+        end
+        next_snoop0_resp_reg_block_addr = snoop0_resp_block_addr;
+        next_snoop0_resp_reg_data = snoop0_resp_data;
+        next_snoop0_resp_reg_need_block = snoop0_resp_need_block;
+        next_snoop0_resp_reg_new_state = snoop0_resp_new_state;
+
+        // latched snoop1 resp
+            // ready now if valid AND (present OR don't need block)
+            // otherwise need mem
+            // everything else comes from snoop resp itself
+        if (snoop1_resp_valid) begin
+            if (snoop1_resp_present | ~snoop1_resp_need_block) begin
+                next_snoop1_resp_reg_ready_now = 1'b1;
+                next_snoop1_resp_reg_need_mem = 1'b0;
+            end
+            else begin
+                next_snoop1_resp_reg_ready_now = 1'b0;
+                next_snoop1_resp_reg_need_mem = 1'b1;
+            end
+        end
+        else begin
+            next_snoop1_resp_reg_ready_now = 1'b0;
+            next_snoop1_resp_reg_need_mem = 1'b0;
+        end
+        next_snoop1_resp_reg_block_addr = snoop1_resp_block_addr;
+        next_snoop1_resp_reg_data = snoop1_resp_data;
+        next_snoop1_resp_reg_need_block = snoop1_resp_need_block;
+        next_snoop1_resp_reg_new_state = snoop1_resp_new_state;
+
+        /////////////////////////////
+        // dmem read resp Q enQ's: //
+        /////////////////////////////
+
+        // dmem0 read resp Q enQ
+            // from snoop1 resp reg
+        if (snoop1_resp_reg_need_mem) begin
+
+            // enQ @ tail
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_tail_ptr.index]
+            .valid
+            = 
+                1'b1
+            ;
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_tail_ptr.index]
+            .returned
+            = 
+                1'b0
+            ;
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_tail_ptr.index]
+            .block_addr
+            = 
+                snoop1_resp_reg_block_addr
+            ;
+            // data is don't care
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_tail_ptr.index]
+            .new_state
+            = 
+                snoop1_resp_reg_new_state
+            ;
+
+            // increment tail
+            next_dmem0_read_resp_Q_tail_ptr = dmem0_read_resp_Q_tail_ptr + 1;
+        end
+
+        // dmem1 read resp Q enQ
+            // from snoop0 resp reg
+        if (snoop0_resp_reg_need_mem) begin
+
+            // enQ @ tail
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_tail_ptr.index]
+            .valid
+            = 
+                1'b1
+            ;
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_tail_ptr.index]
+            .returned
+            = 
+                1'b0
+            ;
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_tail_ptr.index]
+            .block_addr
+            = 
+                snoop0_resp_reg_block_addr
+            ;
+            // data is don't care
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_tail_ptr.index]
+            .new_state
+            = 
+                snoop0_resp_reg_new_state
+            ;
+
+            // increment tail
+            next_dmem1_read_resp_Q_tail_ptr = dmem0_read_resp_Q_tail_ptr + 1;
+        end
+
+        ////////////////////////////////
+        // dmem read resp Q return's: //
+        ////////////////////////////////
+
+        // dmem0 read resp Q return
+        if (dmem0_read_resp_valid) begin
+
+            // mark return head entry as returned
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_return_head_ptr.index]
+            .returned
+            = 
+                1'b1
+            ;
+
+            // accept dmem read resp data
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_return_head_ptr.index]
+            .returned
+            = 
+                dmem0_read_resp_data
+            ;
+
+            // increment return head
+            next_dmem0_read_resp_Q_return_head_ptr
+            =  
+                dmem0_read_resp_Q_return_head_ptr
+                + 1
+            ;
+        end
+
+        // dmem1 read resp Q return
+        if (dmem1_read_resp_valid) begin
+
+            // mark return head entry as returned
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_return_head_ptr.index]
+            .returned
+            = 
+                1'b1
+            ;
+
+            // accept dmem read resp data
+            next_dmem1_read_resp_Q
+            [dmem1_read_resp_Q_return_head_ptr.index]
+            .returned
+            = 
+                dmem1_read_resp_data
+            ;
+
+            // increment return head
+            next_dmem1_read_resp_Q_return_head_ptr
+            =  
+                dmem1_read_resp_Q_return_head_ptr
+                + 1
+            ;
+        end
+
+        //////////////////
+        // dbus resp's: //
+        //////////////////
+
+        // dbus0 resp:
+            // priority:
+                // snoop1 resp reg ready now 
+                // dmem0 read resp Q if valid and returned
+
+        // check snoop1 resp reg ready now
+        if (snoop1_resp_reg_ready_now) begin
+            dbus0_resp_valid = 1'b1;
+            dbus0_resp_block_addr = snoop1_resp_reg_block_addr;
+            dbus0_resp_data = snoop1_resp_reg_data;
+            dbus0_resp_need_block = snoop1_resp_reg_need_block;
+            dbus0_resp_new_state = snoop1_resp_reg_new_state;            
+        end
+
+        // otherwise, check dmem0 read resp Q resp head valid and returned
+        else if (
+            dmem0_read_resp_Q
+            [dmem0_read_resp_Q_resp_head_ptr.index]
+            .valid
+            &
+            dmem0_read_resp_Q
+            [dmem0_read_resp_Q_resp_head_ptr.index]
+            .returned
+        ) begin
+
+            // guaranteed need block
+            dbus0_resp_valid
+            = 
+                1'b1
+            ;
+            dbus0_resp_block_addr 
+            =
+                dmem0_read_resp_Q
+                [dmem0_read_resp_Q_resp_head_ptr.index]
+                .block_addr
+            ;
+            dbus0_resp_data 
+            =
+                dmem0_read_resp_Q
+                [dmem0_read_resp_Q_resp_head_ptr.index]
+                .data
+            ;
+            dbus0_resp_need_block 
+            =
+                1'b1
+            ;
+            dbus0_resp_new_state 
+            =
+                dmem0_read_resp_Q
+                [dmem0_read_resp_Q_resp_head_ptr.index]
+                .new_state
+            ;
+
+            // invalidate dmem0 read resp Q entry
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_resp_head_ptr.index]
+            .valid
+            =
+                1'b0
+            ;
+
+            // increment dmem0 read resp Q resp head
+            next_dmem0_read_resp_Q_resp_head_ptr = dmem0_read_resp_Q_resp_head_ptr + 1;
+        end
+
+        // dbus1 resp:
+            // priority:
+                // snoop0 resp reg ready now 
+                // dmem0 read resp Q if valid and returned
+
+        // check snoop0 resp reg ready now
+        if (snoop0_resp_reg_ready_now) begin
+            dbus1_resp_valid = 1'b1;
+            dbus1_resp_block_addr = snoop0_resp_reg_block_addr;
+            dbus1_resp_data = snoop0_resp_reg_data;
+            dbus1_resp_need_block = snoop0_resp_reg_need_block;
+            dbus1_resp_new_state = snoop0_resp_reg_new_state;            
+        end
+
+        // otherwise, check dmem0 read resp Q resp head valid and returned
+        else if (
+            dmem0_read_resp_Q
+            [dmem0_read_resp_Q_resp_head_ptr.index]
+            .valid
+            &
+            dmem0_read_resp_Q
+            [dmem0_read_resp_Q_resp_head_ptr.index]
+            .returned
+        ) begin
+
+            // guaranteed need block
+            dbus1_resp_valid
+            = 
+                1'b1
+            ;
+            dbus1_resp_block_addr 
+            =
+                dmem0_read_resp_Q
+                [dmem0_read_resp_Q_resp_head_ptr.index]
+                .block_addr
+            ;
+            dbus1_resp_data 
+            =
+                dmem0_read_resp_Q
+                [dmem0_read_resp_Q_resp_head_ptr.index]
+                .data
+            ;
+            dbus1_resp_need_block 
+            =
+                1'b1
+            ;
+            dbus1_resp_new_state 
+            =
+                dmem0_read_resp_Q
+                [dmem0_read_resp_Q_resp_head_ptr.index]
+                .new_state
+            ;
+
+            // invalidate dmem0 read resp Q entry
+            next_dmem0_read_resp_Q
+            [dmem0_read_resp_Q_resp_head_ptr.index]
+            .valid
+            =
+                1'b0
+            ;
+
+            // increment dmem0 read resp Q resp head
+            next_dmem0_read_resp_Q_resp_head_ptr = dmem0_read_resp_Q_resp_head_ptr + 1;
+        end
+
+        ///////////////////////////
+        // dmem resp Q overflow: //
+        ///////////////////////////
+            // check resp head's
+            // check return head's
+
+        // check dmem0 read resp Q tail surpasses resp head
+            // next tail msb != next resp head msb
+            // next tail index == next resp head index + 1
+        if (
+            next_dmem0_read_resp_Q_tail_ptr.msb != next_dmem0_read_resp_Q_resp_head_ptr.msb
+            &
+            next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_resp_head_ptr.index
+        ) begin
+            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("\t@: %0t",$realtime);
+            resp_DUT_error = 1'b1;
+        end
+
+        // check dmem1 read resp Q tail surpasses resp head
+            // next tail msb != next resp head msb
+            // next tail index == next resp head index + 1
+        if (
+            next_dmem1_read_resp_Q_tail_ptr.msb != next_dmem1_read_resp_Q_resp_head_ptr.msb
+            &
+            next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_resp_head_ptr.index
+        ) begin
+            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("\t@: %0t",$realtime);
+            resp_DUT_error = 1'b1;
+        end
+
+        // check dmem0 read resp Q tail surpasses resp head
+            // next tail msb != next resp head msb
+            // next tail index == next resp head index + 1
+        if (
+            next_dmem0_read_resp_Q_tail_ptr.msb != next_dmem0_read_resp_Q_return_head_ptr.msb
+            &
+            next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_return_head_ptr.index
+        ) begin
+            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("\t@: %0t",$realtime);
+            resp_DUT_error = 1'b1;
+        end
+
+        // check dmem1 read resp Q tail surpasses resp head
+            // next tail msb != next resp head msb
+            // next tail index == next resp head index + 1
+        if (
+            next_dmem1_read_resp_Q_tail_ptr.msb != next_dmem1_read_resp_Q_return_head_ptr.msb
+            &
+            next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_return_head_ptr.index
+        ) begin
+            $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
+            $display("\t@: %0t",$realtime);
+            resp_DUT_error = 1'b1;
+        end
     end
 
 endmodule
