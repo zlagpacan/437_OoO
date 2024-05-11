@@ -1849,7 +1849,7 @@ module snoop_dcache (
                     next_load_MSHR_by_LQ_index[i].fulfilled = 1'b1;
                     
                     // fill in read block
-                    next_load_MSHR_by_LQ_index[i].read_block = dbus_resp_block_addr;
+                    next_load_MSHR_by_LQ_index[i].read_block = dbus_resp_data;
 
                     // fill in state
                     next_load_MSHR_by_LQ_index[i].new_state = dbus_resp_new_state;
