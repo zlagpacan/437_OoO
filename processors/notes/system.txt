@@ -236,7 +236,7 @@ RTL TB: testasm
 
 Synthesis: done
 
-    - critical path is snoop -> dcache inv -> CAM
+    - critical path is snoop -> dcache inv -> LSQ CAM
     - can cut in half if latch dcache inv
 
 +--------------------------------------------------------------------------------------+
