@@ -238,21 +238,37 @@ RTL TB: testasm
     - LAT=6: 
     - LAT=10: 
 
-    - TODO: after get everything passing, add perf count HW to check for perf bugs
-        - print counters at end of sim
-            - hate to always print
-            - print on ~nRST?
-                - values will reset
-            - print with dual_mem_controller_flushed?
-                - will need to give all counters as outputs to top level
-        - values to track:
-            - hits
-            - hit rate
-            - MOESI state transitions
-            - RAM utilization rate
-            - load mis-speculation rate
-            - conflict table conflict rate
-            - dcache busy vs. available to snoop rate
+    - ERRORS:
+        - dual.daxpy LAT=6, too many evictions, write buffer overflow since blind to slow down signal
+            - can make able to see slow down
+                - mess with slow down threshold
+                - prevent MSHR return from succeeding if can't evict
+                    - policy:
+                        - general: allow no MSHR return if slow down
+                        - specific: if MSHR return requires eviction, fail if slow down
+                            - need feedback, may be long path
+                    - less OoO since slow down prevents all MSHR returns
+                    - problem is inherent to mem bandwidth so take the L?
+                    - could have coherence issues where expect $ to be filled ASAP so can be snooped
+                    - if MSHR return can see threshold, then all users of write buffer can, 
+                        so can make slow down theshold = full
+
+    - TODO:
+        - perf counters to verif behaviors not caught by functional errors 
+            - print counters at end of sim
+                - hate to always print
+                - print on ~nRST?
+                    - values will reset
+                - print with dual_mem_controller_flushed?
+                    - will need to give all counters as outputs to top level
+            - values to track:
+                - hits
+                - hit rate
+                - MOESI state transitions
+                - RAM utilization rate
+                - load mis-speculation rate
+                - conflict table conflict rate
+                - dcache busy vs. available to snoop rate
 
 potential perf improvements:
 
