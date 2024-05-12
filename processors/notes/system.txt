@@ -223,8 +223,8 @@ Synthesized TB: testasm -s
     - LAT=10: 174183 cycles -> old 437: 374113 cycles
 
 - dual.daxpy:
-    - LAT=0:  cycles -> old 437: 111757 cycles
-    - LAT=2:  cycles -> old 437: 141783 cycles
+    - LAT=0: 42553 cycles -> old 437: 111757 cycles
+    - LAT=2: 45123 cycles -> old 437: 141783 cycles
     - LAT=6:  cycles -> old 437: 208057 cycles
     - LAT=10:  cycles -> old 437: 307675 cycles
 
@@ -237,6 +237,31 @@ RTL TB: testasm
     - LAT=2: 
     - LAT=6: 
     - LAT=10: 
+
+    - TODO: after get everything passing, add perf count HW to check for perf bugs
+        - print counters at end of sim
+            - hate to always print
+            - print on ~nRST?
+                - values will reset
+            - print with dual_mem_controller_flushed?
+                - will need to give all counters as outputs to top level
+        - values to track:
+            - hits
+            - hit rate
+            - MOESI state transitions
+            - RAM utilization rate
+            - load mis-speculation rate
+            - conflict table conflict rate
+            - dcache busy vs. available to snoop rate
+
+potential perf improvements:
+
+    - LSQ forwarding from youngest store:
+        - if the store already got store hit, know that don't have to forward load value for LSQ
+        - can return if hit on same cycle as dcache write req
+        - NO: don't know that load hit cache before store
+    
+    - only fetching required word from mem for stores
 
 Synthesis: done
 

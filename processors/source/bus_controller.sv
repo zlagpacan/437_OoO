@@ -216,11 +216,11 @@ module bus_controller (
         logic [2:0] lower0;
     } conflict_table_block_addr_t;
 
-    function way1_hash(conflict_table_block_addr_t addr);
+    function logic [2:0] way1_hash(conflict_table_block_addr_t addr);
         return addr.upper1 ^ addr.lower1;
     endfunction
 
-    function way0_hash(conflict_table_block_addr_t addr);
+    function logic [2:0] way0_hash(conflict_table_block_addr_t addr);
         return addr.upper0 ^ addr.lower0;
     endfunction
 
@@ -1060,7 +1060,7 @@ module bus_controller (
             ;
 
             // increment tail
-            next_dmem1_read_resp_Q_tail_ptr = dmem0_read_resp_Q_tail_ptr + 1;
+            next_dmem1_read_resp_Q_tail_ptr = dmem1_read_resp_Q_tail_ptr + 1;
         end
 
         ////////////////////////////////
