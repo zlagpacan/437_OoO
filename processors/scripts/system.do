@@ -1099,126 +1099,126 @@ add wave -noupdate -group {snoop_dcache1 Signals} /system_tb/DUT/SNOOP_DCACHE1/n
 add wave -noupdate -group {snoop_dcache1 Signals} /system_tb/DUT/SNOOP_DCACHE1/next_snoop_resp_present
 add wave -noupdate -group {snoop_dcache1 Signals} /system_tb/DUT/SNOOP_DCACHE1/next_snoop_resp_need_block
 add wave -noupdate -group {snoop_dcache1 Signals} /system_tb/DUT/SNOOP_DCACHE1/next_snoop_resp_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/CLK
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/nRST
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/DUT_error
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_exclusive
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_curr_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_exclusive
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_curr_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_exclusive
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_curr_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_present
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_exclusive
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_curr_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_present
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_DUT_error
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/grant_DUT_error
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/resp_DUT_error
-add wave -noupdate -expand -group {bus_controller Signals} -expand /system_tb/DUT/BUS_CONTROLLER/dbus0_req_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus0_req_Q
-add wave -noupdate -expand -group {bus_controller Signals} -expand /system_tb/DUT/BUS_CONTROLLER/dbus1_req_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus1_req_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_Q_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus0_req_Q_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus0_req_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_Q_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus1_req_Q_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus1_req_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} -expand -subitemconfig {{/system_tb/DUT/BUS_CONTROLLER/conflict_table_count_by_way_by_set[1]} -expand {/system_tb/DUT/BUS_CONTROLLER/conflict_table_count_by_way_by_set[0]} -expand} /system_tb/DUT/BUS_CONTROLLER/conflict_table_count_by_way_by_set
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_conflict_table_count_by_way_by_set
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_conflict_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_conflict_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_conflict_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_conflict_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_conflict
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_conflict
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_exclusive
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_curr_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_valid
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_exclusive
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_curr_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q_resp_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q_resp_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q_return_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q_return_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q_resp_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q_resp_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q_return_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q_return_head_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q_tail_ptr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_ready_now
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_ready_now
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_need_mem
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_need_mem
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_ready_now
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_ready_now
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_need_mem
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_need_mem
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_block_addr
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_data
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_need_block
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_new_state
-add wave -noupdate -expand -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/CLK
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/nRST
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/DUT_error
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_exclusive
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_curr_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_exclusive
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_curr_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_exclusive
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_req_curr_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_present
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_exclusive
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_req_curr_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_present
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_DUT_error
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/grant_DUT_error
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/resp_DUT_error
+add wave -noupdate -group {bus_controller Signals} -expand /system_tb/DUT/BUS_CONTROLLER/dbus0_req_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus0_req_Q
+add wave -noupdate -group {bus_controller Signals} -expand /system_tb/DUT/BUS_CONTROLLER/dbus1_req_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus1_req_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_Q_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus0_req_Q_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus0_req_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_Q_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus1_req_Q_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dbus1_req_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} -expand -subitemconfig {{/system_tb/DUT/BUS_CONTROLLER/conflict_table_count_by_way_by_set[1]} -expand {/system_tb/DUT/BUS_CONTROLLER/conflict_table_count_by_way_by_set[0]} -expand} /system_tb/DUT/BUS_CONTROLLER/conflict_table_count_by_way_by_set
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_conflict_table_count_by_way_by_set
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_conflict_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_conflict_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_resp_conflict_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_resp_conflict_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus0_req_conflict
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dbus1_req_conflict
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_exclusive
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_req_curr_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_valid
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_exclusive
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_req_curr_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q_resp_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q_resp_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q_return_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q_return_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem0_read_resp_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem0_read_resp_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q_resp_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q_resp_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q_return_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q_return_head_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/dmem1_read_resp_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_dmem1_read_resp_Q_tail_ptr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_ready_now
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_ready_now
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_need_mem
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_need_mem
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop0_resp_reg_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop0_resp_reg_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_ready_now
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_ready_now
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_need_mem
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_need_mem
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_block_addr
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_data
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_need_block
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/snoop1_resp_reg_new_state
+add wave -noupdate -group {bus_controller Signals} /system_tb/DUT/BUS_CONTROLLER/next_snoop1_resp_reg_new_state
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/CLK
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/nRST
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/DUT_error
@@ -1252,13 +1252,13 @@ add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_DUT_error
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/mem_controller_state
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_mem_controller_state
-add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/read_buffer
+add wave -noupdate -group {dual_mem_controller Signals} -expand /system_tb/DUT/DUAL_MEM_CONTROLLER/read_buffer
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_read_buffer
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/read_buffer_head_ptr
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_read_buffer_head_ptr
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/read_buffer_tail_ptr
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_read_buffer_tail_ptr
-add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/write_buffer
+add wave -noupdate -group {dual_mem_controller Signals} -expand /system_tb/DUT/DUAL_MEM_CONTROLLER/write_buffer
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_write_buffer
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/write_buffer_head_ptr
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_write_buffer_head_ptr
@@ -1293,4 +1293,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {11550 ns}
+WaveRestoreZoom {0 ps} {1509102 ns}
