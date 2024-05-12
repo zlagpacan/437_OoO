@@ -87,6 +87,7 @@ module snoop_dcache (
 
     // invalidation interface:
         // doubled the interface at LSQ for eviction invalidations and snoop invalidations
+        // latch so LSQ CAM can begin at beginning of cycle
     output logic dcache_inv_valid,
     output block_addr_t dcache_inv_block_addr,
     output logic dcache_evict_valid,
@@ -523,6 +524,12 @@ module snoop_dcache (
     logic next_snoop_resp_need_block;
     MOESI_state_t next_snoop_resp_new_state;
 
+    // reg'd dcache inv and evict
+    logic next_dcache_inv_valid;
+    block_addr_t next_dcache_inv_block_addr;
+    logic next_dcache_evict_valid;
+    block_addr_t next_dcache_evict_block_addr;
+
     // seq:
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
@@ -560,6 +567,11 @@ module snoop_dcache (
             snoop_resp_present <= 1'b0;
             snoop_resp_need_block <= 1'b0;
             snoop_resp_new_state <= MOESI_I;
+
+            dcache_inv_valid <= 1'b0;
+            dcache_inv_block_addr <= 13'h0;
+            dcache_evict_valid <= 1'b0;
+            dcache_evict_block_addr <= 13'h0;
         end
         else begin
             dcache_tag_frame_by_way_by_set <= next_dcache_tag_frame_by_way_by_set;
@@ -596,6 +608,11 @@ module snoop_dcache (
             snoop_resp_present <= next_snoop_resp_present;
             snoop_resp_need_block <= next_snoop_resp_need_block;
             snoop_resp_new_state <= next_snoop_resp_new_state;
+
+            dcache_inv_valid <= next_dcache_inv_valid;
+            dcache_inv_block_addr <= next_dcache_inv_block_addr;
+            dcache_evict_valid <= next_dcache_evict_valid;
+            dcache_evict_block_addr <= next_dcache_evict_block_addr;
         end
     end
 
@@ -632,10 +649,10 @@ module snoop_dcache (
         
         // invalidation interface:
             // doubled the interface at LSQ for eviction invalidations and snoop invalidations
-        dcache_inv_valid = 1'b0;
-        dcache_inv_block_addr = 13'h0;
-        dcache_evict_valid = 1'b0;
-        dcache_evict_block_addr = 13'h0;
+        next_dcache_inv_valid = 1'b0;
+        next_dcache_inv_block_addr = 13'h0;
+        next_dcache_evict_valid = 1'b0;
+        next_dcache_evict_block_addr = 13'h0;
 
         // halt interface:
 
@@ -2072,8 +2089,8 @@ module snoop_dcache (
                         // send evict to core
                             // valid
                             // block addr follows (tag in frame, MSHR index)
-                        dcache_evict_valid = 1'b1;
-                        dcache_evict_block_addr = {
+                        next_dcache_evict_valid = 1'b1;
+                        next_dcache_evict_block_addr = {
                             // tag in frame:
                             dcache_tag_frame_by_way_by_set
                             // select way following LRU @ LQ index MSHR index
@@ -2447,8 +2464,8 @@ module snoop_dcache (
                         // send evict to core
                             // valid
                             // block addr follows (tag in frame, MSHR index)
-                        dcache_evict_valid = 1'b1;
-                        dcache_evict_block_addr = {
+                        next_dcache_evict_valid = 1'b1;
+                        next_dcache_evict_block_addr = {
                             // tag in frame:
                             dcache_tag_frame_by_way_by_set
                             // select way following LRU @ LQ index MSHR index
@@ -3152,8 +3169,8 @@ module snoop_dcache (
                     ;
 
                     // send inv to core
-                    dcache_inv_valid = 1'b1;
-                    dcache_inv_block_addr = 
+                    next_dcache_inv_valid = 1'b1;
+                    next_dcache_inv_block_addr = 
                         snoop_req_Q
                         [snoop_req_Q_head_ptr.index]
                         .block_addr
