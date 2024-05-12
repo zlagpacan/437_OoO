@@ -434,11 +434,11 @@ module dual_mem_controller (
             next_read_buffer[read_buffer_tail_ptr.index].which = 1'b0;
 
             // dmem1 @ tail + 1
-            next_read_buffer[read_buffer_tail_ptr.index + 1].valid = 1'b1;
-            next_read_buffer[read_buffer_tail_ptr.index + 1].block_addr =
+            next_read_buffer[read_buffer_tail_ptr.index + MEM_CONTROLLER_LOG_READ_BUFFER_DEPTH'(1)].valid = 1'b1;
+            next_read_buffer[read_buffer_tail_ptr.index + MEM_CONTROLLER_LOG_READ_BUFFER_DEPTH'(1)].block_addr =
                 dmem1_read_req_block_addr
             ;
-            next_read_buffer[read_buffer_tail_ptr.index + 1].which = 1'b1;
+            next_read_buffer[read_buffer_tail_ptr.index + MEM_CONTROLLER_LOG_READ_BUFFER_DEPTH'(1)].which = 1'b1;
 
             // increment tail + 2
             next_read_buffer_tail_ptr = read_buffer_tail_ptr + 2;
@@ -489,11 +489,11 @@ module dual_mem_controller (
             ;
 
             // dmem1 @ tail + 1
-            next_write_buffer[write_buffer_tail_ptr.index + 1].valid = 1'b1;
-            next_write_buffer[write_buffer_tail_ptr.index + 1].block_addr =
+            next_write_buffer[write_buffer_tail_ptr.index + MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH'(1)].valid = 1'b1;
+            next_write_buffer[write_buffer_tail_ptr.index + MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH'(1)].block_addr =
                 dmem1_write_req_block_addr
             ;
-            next_write_buffer[write_buffer_tail_ptr.index + 1].data =
+            next_write_buffer[write_buffer_tail_ptr.index + MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH'(1)].data =
                 dmem1_write_req_data
             ;
 
@@ -952,9 +952,9 @@ module dual_mem_controller (
             next_read_buffer_tail_ptr.msb != next_read_buffer_head_ptr.msb
             &
             (
-                next_read_buffer_tail_ptr.index == read_buffer_head_ptr + 1
+                next_read_buffer_tail_ptr.index == next_read_buffer_head_ptr + 1
                 |
-                next_read_buffer_tail_ptr.index == read_buffer_head_ptr + 2
+                next_read_buffer_tail_ptr.index == next_read_buffer_head_ptr + 2
             )
         ) begin
             $display("mem_controller: ERROR: dmem read buffer tail surpassed head");
@@ -967,9 +967,9 @@ module dual_mem_controller (
             next_write_buffer_tail_ptr.msb != next_write_buffer_head_ptr.msb
             &
             (
-                next_write_buffer_tail_ptr.index == write_buffer_head_ptr + 1
+                next_write_buffer_tail_ptr.index == next_write_buffer_head_ptr + 1
                 |
-                next_write_buffer_tail_ptr.index == write_buffer_head_ptr + 2
+                next_write_buffer_tail_ptr.index == next_write_buffer_head_ptr + 2
             )
         ) begin
             $display("mem_controller: ERROR: dmem write buffer tail surpassed head");

@@ -1029,7 +1029,7 @@ module snoop_dcache (
                 // no snoops while actively doing tag read for store
         
         case ({
-            backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr].valid,
+            backlog_Q_bus_read_req_by_entry[backlog_Q_bus_read_req_head_ptr.index].valid,
             new_load_miss_reg.valid,
             new_store_miss_reg.valid
         })
@@ -1150,27 +1150,27 @@ module snoop_dcache (
                     // guaranteed exclusive
                     // follow store miss upgradding
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                [backlog_Q_bus_read_req_tail_ptr.index + DCACHE_LOG_BUS_READ_REQ_BACKLOG_Q_DEPTH'(1)]
                 .valid = 
                     1'b1
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                [backlog_Q_bus_read_req_tail_ptr.index + DCACHE_LOG_BUS_READ_REQ_BACKLOG_Q_DEPTH'(1)]
                 .block_addr =
                     new_store_miss_reg.block_addr
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                [backlog_Q_bus_read_req_tail_ptr.index + DCACHE_LOG_BUS_READ_REQ_BACKLOG_Q_DEPTH'(1)]
                 .exclusive =
                     1'b1
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                [backlog_Q_bus_read_req_tail_ptr.index + DCACHE_LOG_BUS_READ_REQ_BACKLOG_Q_DEPTH'(1)]
                 .upgrading =
                     new_store_miss_reg.upgrading
                 ;
                 next_backlog_Q_bus_read_req_by_entry
-                [backlog_Q_bus_read_req_tail_ptr.index + 1]
+                [backlog_Q_bus_read_req_tail_ptr.index + DCACHE_LOG_BUS_READ_REQ_BACKLOG_Q_DEPTH'(1)]
                 .upgrading_way =
                     new_store_miss_reg.upgrading_way
                 ;
@@ -3253,9 +3253,9 @@ module snoop_dcache (
             // next tail msb != next head msb
             // next_tail index == next_head index + 1
         if (
-            next_snoop_req_Q_tail_ptr.msb != next_store_MSHR_Q_head_ptr.msb
+            next_snoop_req_Q_tail_ptr.msb != next_snoop_req_Q_head_ptr.msb
             &
-            next_snoop_req_Q_tail_ptr.index == next_store_MSHR_Q_head_ptr.index + 1
+            next_snoop_req_Q_tail_ptr.index == next_snoop_req_Q_head_ptr.index + 1
         ) begin
             $display("dcache: ERROR: snoop req Q tail surpasses head");
             $display("\t@: %0t",$realtime);
