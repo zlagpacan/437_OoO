@@ -202,6 +202,7 @@ Synthesized TB: testasm -s
 
     - probably perf errors causing?
     - looks like it's failed store forwarding, lots of reverting
+    - unless want to add prediction logic, tough break
 
 - dual.mergesort_singlethreaded.asm:
     - LAT=0:  cycles -> old 437: 17419 cycles
@@ -239,23 +240,27 @@ RTL TB: testasm
 
 Synthesis: done
 
-    - critical path is snoop -> dcache inv -> LSQ CAM
-    - can cut in half if latch dcache inv
+    - critical path is snoop -> dcache inv -> LSQ CAM -> combined dcache inv
+        - can cut in half if latch dcache inv
+        - worked
+
+    - new critical path is dcache inv -> LSQ CAM -> combined dcache inv
+        - meh, good enough
 
 +--------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                       ;
 +------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Fri May 10 20:07:55 2024           ;
+; Fitter Status                      ; Successful - Sat May 11 23:08:30 2024           ;
 ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
 ; Revision Name                      ; system                                          ;
 ; Top-level Entity Name              ; system                                          ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29C8                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 54,941 / 114,480 ( 48 % )                       ;
-;     Total combinational functions  ; 50,359 / 114,480 ( 44 % )                       ;
-;     Dedicated logic registers      ; 21,631 / 114,480 ( 19 % )                       ;
-; Total registers                    ; 21632                                           ;
+; Total logic elements               ; 54,742 / 114,480 ( 48 % )                       ;
+;     Total combinational functions  ; 50,348 / 114,480 ( 44 % )                       ;
+;     Dedicated logic registers      ; 21,683 / 114,480 ( 19 % )                       ;
+; Total registers                    ; 21684                                           ;
 ; Total pins                         ; 102 / 529 ( 19 % )                              ;
 ; Total virtual pins                 ; 0                                               ;
 ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
@@ -268,9 +273,9 @@ Synthesis: done
 +------------+-----------------+---------------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
 +------------+-----------------+---------------------+------+
-; 34.38 MHz  ; 34.38 MHz       ; CPUCLK              ;      ;
-; 87.84 MHz  ; 87.84 MHz       ; altera_reserved_tck ;      ;
-; 154.66 MHz ; 154.66 MHz      ; CLK                 ;      ;
+; 48.66 MHz  ; 48.66 MHz       ; CPUCLK              ;      ;
+; 93.65 MHz  ; 93.65 MHz       ; altera_reserved_tck ;      ;
+; 150.11 MHz ; 150.11 MHz      ; CLK                 ;      ;
 +------------+-----------------+---------------------+------+
 
 Synthesized TB: testasm -s
