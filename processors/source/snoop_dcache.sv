@@ -1949,10 +1949,18 @@ module snoop_dcache (
             end
         end
 
-        // use load MSHR if found
+        // reset empty way info
         found_empty_way = 1'b0;
-        empty_way = '0;
-        if (found_load_MSHR_fulfilled) begin
+        empty_way = 0;
+
+        // safe behavior: can't service MSHR if slowing down
+        if (dmem_write_req_slow_down) begin
+
+            // do nothing
+        end
+
+        // otherwise, use load MSHR if found
+        else if (found_load_MSHR_fulfilled) begin
             
             // accessing frames
             snoop_access_allowed = 1'b0;

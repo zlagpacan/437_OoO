@@ -535,10 +535,13 @@ module dual_mem_controller (
 
         // check to give slow down to dcache
             // write buffer tail - write buffer head > 1/2 capacity
+            // update: have slow down feedback for evictions, so can be more generous with slow down
+                // 8 entries, can double enQ up to 6 entries
+                // do > 3/4 capacity
         if (
             write_buffer_tail_ptr - write_buffer_head_ptr 
             > 
-            (MEM_CONTROLLER_WRITE_BUFFER_DEPTH / 2)
+            MEM_CONTROLLER_WRITE_BUFFER_SLOW_DOWN_THRESHOLD
         ) begin
             dmem0_write_req_slow_down = 1'b1;
             dmem1_write_req_slow_down = 1'b1;

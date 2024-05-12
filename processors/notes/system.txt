@@ -206,9 +206,11 @@ Synthesized TB: testasm -s
 
 - dual.mergesort_singlethreaded.asm:
     - LAT=0:  cycles -> old 437: 17419 cycles
-    - LAT=2:  cycles -> old 437: 18541 cycles
-    - LAT=6:  cycles -> old 437: 21371 cycles
-    - LAT=10:  cycles -> old 437: 23911 cycles
+    - LAT=2: 17511 cycles -> old 437: 18541 cycles
+    - LAT=6: 20295 cycles -> old 437: 21371 cycles
+    - LAT=10: 23857 cycles -> old 437: 23911 cycles
+
+    - LAT=0 stall bug
 
 - dual.mergesort:
     - LAT=0:  cycles -> old 437: 10863 cycles
@@ -217,16 +219,22 @@ Synthesized TB: testasm -s
     - LAT=10:  cycles -> old 437: 16841 cycles
 
 - daxpy (single-threaded):
-    - LAT=0: 84847 cycles -> old 437: 180353 cycles
-    - LAT=2: 95521 cycles -> old 437: 214181 cycles
-    - LAT=6: 114243 cycles -> old 437: 298249 cycles
-    - LAT=10: 174183 cycles -> old 437: 374113 cycles
+    - LAT=0: 84637 cycles -> old 437: 180353 cycles
+    - LAT=2: 89415 cycles -> old 437: 214181 cycles
+    - LAT=6: 98939 cycles -> old 437: 298249 cycles
+    - LAT=10: 125001 cycles -> old 437: 374113 cycles
 
 - dual.daxpy:
     - LAT=0: 42553 cycles -> old 437: 111757 cycles
     - LAT=2: 45123 cycles -> old 437: 141783 cycles
-    - LAT=6:  cycles -> old 437: 208057 cycles
-    - LAT=10:  cycles -> old 437: 307675 cycles
+    - LAT=6: 77887 cycles -> old 437: 208057 cycles
+    - LAT=10: 117501 cycles -> old 437: 307675 cycles
+        - 1/8: 113627
+        - 1/4: 113913
+        - 1/2: 114901
+        - 3/4: 117501
+        - idk why smaller slow down thresholds are faster but
+            these are more likely to have coherence problems
 
 - there may be errors in design causing perf problems
 
@@ -240,18 +248,27 @@ RTL TB: testasm
 
     - ERRORS:
         - dual.daxpy LAT=6, too many evictions, write buffer overflow since blind to slow down signal
-            - can make able to see slow down
-                - mess with slow down threshold
-                - prevent MSHR return from succeeding if can't evict
-                    - policy:
-                        - general: allow no MSHR return if slow down
-                        - specific: if MSHR return requires eviction, fail if slow down
-                            - need feedback, may be long path
-                    - less OoO since slow down prevents all MSHR returns
-                    - problem is inherent to mem bandwidth so take the L?
-                    - could have coherence issues where expect $ to be filled ASAP so can be snooped
-                    - if MSHR return can see threshold, then all users of write buffer can, 
-                        so can make slow down theshold = full
+            - replicated error with multi.simple.write_buffer_overflow.asm
+                - rapid evictions
+                - dmem reads blocking dmem writes
+                - loop so no imem's relieving pressure
+
+            - solutions
+                - can make eviction able to see slow down
+                    - prevent MSHR return from succeeding if can't evict
+                        - policy:
+                            - general: allow no MSHR return if slow down
+                            - specific: if MSHR return requires eviction, fail if slow down
+                                - need feedback, may be long path
+                        - less OoO since slow down prevents all MSHR returns
+                        - problem is inherent to mem bandwidth so take the L?
+                        - could have coherence issues where expect $ to be filled ASAP so can be snooped
+                        - if MSHR return can see threshold, then all users of write buffer can, 
+                            so can make slow down theshold = full
+                            - actually, need to be ready for double enQ
+                            - slow down at full or full - 1
+                - can mess with slow down threshold or write buffer size
+                    - these don't make any guarantees about worst case behavior, which can happen
 
     - TODO:
         - perf counters to verif behaviors not caught by functional errors 
@@ -269,6 +286,7 @@ RTL TB: testasm
                 - load mis-speculation rate
                 - conflict table conflict rate
                 - dcache busy vs. available to snoop rate
+                - piggyback rate
 
 potential perf improvements:
 

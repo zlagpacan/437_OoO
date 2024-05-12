@@ -76,6 +76,8 @@ package mem_types_pkg;
     parameter MEM_CONTROLLER_WRITE_BUFFER_DEPTH = 8;
     parameter MEM_CONTROLLER_LOG_WRITE_BUFFER_DEPTH = $clog2(MEM_CONTROLLER_WRITE_BUFFER_DEPTH);
 
+    parameter MEM_CONTROLLER_WRITE_BUFFER_SLOW_DOWN_THRESHOLD = (3 * MEM_CONTROLLER_WRITE_BUFFER_DEPTH / 4);
+
     //////////////////////////////
     // bus controller/snooping: //
     //////////////////////////////
