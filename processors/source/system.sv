@@ -1108,7 +1108,43 @@ module system (input logic CLK, nRST, system_if.sys syif);
 	);
 
 	// system interface connections
-	assign syif.halt = dual_mem_controller_flushed;
+
+	// add hang detector
+		// longest program is singlethreaded daxpy at 125001 RAM cycles
+		// 16k is safe upper limit
+			// 16k = 2^6 * 2^10 = 2^16 -> 16 bit counter
+	logic [15:0] hang_detector_count;
+	logic [15:0] next_hang_detector_count;
+
+	logic hang_detected;
+	logic next_hang_detected;
+
+	always_ff @ (posedge CLK, negedge nRST) begin
+		if (~nRST) begin
+			hang_detector_count = 16'h0;
+			hang_detected = 1'b0;
+		end
+		else begin
+			hang_detector_count = next_hang_detector_count;
+			hang_detected = next_hang_detected;
+		end
+	end
+
+	always_comb begin
+
+		// increment count
+		next_hang_detector_count = hang_detector_count + 1;
+
+		// mark hang detected when count == MAX
+		next_hang_detected = 1'b0;
+		if (hang_detector_count == '1 | hang_detected) begin
+			$display("\nERROR: HANG DETECTED\n");
+			next_hang_detected = 1'b1;
+		end
+	end
+
+	// assign syif.halt = dual_mem_controller_flushed;
+	assign syif.halt = dual_mem_controller_flushed | hang_detected;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
