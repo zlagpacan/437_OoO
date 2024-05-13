@@ -1181,11 +1181,18 @@ module snoop_dcache (
                 // check if tail surpasses head
                     // tail msb != head msb
                     // next_tail index == next_head index + 1 -> tail index + 2 == head index + 2
-                    // tail index == head index
+                    // -> tail index == head index
+                    // OR 
+                    // next_tail index == next_head index + 2 -> tail index + 2 == head index + 3
+                    // -> tail index == head index + 1
                 if (
                     backlog_Q_bus_read_req_tail_ptr.msb != backlog_Q_bus_read_req_head_ptr.msb
                     &
-                    backlog_Q_bus_read_req_tail_ptr.index == backlog_Q_bus_read_req_head_ptr.index
+                    (
+                        backlog_Q_bus_read_req_tail_ptr.index == backlog_Q_bus_read_req_head_ptr.index
+                        |
+                        backlog_Q_bus_read_req_tail_ptr.index == backlog_Q_bus_read_req_head_ptr.index + 1
+                    )
                 ) begin
                     $display("dcache: ERROR: backlog Q tail surpasses head: 3'b111");
                     $display("\t@: %0t",$realtime);
@@ -1877,11 +1884,14 @@ module snoop_dcache (
                 // can only bring in resp if block is M and block addr matches
                     // piggybacking also allows E
                     // here, we want the exclusive request specifically to come through
+                    // NVM: can also take E state
             if (
                 (
+                    // dbus_resp_new_state
+                    // ==
+                    // MOESI_M
                     dbus_resp_new_state
-                    ==
-                    MOESI_M
+                    .exclusive
                 )
                 &
                 (
