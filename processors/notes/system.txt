@@ -256,10 +256,10 @@ Synthesized TB: testasm -s
 Design: done
 
 RTL TB: testasm
-    - LAT=0: 
-    - LAT=2: 
-    - LAT=6: 
-    - LAT=10: 
+    - LAT=0: dual.mergesort.asm test.coherence2.asm failing
+    - LAT=2: dual.mergesort.asm test.coherence2.asm failing
+    - LAT=6: dual.mergesort.asm test.coherence2.asm failing
+    - LAT=10: dual.mergesort.asm test.coherence2.asm failing
 
     - ERRORS:
         - dual.daxpy LAT=6, too many evictions, write buffer overflow since blind to slow down signal
