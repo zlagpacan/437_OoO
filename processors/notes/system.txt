@@ -202,15 +202,29 @@ Synthesized TB: testasm -s
 
     - probably perf errors causing?
     - looks like it's failed store forwarding, lots of reverting
-    - unless want to add prediction logic, tough break
+    - unless want to add dependence prediction logic, tough break
 
 - dual.mergesort_singlethreaded.asm:
-    - LAT=0:  cycles -> old 437: 17419 cycles
+    - LAT=0: 16095 cycles -> old 437: 17419 cycles
     - LAT=2: 17511 cycles -> old 437: 18541 cycles
     - LAT=6: 20295 cycles -> old 437: 21371 cycles
     - LAT=10: 23857 cycles -> old 437: 23911 cycles
 
     - LAT=0 stall bug
+        - LSQ mispredicted load kills load MSHR, not allowing piggyback that store MSHR is relying on
+        - since piggyback is possible, dbus req Q entry gets killed
+        - solutions:
+            - ignore kills
+                - can get bad return for LQ entry if value comes back for old, different-addr, 
+                    mis-speculated load which is allowed to return to LSQ
+                - this might have already been possible in the tight window between 
+                    entry re-validation with the new load and returning of the value
+                        - HOWEVER: returns from mem are by addr, so couldn't get bad return
+            - kills from LSQ can instead mark LSQ to allow piggyback but don't do anything else
+                - small problem if can't allow piggyback
+            - allow store to accept a return with exclusive block state
+                - this should prevent any problems from ^ ideas
+                - piggybacking should be fine as store MSHR will fill in block as M
 
 - dual.mergesort:
     - LAT=0:  cycles -> old 437: 10863 cycles
@@ -233,8 +247,9 @@ Synthesized TB: testasm -s
         - 1/4: 113913
         - 1/2: 114901
         - 3/4: 117501
-        - idk why smaller slow down thresholds are faster but
-            these are more likely to have coherence problems
+        - idk why smaller slow down thresholds are faster
+            - maybe specific timing perf issues, conflict table
+        - these are more likely to have coherence problems so favor larger
 
 - there may be errors in design causing perf problems
 
