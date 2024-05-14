@@ -210,35 +210,19 @@ Synthesized TB: testasm -s
     - LAT=6: 20295 cycles -> old 437: 21371 cycles
     - LAT=10: 23857 cycles -> old 437: 23911 cycles
 
-    - LAT=0 stall bug
-        - LSQ mispredicted load kills load MSHR, not allowing piggyback that store MSHR is relying on
-        - since piggyback is possible, dbus req Q entry gets killed
-        - solutions:
-            - ignore kills
-                - can get bad return for LQ entry if value comes back for old, different-addr, 
-                    mis-speculated load which is allowed to return to LSQ
-                - this might have already been possible in the tight window between 
-                    entry re-validation with the new load and returning of the value
-                        - HOWEVER: returns from mem are by addr, so couldn't get bad return
-            - kills from LSQ can instead mark LSQ to allow piggyback but don't do anything else
-                - small problem if can't allow piggyback
-            - allow store to accept a return with exclusive block state
-                - this should prevent any problems from ^ ideas
-                - piggybacking should be fine as store MSHR will fill in block as M
-
-- dual.mergesort:
+- dual.mergesort.asm:
     - LAT=0:  cycles -> old 437: 10863 cycles
     - LAT=2:  cycles -> old 437: 11859 cycles
     - LAT=6:  cycles -> old 437: 14623 cycles
     - LAT=10:  cycles -> old 437: 16841 cycles
 
-- daxpy (single-threaded):
+- daxpy.asm (single-threaded):
     - LAT=0: 84637 cycles -> old 437: 180353 cycles
     - LAT=2: 89415 cycles -> old 437: 214181 cycles
     - LAT=6: 98939 cycles -> old 437: 298249 cycles
     - LAT=10: 125001 cycles -> old 437: 374113 cycles
 
-- dual.daxpy:
+- dual.daxpy.asm:
     - LAT=0: 42553 cycles -> old 437: 111757 cycles
     - LAT=2: 45123 cycles -> old 437: 141783 cycles
     - LAT=6: 77887 cycles -> old 437: 208057 cycles
@@ -255,7 +239,8 @@ Synthesized TB: testasm -s
 
 Design: done
 
-RTL TB: testasm
+RTL TB: bash testasm_multicore_no_LLSC.sh
+
     - LAT=0: dual.mergesort.asm failing
     - LAT=2: dual.mergesort.asm failing
     - LAT=6: dual.mergesort.asm failing
@@ -266,6 +251,9 @@ RTL TB: testasm
             - 
 
     - TODO:
+
+        - LL/SC
+
         - perf counters to verif behaviors not caught by functional errors 
             - print counters at end of sim
                 - hate to always print
@@ -284,13 +272,21 @@ RTL TB: testasm
                 - piggyback rate
 
 potential perf improvements:
-
-    - LSQ forwarding from youngest store:
-        - if the store already got store hit, know that don't have to forward load value for LSQ
-        - can return if hit on same cycle as dcache write req
-        - NO: don't know that load hit cache before store
     
     - only fetching required word from mem for stores
+        - can be dangerous for piggybacking, if piggybacking load wins?
+        - NO: if own load reads old value instead of store value, would be restarted since should
+            forward from SQ anyway
+        - quite a bit of changes needed
+            - need to know if req is store and which word is needed in:
+                snoop req, snoop resp, dmem read req
+            - already have exclusive or not in snoops, need to add which word is needed
+        - if upgrading, should find out no longer upgrading and values should all be fine when 
+            get to mem?
+
+sim perf improvements:
+
+    - get rid of unhelpful $display()'s
 
 Synthesis: done
 

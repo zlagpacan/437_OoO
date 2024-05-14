@@ -873,7 +873,7 @@ module bru_pipeline (
 
             default:    
             begin
-                $display("bru_pipeline: invalid op in EX stage");
+                $display("bru_pipeline: ERROR: invalid op in EX stage");
                 next_DUT_error = 1'b1;
             end 
 
