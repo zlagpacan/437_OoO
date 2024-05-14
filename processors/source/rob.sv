@@ -664,7 +664,17 @@ module rob (
                 // restart req for ROB_IDLE:
 
                 // simultaneous BRU and LQ restarts -> restart at older
-                if (BRU_restart_valid & LQ_restart_valid) begin
+                    // also check LQ entry valid
+                        // restart can come in late, don't care if entry invalid
+                if (
+                    BRU_restart_valid
+                    &
+                    ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    & 
+                    LQ_restart_valid
+                    &
+                    ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                ) begin
 
                     // age logic: subtract head index
 
@@ -742,7 +752,11 @@ module rob (
                 // otherwise, choose BRU or LQ individually
 
                 // restart BRU
-                else if (BRU_restart_valid) begin
+                else if (
+                    BRU_restart_valid
+                    &
+                    ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                ) begin
 
                     // BRU -> check for checkpoint restore
                     next_ROB_state = ROB_RESTORE;
@@ -759,7 +773,11 @@ module rob (
                 end
 
                 // restart LQ
-                else if (LQ_restart_valid) begin
+                else if (
+                    LQ_restart_valid
+                    &
+                    ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                ) begin
 
                     // LQ -> no check for checkpoint restore, immediately revert
                     next_ROB_state = ROB_REVERT;
@@ -847,18 +865,30 @@ module rob (
                 // restart req for ROB_RESTORE:
 
                 // check BRU valid and older than current restart
-                if (BRU_restart_valid & (
-                    BRU_restart_ROB_index - head_index_ptr
-                    <
-                    restart_ROB_index_ptr - head_index_ptr
-                )) begin
+                if (
+                    BRU_restart_valid
+                    &
+                    ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    &
+                    (
+                        BRU_restart_ROB_index - head_index_ptr
+                        <
+                        restart_ROB_index_ptr - head_index_ptr
+                    )
+                ) begin
 
                     // check LQ valid and older than BRU -> restart LQ
-                    if (LQ_restart_valid & (
-                        LQ_restart_ROB_index - head_index_ptr
-                        <
-                        BRU_restart_ROB_index - head_index_ptr
-                    )) begin
+                    if (
+                        LQ_restart_valid
+                        &
+                        ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                        &
+                        (
+                            LQ_restart_ROB_index - head_index_ptr
+                            <
+                            BRU_restart_ROB_index - head_index_ptr
+                        )
+                    ) begin
 
                         // LQ -> no check for checkpoint restore, immediately revert
                         next_ROB_state = ROB_REVERT;
@@ -921,11 +951,17 @@ module rob (
                 end
 
                 // check LQ valid and older than current restart
-                if (LQ_restart_valid & (
-                    LQ_restart_ROB_index - head_index_ptr
-                    <
-                    restart_ROB_index_ptr - head_index_ptr
-                )) begin
+                if (
+                    LQ_restart_valid 
+                    &
+                    ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    & 
+                    (
+                        LQ_restart_ROB_index - head_index_ptr
+                        <
+                        restart_ROB_index_ptr - head_index_ptr
+                    )
+                ) begin
 
                     // LQ -> no check for checkpoint restore, immediately revert
                     next_ROB_state = ROB_REVERT;
@@ -1025,18 +1061,30 @@ module rob (
                 // restart req for ROB_REVERT:
 
                 // check BRU valid and older than current restart
-                if (BRU_restart_valid & (
-                    BRU_restart_ROB_index - head_index_ptr
-                    <
-                    restart_ROB_index_ptr - head_index_ptr
-                )) begin
+                if (
+                    BRU_restart_valid
+                    &
+                    ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    &
+                    (
+                        BRU_restart_ROB_index - head_index_ptr
+                        <
+                        restart_ROB_index_ptr - head_index_ptr
+                    )
+                ) begin
 
                     // check LQ valid and older than BRU -> restart LQ
-                    if (LQ_restart_valid & (
-                        LQ_restart_ROB_index - head_index_ptr
-                        <
-                        BRU_restart_ROB_index - head_index_ptr
-                    )) begin
+                    if (
+                        LQ_restart_valid
+                        &
+                        ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid 
+                        & 
+                        (
+                            LQ_restart_ROB_index - head_index_ptr
+                            <
+                            BRU_restart_ROB_index - head_index_ptr
+                        )
+                    ) begin
 
                         // LQ -> no check for checkpoint restore, immediately revert
                         next_ROB_state = ROB_REVERT;
@@ -1091,11 +1139,17 @@ module rob (
                 end
 
                 // check LQ valid and older than current restart
-                if (LQ_restart_valid & (
-                    LQ_restart_ROB_index - head_index_ptr
-                    <
-                    restart_ROB_index_ptr - head_index_ptr
-                )) begin
+                if (
+                    LQ_restart_valid 
+                    &
+                    ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    & 
+                    (
+                        LQ_restart_ROB_index - head_index_ptr
+                        <
+                        restart_ROB_index_ptr - head_index_ptr
+                    )
+                ) begin
 
                     // LQ -> no check for checkpoint restore, immediately revert
                     next_ROB_state = ROB_REVERT;

@@ -2402,7 +2402,7 @@ module lsq (
         dcache_read_kill_1_LQ_index = LQ_SQ_search_ptr.index;
         
         // check for simultaneous valid d$ read resp and SQ search resp
-        if (dcache_read_resp_valid & LQ_array[dcache_read_resp_LQ_index].valid & SQ_search_resp_valid) begin
+        if (dcache_read_resp_valid & next_LQ_array[dcache_read_resp_LQ_index].valid & SQ_search_resp_valid) begin
 
             // check correspond to same load -> == LQ index
             if (
@@ -2491,7 +2491,7 @@ module lsq (
         end
 
         // otherwise, check for lone valid d$ read resp 
-        else if (dcache_read_resp_valid & LQ_array[dcache_read_resp_LQ_index].valid) begin
+        else if (dcache_read_resp_valid & next_LQ_array[dcache_read_resp_LQ_index].valid) begin
 
             // service d$ load:
 

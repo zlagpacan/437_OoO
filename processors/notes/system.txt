@@ -262,28 +262,10 @@ RTL TB: testasm
     - LAT=10: dual.mergesort.asm test.coherence2.asm failing
 
     - ERRORS:
-        - dual.daxpy LAT=6, too many evictions, write buffer overflow since blind to slow down signal
-            - replicated error with multi.simple.write_buffer_overflow.asm
-                - rapid evictions
-                - dmem reads blocking dmem writes
-                - loop so no imem's relieving pressure
-
-            - solutions
-                - can make eviction able to see slow down
-                    - prevent MSHR return from succeeding if can't evict
-                        - policy:
-                            - general: allow no MSHR return if slow down
-                            - specific: if MSHR return requires eviction, fail if slow down
-                                - need feedback, may be long path
-                        - less OoO since slow down prevents all MSHR returns
-                        - problem is inherent to mem bandwidth so take the L?
-                        - could have coherence issues where expect $ to be filled ASAP so can be snooped
-                        - if MSHR return can see threshold, then all users of write buffer can, 
-                            so can make slow down theshold = full
-                            - actually, need to be ready for double enQ
-                            - slow down at full or full - 1
-                - can mess with slow down threshold or write buffer size
-                    - these don't make any guarantees about worst case behavior, which can happen
+        - dual.mergesort.asm
+            - 
+        - test.coherence2.asm    
+            - looks like LQ mis-speculated complete getting through 
 
     - TODO:
         - perf counters to verif behaviors not caught by functional errors 
