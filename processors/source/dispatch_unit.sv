@@ -898,7 +898,7 @@ module dispatch_unit (
 
             // IDLE: keep default outputs
 
-            $display("dispatch_unit: IDLE: core_control_halt");
+            // $display("dispatch_unit: IDLE: core_control_halt");
         end
 
         // check for flush
@@ -906,7 +906,7 @@ module dispatch_unit (
 
             // IDLE: keep default outputs
 
-            $display("dispatch_unit: IDLE: core_control_flush_dispatch_unit");
+            // $display("dispatch_unit: IDLE: core_control_flush_dispatch_unit");
         end
 
         // check for stall
@@ -914,7 +914,7 @@ module dispatch_unit (
 
             // IDLE: keep default outputs
 
-            $display("dispatch_unit: IDLE: core_control_stall_dispatch_unit");
+            // $display("dispatch_unit: IDLE: core_control_stall_dispatch_unit");
         end
 
         // check for no available instr 
@@ -922,7 +922,7 @@ module dispatch_unit (
 
             // IDLE: keep default outputs
 
-            $display("dispatch_unit: IDLE: ~dispatch_unit_ivalid");
+            // $display("dispatch_unit: IDLE: ~dispatch_unit_ivalid");
         end
 
         // check for ROB full
@@ -931,7 +931,7 @@ module dispatch_unit (
             // FAIL: explicitly give dispatch fail
             core_control_dispatch_failed = 1'b1;
 
-            $display("dispatch_unit: FAIL: ROB_full");
+            // $display("dispatch_unit: FAIL: ROB_full");
         end
 
         // otherwise, have instr that can try to dispatch
@@ -954,7 +954,7 @@ module dispatch_unit (
                             // FAIL: explicitly give dispatch fail
                             core_control_dispatch_failed = 1'b1;
 
-                            $display("dispatch_unit: FAIL: BRU_RS_full");
+                            // $display("dispatch_unit: FAIL: BRU_RS_full");
                         end
 
                         // otherwise, can dispatch to BRU
@@ -1008,7 +1008,7 @@ module dispatch_unit (
 
                         // check for dead instr -> write to rd = $0
                         if (instr_rd == 5'd0) begin
-                            $display("dispatch_unit: dead instr, RTYPE instr_rd == 5'd0");
+                            // $display("dispatch_unit: dead instr, RTYPE instr_rd == 5'd0");
                             
                             // immediately complete
                             // dispatched unit is DEAD
@@ -1034,7 +1034,7 @@ module dispatch_unit (
                             // FAIL: explicitly give dispatch fail
                             core_control_dispatch_failed = 1'b1;
 
-                            $display("dispatch_unit: FAIL: free list empty");
+                            // $display("dispatch_unit: FAIL: free list empty");
                         end
 
                         // fail if ALU RS's full 
@@ -1043,7 +1043,7 @@ module dispatch_unit (
                             // FAIL: explicitly give dispatch fail
                             core_control_dispatch_failed = 1'b1;
 
-                            $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                            // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                         end
 
                         // otherwise, can dispatch to an ALU RS
@@ -1203,7 +1203,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // fail if free list empty 
@@ -1212,7 +1212,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1275,7 +1275,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: BRU_RS_full");
+                        // $display("dispatch_unit: FAIL: BRU_RS_full");
                     end
 
                     // otherwise, can dispatch to BRU
@@ -1332,7 +1332,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: BRU_RS_full");
+                        // $display("dispatch_unit: FAIL: BRU_RS_full");
                     end
 
                     // otherwise, can dispatch to BRU
@@ -1388,7 +1388,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, ADDI instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, ADDI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1414,7 +1414,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1423,7 +1423,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1475,7 +1475,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, ADDIU instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, ADDIU instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1501,7 +1501,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1510,7 +1510,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1562,7 +1562,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, SLTI instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, SLTI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1588,7 +1588,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1597,7 +1597,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1649,7 +1649,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, SLTIU instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, SLTIU instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1675,7 +1675,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1684,7 +1684,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1736,7 +1736,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, ANDI instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, ANDI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1762,7 +1762,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1771,7 +1771,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1823,7 +1823,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, ORI instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, ORI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1849,7 +1849,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1858,7 +1858,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1910,7 +1910,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, XORI instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, XORI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -1936,7 +1936,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -1945,7 +1945,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
                         
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -1997,7 +1997,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, LUI instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, LUI instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -2023,7 +2023,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if ALU RS's full 
@@ -2032,7 +2032,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: ALU_RS_both_full");
+                        // $display("dispatch_unit: FAIL: ALU_RS_both_full");
                     end
 
                     // otherwise, can dispatch to an ALU RS
@@ -2087,7 +2087,7 @@ module dispatch_unit (
                 begin
                     // check for dead instr -> write to rt = $0
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead instr, LW instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead instr, LW instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -2113,7 +2113,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if LQ full
@@ -2122,7 +2122,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: LQ_full");
+                        // $display("dispatch_unit: FAIL: LQ_full");
                     end
 
                     // otherwise, can dispatch to LQ
@@ -2174,7 +2174,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: SQ_full");
+                        // $display("dispatch_unit: FAIL: SQ_full");
                     end
 
                     // otherwise, can dispatch to SQ
@@ -2226,7 +2226,7 @@ module dispatch_unit (
                         // could be possible if only want to set link reg
                             // although why would do this when LL is for atomic RMW -> don't care abt R?
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead LL instr, instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead LL instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -2252,7 +2252,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if LQ full
@@ -2261,7 +2261,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: LQ_full");
+                        // $display("dispatch_unit: FAIL: LQ_full");
                     end
 
                     // otherwise, can dispatch to LQ
@@ -2315,7 +2315,7 @@ module dispatch_unit (
                                 // else no atomic RMW
                                 // else why use SC?
                     if (instr_rt == 5'd0) begin
-                        $display("dispatch_unit: dead SC instr, instr_rt == 5'd0");
+                        // $display("dispatch_unit: dead SC instr, instr_rt == 5'd0");
                             
                         // immediately complete
                         // dispatched unit is DEAD
@@ -2341,7 +2341,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: free list empty");
+                        // $display("dispatch_unit: FAIL: free list empty");
                     end
 
                     // fail if LQ full
@@ -2351,7 +2351,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: LQ_full");
+                        // $display("dispatch_unit: FAIL: LQ_full");
                     end
 
                     // fail if SQ full
@@ -2360,7 +2360,7 @@ module dispatch_unit (
                         // FAIL: explicitly give dispatch fail
                         core_control_dispatch_failed = 1'b1;
 
-                        $display("dispatch_unit: FAIL: SQ_full");
+                        // $display("dispatch_unit: FAIL: SQ_full");
                     end
 
                     // otherwise, can dispatch to SQ

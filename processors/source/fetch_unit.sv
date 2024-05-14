@@ -365,12 +365,12 @@ module fetch_unit #(
             if (is_beq_bne) begin
                 // taken
                 if (DIRP_state == STRONG_T | DIRP_state == WEAK_T) begin
-                    $display("fetch_unit: speculate branch taken to BTB target");
+                    // $display("fetch_unit: speculate branch taken to BTB target");
                     nPC = BTB_target;
                 end
                 // not taken
                 else if (DIRP_state == STRONG_NT | DIRP_state == WEAK_NT) begin
-                    $display("fetch unit: speculate branch not taken");
+                    // $display("fetch unit: speculate branch not taken");
                     nPC = PC_plus_4;
                 end
                 // shouldn't get here
