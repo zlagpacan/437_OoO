@@ -256,16 +256,14 @@ Synthesized TB: testasm -s
 Design: done
 
 RTL TB: testasm
-    - LAT=0: dual.mergesort.asm test.coherence2.asm failing
-    - LAT=2: dual.mergesort.asm test.coherence2.asm failing
-    - LAT=6: dual.mergesort.asm test.coherence2.asm failing
-    - LAT=10: dual.mergesort.asm test.coherence2.asm failing
+    - LAT=0: dual.mergesort.asm failing
+    - LAT=2: dual.mergesort.asm failing
+    - LAT=6: dual.mergesort.asm failing
+    - LAT=10: dual.mergesort.asm failing
 
     - ERRORS:
         - dual.mergesort.asm
             - 
-        - test.coherence2.asm    
-            - looks like LQ mis-speculated complete getting through 
 
     - TODO:
         - perf counters to verif behaviors not caught by functional errors 

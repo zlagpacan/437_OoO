@@ -1110,16 +1110,17 @@ module system (input logic CLK, nRST, system_if.sys syif);
 	// system interface connections
 
 	// add hang detector
-		// longest program is singlethreaded daxpy at 125001 RAM cycles
-		// 16k is safe upper limit
-			// 16k = 2^6 * 2^10 = 2^16 -> 16 bit counter
+		// longest program is singlethreaded daxpy with LAT=10 at 125001 RAM cycles
+			// ~ 64k CPU cycles
+		// 64k is safe upper limit
+			// 64k = 2^6 * 2^10 = 2^16 -> 16 bit counter
 	logic [15:0] hang_detector_count;
 	logic [15:0] next_hang_detector_count;
 
 	logic hang_detected;
 	logic next_hang_detected;
 
-	always_ff @ (posedge CLK, negedge nRST) begin
+	always_ff @ (posedge CPUCLK, negedge nRST) begin
 		if (~nRST) begin
 			hang_detector_count = 16'h0;
 			hang_detected = 1'b0;
