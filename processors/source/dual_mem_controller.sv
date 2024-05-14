@@ -205,6 +205,7 @@ module dual_mem_controller (
         logic dmem0_read;
         logic dmem1_read;
         logic dmem_write;
+        logic first_half_search_found;
         block_addr_t block_addr;
         word_t [1:0] read_data;
         word_t [1:0] write_data;
@@ -411,6 +412,8 @@ module dual_mem_controller (
         write_buffer_search_youngest_found_index = write_buffer_head_ptr.index;
         next_write_buffer_search_first_half_youngest_found_index = write_buffer_search_youngest_found_index;
         write_buffer_search_data = {32'h0, 32'h0};
+            // this had bug where if value is at head, then didn't find new youngest, didn't update data
+        // write_buffer_search_data = write_buffer[write_buffer_head_ptr.index].data;
 
         // imem LRU
         next_imem_LRU = imem_LRU;
@@ -575,6 +578,7 @@ module dual_mem_controller (
                         next_working_req.dmem1_read = 1'b0;
                     end
                     next_working_req.dmem_write = 1'b0;
+                    next_working_req.first_half_search_found = 1'b0;
                     next_working_req.block_addr = read_buffer[read_buffer_head_ptr.index].block_addr;
 
                     // deQ dmem read buffer
@@ -596,6 +600,7 @@ module dual_mem_controller (
                     next_working_req.dmem0_read = 1'b0;
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b1;
+                    next_working_req.first_half_search_found = 1'b0;
                     next_working_req.block_addr = write_buffer[write_buffer_head_ptr.index].block_addr;
                     next_working_req.write_data = write_buffer[write_buffer_head_ptr.index].data;
 
@@ -627,6 +632,7 @@ module dual_mem_controller (
                     next_working_req.dmem0_read = 1'b0;
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b0;
+                    next_working_req.first_half_search_found = 1'b0;
 
                     // toggle imem LRU
                     next_imem_LRU = ~imem_LRU;
@@ -645,6 +651,7 @@ module dual_mem_controller (
                     next_working_req.dmem0_read = 1'b0;
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b0;
+                    next_working_req.first_half_search_found = 1'b0;
 
                     // reverse imem LRU 0->1
                     next_imem_LRU = 1'b1;
@@ -663,6 +670,7 @@ module dual_mem_controller (
                     next_working_req.dmem0_read = 1'b0;
                     next_working_req.dmem1_read = 1'b0;
                     next_working_req.dmem_write = 1'b0;
+                    next_working_req.first_half_search_found = 1'b0;
 
                     // reverse imem LRU 1->0
                     next_imem_LRU = 1'b0;
@@ -733,6 +741,8 @@ module dual_mem_controller (
                     write_buffer_search_found = 1'b0;
                     write_buffer_search_youngest_found_index = write_buffer_head_ptr.index;
                     write_buffer_search_data = {32'h0, 32'h0};
+                        // this had bug where if value is at head, then didn't find new youngest, didn't update data
+                    // write_buffer_search_data = write_buffer[write_buffer_head_ptr.index].data;
                     // for (int i = 0; i < MEM_CONTROLLER_WRITE_BUFFER_DEPTH; i++) begin
 
                     // ONLY SEARCH THROUGH FIRST HALF
@@ -749,9 +759,6 @@ module dual_mem_controller (
                             )
                         ) begin
 
-                            // search successful
-                            write_buffer_search_found = 1'b1;
-
                             // check new youngest
                                 // younger -> greater than
                                 // subtract from current head
@@ -762,6 +769,9 @@ module dual_mem_controller (
                                 >=
                                 write_buffer_search_youngest_found_index - write_buffer_head_ptr.index
                             ) begin
+
+                                // search successful
+                                write_buffer_search_found = 1'b1;
 
                                 // update youngest
                                 write_buffer_search_youngest_found_index = i;
@@ -785,6 +795,19 @@ module dual_mem_controller (
                     //     // return to ARBITRATE
                     //     next_mem_controller_state = MEM_CONTROLLER_ARBITRATE;
                     // end
+
+                    // save write buffer search data and skip to ACCESS_1 if search successful
+                    if (write_buffer_search_found) begin
+
+                        // save forward val in working req
+                        next_working_req.read_data = write_buffer_search_data;
+
+                        // mark found data in first half of search
+                        next_working_req.first_half_search_found = 1'b1;
+
+                        // skip to ACCESS_1
+                        next_mem_controller_state = MEM_CONTROLLER_ACCESS_1;
+                    end
 
                     // otherwise, read seemessly continues trying to get val from mem
                 end
@@ -888,9 +911,6 @@ module dual_mem_controller (
                             )
                         ) begin
 
-                            // search successful
-                            write_buffer_search_found = 1'b1;
-
                             // check new youngest
                                 // younger -> greater than
                                 // subtract from current head
@@ -901,6 +921,9 @@ module dual_mem_controller (
                                 >=
                                 write_buffer_search_youngest_found_index - write_buffer_head_ptr.index
                             ) begin
+
+                                // search successful
+                                write_buffer_search_found = 1'b1;
 
                                 // update youngest
                                 write_buffer_search_youngest_found_index = i;
@@ -916,6 +939,25 @@ module dual_mem_controller (
 
                         // save forward val in working req
                         next_working_req.read_data = write_buffer_search_data;
+
+                        // send dmem read resp
+                        // next_dmem_read_resp_valid = 1'b1;
+                        if (working_req.dmem0_read) begin
+                            next_dmem0_read_resp_valid = 1'b1;
+                        end
+                        if (working_req.dmem1_read) begin
+                            next_dmem1_read_resp_valid = 1'b1;
+                        end
+
+                        // return to ARBITRATE
+                        next_mem_controller_state = MEM_CONTROLLER_ARBITRATE;
+                    end
+
+                    // otherwise, forward old value if first half search successful
+                    else if (working_req.first_half_search_found) begin
+
+                        // keep old val in working req
+                        next_working_req.read_data = working_req.read_data;
 
                         // send dmem read resp
                         // next_dmem_read_resp_valid = 1'b1;
