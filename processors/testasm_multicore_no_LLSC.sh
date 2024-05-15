@@ -4,5 +4,5 @@ do
     cat temp_ram > source/ram.sv
     rm temp_ram
 
-    testasm -d multi test.coh dual.mergesort daxpy.asm dual.daxpy.asm
+    testasm -d multi test.coh dual.mergesort daxpy.asm dual.daxpy.asm dual.M
 done

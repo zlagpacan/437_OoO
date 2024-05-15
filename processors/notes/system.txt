@@ -211,10 +211,10 @@ Synthesized TB: testasm -s
     - LAT=10: 23857 cycles -> old 437: 23911 cycles
 
 - dual.mergesort.asm:
-    - LAT=0:  cycles -> old 437: 10863 cycles
-    - LAT=2:  cycles -> old 437: 11859 cycles
-    - LAT=6:  cycles -> old 437: 14623 cycles
-    - LAT=10:  cycles -> old 437: 16841 cycles
+    - LAT=0: 10055 cycles -> old 437: 10863 cycles
+    - LAT=2: 11319 cycles -> old 437: 11859 cycles
+    - LAT=6: 14335 cycles -> old 437: 14623 cycles
+    - LAT=10: 17673 cycles -> old 437: 16841 cycles
 
 - daxpy.asm (single-threaded):
     - LAT=0: 84637 cycles -> old 437: 180353 cycles
@@ -304,17 +304,17 @@ Synthesis: done
 +--------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                       ;
 +------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Sat May 11 23:08:30 2024           ;
+; Fitter Status                      ; Successful - Tue May 14 22:22:40 2024           ;
 ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
 ; Revision Name                      ; system                                          ;
 ; Top-level Entity Name              ; system                                          ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29C8                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 54,742 / 114,480 ( 48 % )                       ;
-;     Total combinational functions  ; 50,348 / 114,480 ( 44 % )                       ;
-;     Dedicated logic registers      ; 21,683 / 114,480 ( 19 % )                       ;
-; Total registers                    ; 21684                                           ;
+; Total logic elements               ; 55,808 / 114,480 ( 49 % )                       ;
+;     Total combinational functions  ; 51,417 / 114,480 ( 45 % )                       ;
+;     Dedicated logic registers      ; 21,726 / 114,480 ( 19 % )                       ;
+; Total registers                    ; 21726                                           ;
 ; Total pins                         ; 102 / 529 ( 19 % )                              ;
 ; Total virtual pins                 ; 0                                               ;
 ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
@@ -327,9 +327,9 @@ Synthesis: done
 +------------+-----------------+---------------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
 +------------+-----------------+---------------------+------+
-; 48.66 MHz  ; 48.66 MHz       ; CPUCLK              ;      ;
-; 93.65 MHz  ; 93.65 MHz       ; altera_reserved_tck ;      ;
-; 150.11 MHz ; 150.11 MHz      ; CLK                 ;      ;
+; 47.45 MHz  ; 47.45 MHz       ; CPUCLK              ;      ;
+; 82.12 MHz  ; 82.12 MHz       ; altera_reserved_tck ;      ;
+; 133.05 MHz ; 133.05 MHz      ; CLK                 ;      ;
 +------------+-----------------+---------------------+------+
 
 Synthesized TB: testasm -s
