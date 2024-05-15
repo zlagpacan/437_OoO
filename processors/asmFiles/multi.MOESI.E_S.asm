@@ -33,6 +33,14 @@ ori $a0, $zero, 0x0100
 core1_delay_loop_0:
     addi $a0, $a0, -1
     bne $a0, $zero, core1_delay_loop_0
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
 
 # load in other word in O block (avoid SQ forward)
 lw $t1, 4($s0)

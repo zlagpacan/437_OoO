@@ -11,6 +11,14 @@ ori $a0, $zero, 0x0080
 core0_delay_loop_0:
     addi $a0, $a0, -1
     bne $a0, $zero, core0_delay_loop_0
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
 
 lw $t0, 0($s0)
 sw $t0, 0($s1)
@@ -19,7 +27,7 @@ halt
 
 org 0x0200
 
-# I->E->S
+# I->E->M->O
 
 ori $s0, $zero, shared
 ori $s1, $zero, result1
@@ -35,6 +43,14 @@ ori $a0, $zero, 0x0100
 core1_delay_loop_0:
     addi $a0, $a0, -1
     bne $a0, $zero, core1_delay_loop_0
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
 
 # load in other word in O block (avoid SQ forward)
 lw $t1, 4($s0)
