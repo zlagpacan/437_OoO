@@ -44,15 +44,14 @@ ori $s4, $zero, result
 
 # flag wait loop
 flag_wait_loop:
+
+    # load flag
     lw $t0, 0($s0)
 
     # load value
-    lw $t1, 0($s4)
+    lw $t1, 0($s2)
     
     beq $t0, $zero, flag_wait_loop
-
-# # load value
-# lw $t1, 0($s2)
 
 # store value at result
 sw $t1, 0($s4)

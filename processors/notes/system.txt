@@ -241,10 +241,13 @@ Design: done
 
 RTL TB: bash testasm_multicore_no_LLSC.sh
 
+    - some dual.MSI... tests are racey, rely on more atomic bus timing
+    - multi.MOESI and multi.seqc tests replace these
+
     - LAT=0: all passing
     - LAT=2: all passing
     - LAT=6: all passing
-    - LAT=10: all passing
+    - LAT=10: multi.seqc.flag_miss_value.asm failing
 
     - ERRORS:
         - dual.mergesort.asm

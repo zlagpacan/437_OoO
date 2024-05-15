@@ -1609,26 +1609,28 @@ module snoop_dcache (
 
         endcase
 
-        ///////////////////////////
-        // load MSHR kill logic: //
-        ///////////////////////////
-            // multicore: no change
+        // ///////////////////////////
+        // // load MSHR kill logic: //
+        // ///////////////////////////
+        //     // multicore: no change
         
-        // kill bus 0
-        if (dcache_read_kill_0_valid) begin
+        // // kill bus 0
+        // if (dcache_read_kill_0_valid) begin
 
-            // invalidate MSHR
-                // don't need to check anything else?
-            next_load_MSHR_by_LQ_index[dcache_read_kill_0_LQ_index].valid = 1'b0;
-        end
+        //     // invalidate MSHR
+        //         // don't need to check anything else?
+        //     next_load_MSHR_by_LQ_index[dcache_read_kill_0_LQ_index].valid = 1'b0;
+        // end
 
-        // kill bus 1
-        if (dcache_read_kill_1_valid) begin
+        // // kill bus 1
+        // if (dcache_read_kill_1_valid) begin
 
-            // invalidate MSHR
-                // don't need to check anything else?
-            next_load_MSHR_by_LQ_index[dcache_read_kill_1_LQ_index].valid = 1'b0;
-        end
+        //     // invalidate MSHR
+        //         // don't need to check anything else?
+        //     next_load_MSHR_by_LQ_index[dcache_read_kill_1_LQ_index].valid = 1'b0;
+        // end
+
+            // this is highest priority, can have same-cycle load MSHR alloc and read kill
 
         ///////////////////////
         // store MSHR logic: //
@@ -3287,6 +3289,28 @@ module snoop_dcache (
             $display("dcache: ERROR: dcache tag array != snoop tag array");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+        end
+
+        ///////////////////////////
+        // load MSHR kill logic: //
+        ///////////////////////////
+            // multicore: no change
+            // this is highest priority, can have same-cycle load MSHR alloc and read kill
+        
+        // kill bus 0
+        if (dcache_read_kill_0_valid) begin
+
+            // invalidate MSHR
+                // don't need to check anything else?
+            next_load_MSHR_by_LQ_index[dcache_read_kill_0_LQ_index].valid = 1'b0;
+        end
+
+        // kill bus 1
+        if (dcache_read_kill_1_valid) begin
+
+            // invalidate MSHR
+                // don't need to check anything else?
+            next_load_MSHR_by_LQ_index[dcache_read_kill_1_LQ_index].valid = 1'b0;
         end
     end
 

@@ -2891,12 +2891,12 @@ module lsq (
 
                 // tail follows d$ inv
                     // adjust msb still greater than head as expect
-                    // if new tail index >= old tail index, then need to flip msb to undo wraparound
+                    // if new tail index >= head index, then need keep msb to undo wraparound
                 next_LQ_tail_ptr = {
-                    (LQ_restart_combined_dcache_inv_evict_LQ_index >= LQ_tail_ptr.index) ? 
-                        ~LQ_tail_ptr.msb
+                    (LQ_restart_combined_dcache_inv_evict_LQ_index >= next_LQ_head_ptr.index) ? 
+                        next_LQ_head_ptr.msb
                         :    
-                        LQ_tail_ptr.msb
+                        ~next_LQ_head_ptr.msb
                     , 
                     LQ_restart_combined_dcache_inv_evict_LQ_index
                 };
@@ -2924,17 +2924,17 @@ module lsq (
             next_ROB_LQ_restart_after_instr = 1'b0;
             next_ROB_LQ_restart_ROB_index = LQ_restart_combined_dcache_inv_evict_ROB_index;
 
-            // tail follows d$ inv
-                // adjust msb still greater than head as expect
-                // if new tail index >= old tail index, then need to flip msb to undo wraparound
-            next_LQ_tail_ptr = {
-                (LQ_restart_combined_dcache_inv_evict_LQ_index >= LQ_tail_ptr.index) ? 
-                    ~LQ_tail_ptr.msb
-                    :    
-                    LQ_tail_ptr.msb
-                , 
-                LQ_restart_combined_dcache_inv_evict_LQ_index
-            };
+                // tail follows d$ inv
+                    // adjust msb still greater than head as expect
+                    // if new tail index >= head index, then need keep msb to undo wraparound
+                next_LQ_tail_ptr = {
+                    (LQ_restart_combined_dcache_inv_evict_LQ_index >= next_LQ_head_ptr.index) ? 
+                        next_LQ_head_ptr.msb
+                        :    
+                        ~next_LQ_head_ptr.msb
+                    , 
+                    LQ_restart_combined_dcache_inv_evict_LQ_index
+                };
         end
 
         // otherwise, follow lone missed SQ forward
