@@ -666,6 +666,10 @@ module rob (
                 // simultaneous BRU and LQ restarts -> restart at older
                     // also check LQ entry valid
                         // restart can come in late, don't care if entry invalid
+                    // also check LQ entry not going to be killed -> between inorder start and end
+                        // (LQ entry - head) >= (start - head)
+                        // AND
+                        // (LQ entry - head) < (end - head)
                 if (
                     BRU_restart_valid
                     &
@@ -674,6 +678,20 @@ module rob (
                     LQ_restart_valid
                     &
                     ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    &
+                    !(
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            >=
+                            (inorder_kill_start_ROB_index - head_index_ptr)
+                        )
+                        &
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            <
+                            (inorder_kill_end_ROB_index - head_index_ptr)
+                        )
+                    )
                 ) begin
 
                     // age logic: subtract head index
@@ -777,6 +795,20 @@ module rob (
                     LQ_restart_valid
                     &
                     ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    &
+                    !(
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            >=
+                            (inorder_kill_start_ROB_index - head_index_ptr)
+                        )
+                        &
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            <
+                            (inorder_kill_end_ROB_index - head_index_ptr)
+                        )
+                    )
                 ) begin
 
                     // LQ -> no check for checkpoint restore, immediately revert
@@ -883,6 +915,20 @@ module rob (
                         &
                         ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
                         &
+                        !(
+                            (
+                                (LQ_restart_ROB_index - head_index_ptr)
+                                >=
+                                (inorder_kill_start_ROB_index - head_index_ptr)
+                            )
+                            &
+                            (
+                                (LQ_restart_ROB_index - head_index_ptr)
+                                <
+                                (inorder_kill_end_ROB_index - head_index_ptr)
+                            )
+                        )
+                        &
                         (
                             LQ_restart_ROB_index - head_index_ptr
                             <
@@ -955,6 +1001,20 @@ module rob (
                     LQ_restart_valid 
                     &
                     ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    &
+                    !(
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            >=
+                            (inorder_kill_start_ROB_index - head_index_ptr)
+                        )
+                        &
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            <
+                            (inorder_kill_end_ROB_index - head_index_ptr)
+                        )
+                    )
                     & 
                     (
                         LQ_restart_ROB_index - head_index_ptr
@@ -1078,6 +1138,20 @@ module rob (
                         LQ_restart_valid
                         &
                         ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid 
+                        &
+                        !(
+                            (
+                                (LQ_restart_ROB_index - head_index_ptr)
+                                >=
+                                (inorder_kill_start_ROB_index - head_index_ptr)
+                            )
+                            &
+                            (
+                                (LQ_restart_ROB_index - head_index_ptr)
+                                <
+                                (inorder_kill_end_ROB_index - head_index_ptr)
+                            )
+                        )
                         & 
                         (
                             LQ_restart_ROB_index - head_index_ptr
@@ -1143,6 +1217,20 @@ module rob (
                     LQ_restart_valid 
                     &
                     ROB_array_by_entry[LQ_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid
+                    &
+                    !(
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            >=
+                            (inorder_kill_start_ROB_index - head_index_ptr)
+                        )
+                        &
+                        (
+                            (LQ_restart_ROB_index - head_index_ptr)
+                            <
+                            (inorder_kill_end_ROB_index - head_index_ptr)
+                        )
+                    )
                     & 
                     (
                         LQ_restart_ROB_index - head_index_ptr
