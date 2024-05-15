@@ -148,333 +148,333 @@ add wave -noupdate -expand -group {dmem1 write req interface} /system_tb/DUT/dme
 add wave -noupdate -expand -group {dmem1 write req interface} /system_tb/DUT/dmem1_write_req_data
 add wave -noupdate -expand -group {dmem1 write req interface} /system_tb/DUT/dmem1_write_req_slow_down
 add wave -noupdate -divider {Internal Signals}
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/CLK
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/nRST
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/icache_hit
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/icache_load
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/icache_REN
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/icache_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/icache_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_linked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_conditional
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_resp_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_resp_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_resp_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_conditional
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_0_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_0_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_1_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_1_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_inv_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_inv_block_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_evict_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_evict_block_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/dcache_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_BTB_DIRP_update
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_BTB_DIRP_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_BTB_target
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_DIRP_taken
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_take_resolved
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_resolved_PC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_hit
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_load
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_core_control_stall_fetch_unit
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_core_control_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_REN
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_instr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_ivalid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_PC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_nPC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_stall_dispatch_unit
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_flush_dispatch_unit
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_dispatch_failed
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_instr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_ivalid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_PC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_nPC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_speculate_failed
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_safe_column
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_success
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_arch_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_speculated_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_safe_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_0_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_0_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_1_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_1_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_2_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_2_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_tail_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_enqueue_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_struct_out
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_retire_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_retire_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ALU_RS_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ALU_RS_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_ALU_RS_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_LQ_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_LQ_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_LQ_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_SQ_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_SQ_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_SQ_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_BRU_RS_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_BRU_RS_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/DU_BRU_RS_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_empty
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_fetch_unit_take_resolved
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_fetch_unit_resolved_PC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_ROB_tail_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_enqueue_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_enqueue_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_retire_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_retire_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_0_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_0_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_0_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_1_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_1_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_1_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_2_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_2_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_2_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_complete_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_PC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_safe_column
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_restart_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_restart_after_instr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_restart_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_retire_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_retire_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_retire_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_complete_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_complete_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_retire_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_retire_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_retire_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_speculate_failed
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_safe_column
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_success
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_arch_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_safe_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_speculated_phys_reg_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_kill_bus_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_core_control_restore_flush
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_core_control_revert_stall
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/ROB_core_control_halt_assert
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_read_overload
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_read_req_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_read_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_read_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_ALU_RS_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_dispatch_unit_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_dispatch_unit_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_kill_bus_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_0_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_1_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_2_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_2_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_2_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_data_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_ALU_RS_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_dispatch_unit_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_dispatch_unit_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_kill_bus_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_0_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_1_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_2_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_2_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_2_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_data_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_BRU_RS_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_dispatch_unit_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_dispatch_unit_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_kill_bus_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_0_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_1_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_2_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_2_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_2_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_complete_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_PC
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_safe_column
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_BTB_DIRP_update
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_BTB_DIRP_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_BTB_target
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_DIRP_taken
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_DUT_error
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_LQ_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_LQ_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_LQ_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_SQ_full
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_SQ_task_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_SQ_task_struct
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_kill_bus_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_core_control_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_restart_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_restart_after_instr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_restart_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_retire_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_retire_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_retire_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_complete_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_complete_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_retire_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_retire_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_retire_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_req_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_serviced
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_ROB_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_data_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_linked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_conditional
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_resp_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_resp_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_resp_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_conditional
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_blocked
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_0_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_0_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_1_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_1_LQ_index
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_inv_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_inv_block_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_evict_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_evict_block_addr
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_halt
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_0_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_0_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_0_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_1_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_1_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_1_data
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_2_tag_valid
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_2_tag
-add wave -noupdate -expand -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_2_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/CLK
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/nRST
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/icache_hit
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/icache_load
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/icache_REN
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/icache_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/icache_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_linked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_conditional
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_req_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_resp_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_resp_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_resp_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_conditional
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_write_req_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_0_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_0_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_1_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_read_kill_1_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_inv_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_inv_block_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_evict_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_evict_block_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/dcache_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_BTB_DIRP_update
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_BTB_DIRP_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_BTB_target
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_DIRP_taken
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_take_resolved
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_from_pipeline_resolved_PC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_hit
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_load
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_core_control_stall_fetch_unit
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_core_control_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_REN
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_icache_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_instr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_ivalid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_PC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/FU_to_pipeline_nPC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_stall_dispatch_unit
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_flush_dispatch_unit
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_core_control_dispatch_failed
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_instr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_ivalid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_PC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_fetch_unit_nPC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_speculate_failed
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_safe_column
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_restore_checkpoint_success
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_arch_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_speculated_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_kill_bus_safe_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_0_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_1_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_2_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_tail_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_enqueue_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_struct_out
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_retire_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ROB_retire_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ALU_RS_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ALU_RS_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_ALU_RS_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_LQ_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_LQ_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_LQ_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_SQ_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_SQ_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_SQ_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_BRU_RS_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_BRU_RS_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/DU_BRU_RS_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_empty
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_fetch_unit_take_resolved
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_fetch_unit_resolved_PC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_ROB_tail_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_enqueue_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_enqueue_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_retire_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_dispatch_unit_retire_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_0_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_0_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_1_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_1_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_2_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_complete_bus_2_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_complete_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_PC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_BRU_restart_safe_column
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_restart_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_restart_after_instr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_restart_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_retire_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_retire_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_LQ_retire_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_complete_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_complete_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_retire_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_retire_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_SQ_retire_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_speculate_failed
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_safe_column
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_restore_checkpoint_success
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_arch_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_safe_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_revert_speculated_phys_reg_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_kill_bus_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_kill_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_core_control_restore_flush
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_core_control_revert_stall
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/ROB_core_control_halt_assert
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_read_overload
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_read_req_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_BRU_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_SQ_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_read_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_read_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_LQ_write_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_0_write_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/PRF_ALU_1_write_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_ALU_RS_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_dispatch_unit_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_dispatch_unit_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_reg_file_read_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_kill_bus_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_kill_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_0_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_1_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_2_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_2_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_complete_bus_2_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_data_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP0_this_complete_bus_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_ALU_RS_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_dispatch_unit_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_dispatch_unit_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_reg_file_read_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_kill_bus_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_kill_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_0_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_1_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_2_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_2_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_complete_bus_2_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_data_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/AP1_this_complete_bus_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_BRU_RS_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_dispatch_unit_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_dispatch_unit_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_reg_file_read_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_kill_bus_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_kill_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_0_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_1_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_2_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_2_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_complete_bus_2_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_complete_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_PC
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_restart_safe_column
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_BTB_DIRP_update
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_BTB_DIRP_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_BTB_target
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/BP_this_DIRP_taken
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_DUT_error
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_LQ_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_LQ_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_LQ_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_SQ_full
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_SQ_task_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dispatch_unit_SQ_task_struct
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_kill_bus_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_kill_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_core_control_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_restart_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_restart_after_instr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_restart_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_retire_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_retire_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_LQ_retire_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_complete_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_complete_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_retire_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_retire_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_ROB_SQ_retire_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_req_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_LQ_reg_read_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_req_serviced
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_SQ_reg_read_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_ROB_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_data_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_this_complete_bus_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_linked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_conditional
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_req_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_resp_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_resp_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_resp_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_conditional
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_write_req_blocked
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_0_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_0_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_1_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_read_kill_1_LQ_index
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_inv_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_inv_block_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_evict_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_evict_block_addr
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_dcache_halt
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_0_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_0_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_0_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_1_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_1_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_1_data
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_2_tag_valid
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_2_tag
+add wave -noupdate -group {core0 Signals} /system_tb/DUT/CORE0/LSQ_complete_bus_2_data
 add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/CLK
 add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/nRST
 add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/DUT_error
@@ -500,459 +500,459 @@ add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/missing_block
 add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/next_missing_block_addr
 add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/missing_plus_counter_block_addr
 add wave -noupdate -group {icache0 Signals} /system_tb/DUT/ICACHE0/icache_addr_structed
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/CLK
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/nRST
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/DUT_error
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_linked
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_conditional
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_blocked
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_resp_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_resp_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_resp_data
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_data
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_conditional
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_blocked
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_0_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_0_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_1_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_1_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_inv_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_inv_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_evict_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_evict_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_halt
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_exclusive
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_curr_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_data
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_need_block
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_new_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_exclusive
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_curr_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_data
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_present
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_need_block
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_new_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_data
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_slow_down
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/flushed
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_DUT_error
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_addr_structed
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_addr_structed
-add wave -noupdate -expand -group {snoop_dcache0 Signals} -expand -subitemconfig {{/system_tb/DUT/SNOOP_DCACHE0/dcache_tag_frame_by_way_by_set[1]} -expand {/system_tb/DUT/SNOOP_DCACHE0/dcache_tag_frame_by_way_by_set[0]} -expand} /system_tb/DUT/SNOOP_DCACHE0/dcache_tag_frame_by_way_by_set
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_tag_frame_by_way_by_set
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_data_frame_by_way_by_set
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_data_frame_by_way_by_set
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_tag_frame_by_way_by_set
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_tag_frame_by_way_by_set
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_set_LRU
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_set_LRU
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_MSHR_by_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_MSHR_by_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR_Q
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR_Q
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR_Q_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR_Q_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR_Q_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR_Q_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/flush_counter
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_flush_counter
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/new_load_miss_reg
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_new_load_miss_reg
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/new_store_miss_reg
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_new_store_miss_reg
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/backlog_Q_bus_read_req_by_entry
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_backlog_Q_bus_read_req_by_entry
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/backlog_Q_bus_read_req_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_backlog_Q_bus_read_req_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/backlog_Q_bus_read_req_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_backlog_Q_bus_read_req_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_hit_this_cycle
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_hit_this_cycle
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_load_MSHR_fulfilled
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_load_MSHR_LQ_index
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_empty_way
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/empty_way
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_hit_return
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_hit_return
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_miss_return_Q
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_miss_return_Q
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_miss_return_Q_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_miss_return_Q_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_miss_return_Q_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_miss_return_Q_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/hit_counter
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_hit_counter
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_store_MSHR_Q_valid_entry
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_flushed
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_way
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_new_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_miss_upgrading
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_miss_upgrading_way
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_access_allowed
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_search_VTM_success
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_search_VTM_way
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_search_VTM_state
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_Q
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_req_Q
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_Q_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_req_Q_head_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_Q_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_req_Q_tail_ptr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_valid
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_block_addr
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_data
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_present
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_need_block
-add wave -noupdate -expand -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_new_state
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PC_RESET_VAL
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/CLK
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/nRST
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/icache_hit
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/icache_load
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/icache_REN
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/icache_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/icache_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_linked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_conditional
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_resp_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_resp_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_resp_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_conditional
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_0_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_0_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_1_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_1_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_inv_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_inv_block_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_evict_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_evict_block_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/dcache_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_BTB_DIRP_update
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_BTB_DIRP_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_BTB_target
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_DIRP_taken
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_take_resolved
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_resolved_PC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_hit
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_load
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_core_control_stall_fetch_unit
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_core_control_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_REN
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_instr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_ivalid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_PC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_nPC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_stall_dispatch_unit
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_flush_dispatch_unit
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_dispatch_failed
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_instr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_ivalid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_PC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_nPC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_speculate_failed
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_safe_column
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_success
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_arch_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_speculated_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_safe_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_0_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_0_dest_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_1_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_1_dest_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_2_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_2_dest_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_tail_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_enqueue_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_struct_out
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_retire_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_retire_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ALU_RS_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ALU_RS_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_ALU_RS_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_LQ_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_LQ_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_LQ_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_SQ_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_SQ_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_SQ_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_BRU_RS_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_BRU_RS_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/DU_BRU_RS_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_empty
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_fetch_unit_take_resolved
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_fetch_unit_resolved_PC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_ROB_tail_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_enqueue_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_enqueue_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_retire_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_retire_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_0_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_0_dest_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_0_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_1_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_1_dest_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_1_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_2_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_2_dest_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_2_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_complete_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_PC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_safe_column
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_restart_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_restart_after_instr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_restart_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_retire_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_retire_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_retire_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_complete_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_complete_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_retire_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_retire_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_retire_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_speculate_failed
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_safe_column
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_success
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_arch_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_safe_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_speculated_phys_reg_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_kill_bus_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_kill_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_core_control_restore_flush
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_core_control_revert_stall
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/ROB_core_control_halt_assert
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_read_overload
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_read_req_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_read_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_read_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_ALU_RS_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_dispatch_unit_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_dispatch_unit_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_kill_bus_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_kill_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_0_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_1_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_2_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_2_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_2_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_data_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_ALU_RS_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_dispatch_unit_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_dispatch_unit_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_kill_bus_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_kill_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_0_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_1_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_2_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_2_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_2_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_data_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_BRU_RS_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_dispatch_unit_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_dispatch_unit_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_kill_bus_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_kill_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_0_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_1_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_2_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_2_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_2_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_complete_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_PC
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_safe_column
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_BTB_DIRP_update
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_BTB_DIRP_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_BTB_target
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_DIRP_taken
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_DUT_error
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_LQ_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_LQ_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_LQ_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_SQ_full
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_SQ_task_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_SQ_task_struct
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_kill_bus_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_kill_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_core_control_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_restart_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_restart_after_instr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_restart_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_retire_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_retire_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_retire_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_complete_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_complete_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_retire_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_retire_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_retire_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_req_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_serviced
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_ROB_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_data_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_linked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_conditional
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_resp_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_resp_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_resp_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_conditional
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_blocked
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_0_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_0_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_1_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_1_LQ_index
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_inv_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_inv_block_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_evict_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_evict_block_addr
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_halt
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_0_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_0_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_0_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_1_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_1_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_1_data
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_2_tag_valid
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_2_tag
-add wave -noupdate -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_2_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/CLK
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/nRST
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/DUT_error
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_linked
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_conditional
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_blocked
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_resp_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_resp_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_resp_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_conditional
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_blocked
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_0_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_0_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_1_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_kill_1_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_inv_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_inv_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_evict_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_evict_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_halt
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_exclusive
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_req_curr_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_need_block
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dbus_resp_new_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_exclusive
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_curr_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_present
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_need_block
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_resp_new_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dmem_write_req_slow_down
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/flushed
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_DUT_error
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_read_req_addr_structed
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_write_req_addr_structed
+add wave -noupdate -group {snoop_dcache0 Signals} -expand -subitemconfig {{/system_tb/DUT/SNOOP_DCACHE0/dcache_tag_frame_by_way_by_set[1]} -expand {/system_tb/DUT/SNOOP_DCACHE0/dcache_tag_frame_by_way_by_set[0]} -expand} /system_tb/DUT/SNOOP_DCACHE0/dcache_tag_frame_by_way_by_set
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_tag_frame_by_way_by_set
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_data_frame_by_way_by_set
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_data_frame_by_way_by_set
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_tag_frame_by_way_by_set
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_tag_frame_by_way_by_set
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_set_LRU
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_set_LRU
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_MSHR_by_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_MSHR_by_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR_Q
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR_Q
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR_Q_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR_Q_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_MSHR_Q_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_store_MSHR_Q_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/dcache_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_dcache_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/flush_counter
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_flush_counter
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/new_load_miss_reg
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_new_load_miss_reg
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/new_store_miss_reg
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_new_store_miss_reg
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/backlog_Q_bus_read_req_by_entry
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_backlog_Q_bus_read_req_by_entry
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/backlog_Q_bus_read_req_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_backlog_Q_bus_read_req_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/backlog_Q_bus_read_req_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_backlog_Q_bus_read_req_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_hit_this_cycle
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_hit_this_cycle
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_load_MSHR_fulfilled
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_load_MSHR_LQ_index
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_empty_way
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/empty_way
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_hit_return
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_hit_return
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_miss_return_Q
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_miss_return_Q
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_miss_return_Q_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_miss_return_Q_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/load_miss_return_Q_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_load_miss_return_Q_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/hit_counter
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_hit_counter
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/found_store_MSHR_Q_valid_entry
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_flushed
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_way
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/piggyback_bus_new_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_miss_upgrading
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/store_miss_upgrading_way
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_access_allowed
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_search_VTM_success
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_search_VTM_way
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_search_VTM_state
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_Q
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_req_Q
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_Q_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_req_Q_head_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/snoop_req_Q_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_req_Q_tail_ptr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_valid
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_block_addr
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_data
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_present
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_need_block
+add wave -noupdate -group {snoop_dcache0 Signals} /system_tb/DUT/SNOOP_DCACHE0/next_snoop_resp_new_state
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PC_RESET_VAL
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/CLK
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/nRST
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/icache_hit
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/icache_load
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/icache_REN
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/icache_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/icache_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_linked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_conditional
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_req_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_resp_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_resp_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_resp_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_conditional
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_write_req_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_0_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_0_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_1_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_read_kill_1_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_inv_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_inv_block_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_evict_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_evict_block_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/dcache_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_BTB_DIRP_update
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_BTB_DIRP_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_BTB_target
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_DIRP_taken
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_take_resolved
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_from_pipeline_resolved_PC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_hit
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_load
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_core_control_stall_fetch_unit
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_core_control_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_REN
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_icache_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_instr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_ivalid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_PC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/FU_to_pipeline_nPC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_stall_dispatch_unit
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_flush_dispatch_unit
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_core_control_dispatch_failed
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_instr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_ivalid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_PC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_fetch_unit_nPC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_speculate_failed
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_safe_column
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_restore_checkpoint_success
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_arch_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_speculated_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_kill_bus_safe_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_0_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_1_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_2_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_tail_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_enqueue_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_struct_out
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_retire_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ROB_retire_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ALU_RS_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ALU_RS_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_ALU_RS_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_LQ_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_LQ_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_LQ_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_SQ_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_SQ_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_SQ_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_BRU_RS_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_BRU_RS_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/DU_BRU_RS_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_empty
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_fetch_unit_take_resolved
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_fetch_unit_resolved_PC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_ROB_tail_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_enqueue_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_enqueue_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_retire_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_dispatch_unit_retire_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_0_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_0_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_1_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_1_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_2_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_complete_bus_2_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_complete_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_PC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_BRU_restart_safe_column
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_restart_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_restart_after_instr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_restart_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_retire_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_retire_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_LQ_retire_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_complete_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_complete_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_retire_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_retire_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_SQ_retire_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_speculate_failed
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_safe_column
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_restore_checkpoint_success
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_arch_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_safe_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_revert_speculated_phys_reg_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_kill_bus_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_core_control_restore_flush
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_core_control_revert_stall
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/ROB_core_control_halt_assert
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_read_overload
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_read_req_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_BRU_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_SQ_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_read_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_read_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_LQ_write_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_0_write_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/PRF_ALU_1_write_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_ALU_RS_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_dispatch_unit_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_dispatch_unit_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_reg_file_read_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_kill_bus_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_0_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_1_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_2_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_2_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_complete_bus_2_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_data_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP0_this_complete_bus_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_ALU_RS_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_dispatch_unit_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_dispatch_unit_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_reg_file_read_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_kill_bus_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_0_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_1_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_2_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_2_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_complete_bus_2_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_data_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/AP1_this_complete_bus_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_BRU_RS_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_dispatch_unit_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_dispatch_unit_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_reg_file_read_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_kill_bus_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_0_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_1_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_2_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_2_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_complete_bus_2_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_complete_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_PC
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_restart_safe_column
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_BTB_DIRP_update
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_BTB_DIRP_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_BTB_target
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/BP_this_DIRP_taken
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_DUT_error
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_LQ_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_LQ_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_LQ_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_SQ_full
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_SQ_task_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dispatch_unit_SQ_task_struct
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_kill_bus_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_core_control_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_restart_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_restart_after_instr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_restart_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_retire_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_retire_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_LQ_retire_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_complete_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_complete_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_retire_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_retire_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_ROB_SQ_retire_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_req_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_LQ_reg_read_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_req_serviced
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_SQ_reg_read_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_ROB_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_data_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_this_complete_bus_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_linked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_conditional
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_req_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_resp_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_resp_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_resp_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_conditional
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_write_req_blocked
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_0_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_0_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_1_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_read_kill_1_LQ_index
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_inv_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_inv_block_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_evict_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_evict_block_addr
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_dcache_halt
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_0_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_0_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_0_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_1_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_1_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_1_data
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_2_tag_valid
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_2_tag
+add wave -noupdate -expand -group {core1 Signals} /system_tb/DUT/CORE1/LSQ_complete_bus_2_data
 add wave -noupdate -group {icache1 Signals} /system_tb/DUT/ICACHE1/CLK
 add wave -noupdate -group {icache1 Signals} /system_tb/DUT/ICACHE1/nRST
 add wave -noupdate -group {icache1 Signals} /system_tb/DUT/ICACHE1/DUT_error
@@ -1280,82 +1280,174 @@ add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/write_buffer_search_data
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/imem_LRU
 add wave -noupdate -group {dual_mem_controller Signals} /system_tb/DUT/DUAL_MEM_CONTROLLER/next_imem_LRU
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/CLK
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/nRST
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/DUT_error
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/full
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/empty
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/fetch_unit_take_resolved
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/fetch_unit_resolved_PC
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_ROB_tail_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_enqueue_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_enqueue_struct
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_retire_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_retire_phys_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_0_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_0_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_0_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_1_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_1_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_1_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_2_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_2_dest_phys_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_2_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_complete_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_PC
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_safe_column
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_restart_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_restart_after_instr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_restart_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_retire_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_retire_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_retire_blocked
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_complete_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_complete_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_retire_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_retire_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_retire_blocked
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_speculate_failed
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_safe_column
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_success
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_arch_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_safe_phys_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_speculated_phys_reg_tag
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/kill_bus_valid
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/kill_bus_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/core_control_restore_flush
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/core_control_revert_stall
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/core_control_halt_assert
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_state_out
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/invalid_complete
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_capacity
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_DUT_error
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_array_by_entry
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_ROB_array_by_entry
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/head_index_ptr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_head_index_ptr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/tail_index_ptr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_tail_index_ptr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restart_ROB_index_ptr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_restart_ROB_index_ptr
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restart_column
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_restart_column
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/inorder_kill_start_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_inorder_kill_start_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/inorder_kill_end_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_inorder_kill_end_ROB_index
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_full
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_empty
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_state
-add wave -noupdate -expand -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_ROB_state
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/CLK
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/nRST
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/DUT_error
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/full
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/empty
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/fetch_unit_take_resolved
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/fetch_unit_resolved_PC
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_ROB_tail_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_enqueue_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_enqueue_struct
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_retire_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/dispatch_unit_retire_phys_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_0_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_0_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_1_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_1_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_2_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/complete_bus_2_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_complete_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_PC
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/BRU_restart_safe_column
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_restart_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_restart_after_instr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_restart_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_retire_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_retire_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/LQ_retire_blocked
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_complete_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_complete_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_retire_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_retire_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/SQ_retire_blocked
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_speculate_failed
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_safe_column
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restore_checkpoint_success
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_arch_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_safe_phys_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/revert_speculated_phys_reg_tag
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/kill_bus_valid
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/kill_bus_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/core_control_restore_flush
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/core_control_revert_stall
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/core_control_halt_assert
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_state_out
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/invalid_complete
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_capacity
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_DUT_error
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_array_by_entry
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_ROB_array_by_entry
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/head_index_ptr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_head_index_ptr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/tail_index_ptr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_tail_index_ptr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restart_ROB_index_ptr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_restart_ROB_index_ptr
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/restart_column
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_restart_column
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/inorder_kill_start_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_inorder_kill_start_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/inorder_kill_end_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_inorder_kill_end_ROB_index
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_full
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_empty
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/ROB_state
+add wave -noupdate -group {core0 ROB Signals} /system_tb/DUT/CORE0/ROB/next_ROB_state
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/CLK
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/nRST
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/DUT_error
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/full
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/empty
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/fetch_unit_take_resolved
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/fetch_unit_resolved_PC
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/dispatch_unit_ROB_tail_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/dispatch_unit_enqueue_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/dispatch_unit_enqueue_struct
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/dispatch_unit_retire_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/dispatch_unit_retire_phys_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_0_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_0_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_1_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_1_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_2_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/complete_bus_2_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/BRU_complete_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/BRU_restart_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/BRU_restart_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/BRU_restart_PC
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/BRU_restart_safe_column
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/LQ_restart_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/LQ_restart_after_instr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/LQ_restart_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/LQ_retire_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/LQ_retire_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/LQ_retire_blocked
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/SQ_complete_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/SQ_complete_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/SQ_retire_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/SQ_retire_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/SQ_retire_blocked
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restore_checkpoint_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restore_checkpoint_speculate_failed
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restore_checkpoint_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restore_checkpoint_safe_column
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restore_checkpoint_success
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/revert_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/revert_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/revert_arch_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/revert_safe_phys_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/revert_speculated_phys_reg_tag
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/kill_bus_valid
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/kill_bus_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/core_control_restore_flush
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/core_control_revert_stall
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/core_control_halt_assert
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/ROB_state_out
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/invalid_complete
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/ROB_capacity
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_DUT_error
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/ROB_array_by_entry
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_ROB_array_by_entry
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/head_index_ptr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_head_index_ptr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/tail_index_ptr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_tail_index_ptr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restart_ROB_index_ptr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_restart_ROB_index_ptr
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/restart_column
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_restart_column
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/inorder_kill_start_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_inorder_kill_start_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/inorder_kill_end_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_inorder_kill_end_ROB_index
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_full
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_empty
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/ROB_state
+add wave -noupdate -expand -group {core1 ROB Signals} /system_tb/DUT/CORE1/ROB/next_ROB_state
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/CLK
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/nRST
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/DUT_error
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/dispatch_source_0_phys_reg_tag
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/dispatch_source_0_ready
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/dispatch_source_1_phys_reg_tag
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/dispatch_source_1_ready
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/dispatch_dest_write
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/dispatch_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/complete_bus_0_valid
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/complete_bus_0_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/complete_bus_1_valid
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/complete_bus_1_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/complete_bus_2_valid
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/complete_bus_2_dest_phys_reg_tag
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/next_DUT_error
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/ready_table_by_phys_reg_tag_index
+add wave -noupdate -expand -group {core1 PRRT Signals} /system_tb/DUT/CORE1/DU/prrt/next_ready_table_by_phys_reg_tag_index
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {1819856 ps} 0}
+WaveRestoreCursors {{Cursor 1} {21440000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 311
 configure wave -valuecolwidth 202
@@ -1371,4 +1463,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {4691446 ps}
+WaveRestoreZoom {20669388 ps} {21793443 ps}

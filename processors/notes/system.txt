@@ -241,14 +241,18 @@ Design: done
 
 RTL TB: bash testasm_multicore_no_LLSC.sh
 
-    - LAT=0: dual.mergesort.asm failing
-    - LAT=2: dual.mergesort.asm failing
-    - LAT=6: dual.mergesort.asm failing
-    - LAT=10: dual.mergesort.asm failing
+    - LAT=0: all passing
+    - LAT=2: all passing
+    - LAT=6: all passing
+    - LAT=10: all passing
 
     - ERRORS:
         - dual.mergesort.asm
-            - 
+            - was load restart req for instr that will be killed in inorder kill
+                - since was successful BRU restart, can't directly compare 
+                    BRU restart index to load restart index
+            - SOLUTION: 
+                - for load restart, check entry next_...valid and not in inorder kill [start,end)
 
     - TODO:
 
