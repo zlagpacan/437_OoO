@@ -1,6 +1,6 @@
 org 0x0000
 
-# I->S
+# I->S->M
 
 ori $s0, $zero, shared
 ori $s1, $zero, result0
@@ -21,18 +21,20 @@ nop
 nop
 
 lw $t0, 0($s0)
-sw $t0, 0($s1)
+addi $t0, $t0, 0x1111
+sw $t0, 0($s0)
 
 halt
 
 org 0x0200
 
-# I->M->O
+# I->E->M->O->I
 
 ori $s0, $zero, shared
 ori $s1, $zero, result1
-ori $t0, $zero, 0x2222
 
+lw $t0, 0($s0)
+addi $t0, $t0, 0x1111
 sw $t0, 0($s0)
 
 # core1_delay_loop_0
@@ -49,10 +51,6 @@ nop
 nop
 nop
 nop
-
-# load in other word in O block (avoid SQ forward)
-lw $t1, 4($s0)
-sw $t1, 0($s1)
 
 halt
 
