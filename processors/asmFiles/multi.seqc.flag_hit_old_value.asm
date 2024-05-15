@@ -42,6 +42,9 @@ ori $s0, $zero, flag
 ori $s2, $zero, value
 ori $s4, $zero, result
 
+# load old value
+lw $t1, 0($s2)
+
 # flag wait loop
 flag_wait_loop:
 
@@ -58,7 +61,7 @@ nop
 nop
 nop
 
-# load value
+# load new value
 lw $t1, 0($s2)
 
 # store value at result
