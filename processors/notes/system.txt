@@ -250,7 +250,7 @@ RTL TB: bash testasm_multicore_no_LLSC.sh
     - LAT=10: all passing
 
     - ERRORS:
-        - 
+        - multi.seqc.TSO_5.asm @ LAT={0,2}
         
     - TODO:
 
