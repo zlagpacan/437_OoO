@@ -251,6 +251,17 @@ RTL TB: bash testasm_multicore_no_LLSC.sh
 
     - ERRORS:
         - multi.seqc.TSO_5.asm @ LAT={0,2}
+            - print(B) piggybacks on a recent load of B before A = 1
+            - don't get inv in time before sw for A = 1 commits before store miss finishes
+            - this proves that it is TSO, as the store can be reordered
+            - RESOLUTION:
+                - prevent ROB from moving on until store completes
+                    - then, load can receive inv before it is committed
+                - this is rare case, big change, and will slow things down since store can become bottleneck
+                    - meh, won't do
+                - since already TSO, can treat stores like loads and have multiple MSHR's,
+                    don't need to be in-order?
+                    - naw, store MSHR Q solution have now is fine since stores not on critical path
         
     - TODO:
 
@@ -285,6 +296,12 @@ potential perf improvements:
             - already have exclusive or not in snoops, need to add which word is needed
         - if upgrading, should find out no longer upgrading and values should all be fine when 
             get to mem?
+
+    - can immediately store on BusUpgrade once get grant, don't need to wait for inv's
+        - will be hard to make change with current 
+            - will need to check if still upgrading when get grant
+            - will need new return path from grant to dbus resp
+        - minor perf improvement, only bypassing snoop req and resp
 
 sim perf improvements:
 

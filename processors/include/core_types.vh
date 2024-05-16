@@ -225,6 +225,9 @@ package core_types_pkg;
         arch_reg_tag_t dest_arch_reg_tag;
         phys_reg_tag_t safe_dest_phys_reg_tag;
         phys_reg_tag_t speculated_dest_phys_reg_tag;
+        // ll/sc: 
+        logic store_sent;
+        logic load_returned;
     } ROB_entry_t;
         // consider adding safe checkpoint column here to better support general instr checkpointing
             // fine for now since checkpoint goes to BRU, and only BRU instr's are allowed to checkpoint

@@ -688,6 +688,11 @@ module dispatch_unit (
         ROB_struct_out.dest_arch_reg_tag = instr_rd;
         ROB_struct_out.safe_dest_phys_reg_tag = prmt_old_dest_phys_reg_tag;
         ROB_struct_out.speculated_dest_phys_reg_tag = prfl_dequeue_phys_reg_tag;
+            // ll/sc:
+                // not yet store_sent
+                // not yet load_returned
+        ROB_struct_out.store_sent = 1'b0;
+        ROB_struct_out.load_returned = 1'b0;
 
         // ALU 0 struct
             // RTYPE ADD
