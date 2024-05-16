@@ -2009,15 +2009,34 @@ module lsq (
                     // check entry valid
                     if (LQ_array[i].valid) begin
 
-                        // if searched and loaded, fulfill retire: invalidate
-                        if (LQ_array[i].SQ_searched & (LQ_array[i].SQ_loaded | LQ_array[i].dcache_loaded)) begin
+                        // LL or SC: check loaded
+                        if (LQ_array[i].linked | LQ_array[i].conditional) begin
 
-                            next_LQ_array[i].valid = 1'b0;
+                            // if loaded, fulfill retire: invalidate
+                            if (LQ_array[i].dcache_loaded) begin
+
+                                next_LQ_array[i].valid = 1'b0;
+                            end
+
+                            // otherwise, need to block retire attempt
+                            else begin
+                                ROB_LQ_retire_blocked = 1'b1;
+                            end
                         end
 
-                        // otherwise, need to block retire attempt
+                        // LW: check searched and loaded
                         else begin
-                            ROB_LQ_retire_blocked = 1'b1;
+
+                            // if searched and loaded, fulfill retire: invalidate
+                            if (LQ_array[i].SQ_searched & (LQ_array[i].SQ_loaded | LQ_array[i].dcache_loaded)) begin
+
+                                next_LQ_array[i].valid = 1'b0;
+                            end
+
+                            // otherwise, need to block retire attempt
+                            else begin
+                                ROB_LQ_retire_blocked = 1'b1;
+                            end
                         end
                     end
 
@@ -2202,8 +2221,15 @@ module lsq (
         SQ_search_req_valid = 1'b0;
         if (LQ_array[LQ_SQ_search_ptr.index].valid & ~LQ_array[LQ_SQ_search_ptr.index].SQ_searched) begin
 
-            // check for search resp
-            if (SQ_search_resp_valid) begin
+            // check for LQ_LL or LQ_SC, move on
+            if (LQ_array[LQ_SQ_search_ptr.index].linnked | LQ_array[LQ_SQ_search_ptr.index].conditional) begin
+
+                // increment search pointer
+                next_LQ_SQ_search_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);
+            end
+
+            // otherwise, check for search resp
+            else if (SQ_search_resp_valid) begin
                 
                 // increment search pointer
                 next_LQ_SQ_search_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);
@@ -2211,17 +2237,10 @@ module lsq (
                 // do logic for updating entry values as part of LQ complete bus broadcast logic
             end
 
-            // otherwise, send req if ready and not LQ_SC, don't move on
-            else if (LQ_array[LQ_SQ_search_ptr.index].ready & ~LQ_array[LQ_SQ_search_ptr.index].conditional) begin
+            // otherwise, send req if ready, don't move on
+            else if (LQ_array[LQ_SQ_search_ptr.index].ready) begin
                 SQ_search_req_valid = 1'b1;
                 next_LQ_SQ_search_ptr = LQ_SQ_search_ptr;
-            end
-
-            // otherwise, if LQ_SC, move on
-            else if (LQ_array[LQ_SQ_search_ptr.index].conditional) begin
-
-                // increment search pointer
-                next_LQ_SQ_search_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);
             end
 
             // otherwise, not ready, don't move on
@@ -2563,7 +2582,7 @@ module lsq (
             // CAM search through SQ
             for (int i = 0; i < SQ_DEPTH; i++) begin
 
-                // check for valid, unwritten, and older
+                // check for valid, unwritten, NOT conditional, and older
                     // older -> less than
                     // subtract from current head
                     // compare against SQ tail when LQ was dispatched
@@ -2571,6 +2590,8 @@ module lsq (
                     SQ_array[i].valid
                     & 
                     ~SQ_array[i].written
+                    &
+                    ~SQ_array[i].conditional
                     &
                     (
                         SQ_index_t'(i) - SQ_head_ptr.index
@@ -2622,11 +2643,13 @@ module lsq (
                     end
                 end
 
-                // check for valid, written
+                // check for valid, written, NOT conditional
                 else if (
                     SQ_array[i].valid
                     & 
                     SQ_array[i].written
+                    &
+                    ~SQ_array[i].conditional
                 ) begin
 
                     // check addr match

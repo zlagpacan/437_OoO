@@ -447,9 +447,10 @@ module rob (
                     // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
             end
             
-            // otherwise, safe to mark complete
+            // otherwise, safe to mark complete, load returned
             else begin
                 next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b1;
+                next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].load_returned = 1'b1;
             end
 
             // assert tag match
@@ -601,11 +602,65 @@ module rob (
                         dispatch_unit_retire_phys_reg_tag = ROB_array_by_entry[head_index_ptr.index].safe_dest_phys_reg_tag;
                     end
 
-                    // if in LQ, send retire
-                    if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ) begin
+                    // ll/sc
+                    // check in LQ and SQ -> SC
+                    if (
+                        ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ
+                        &
+                        ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ
+                    ) begin
 
-                        // send retire
-                        LQ_retire_valid = 1'b1;
+                        // retire indexes safe regardless
+                        SQ_retire_ROB_index = head_index_ptr;
+                        LQ_retire_ROB_index = head_index_ptr;
+
+                        // check for no store sent
+                        if (~ROB_array_by_entry[head_index_ptr.index].store_sent) begin
+
+                            // prevent old rename from being freed
+                            dispatch_unit_retire_valid = 1'b0;
+
+                            // keep entry valid
+                            next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b1;
+
+                            // stall head
+                            next_head_index_ptr = head_index_ptr;
+
+                            // check not being blocked
+                            if (~SQ_retire_blocked) begin
+
+                                // send retire
+                                SQ_retire_valid = 1'b1;
+
+                                // mark store sent
+                                next_ROB_array_by_entry[head_index_ptr.index].store_sent = 1'b1;
+                            end
+                        end
+
+                        // otherwise, check waiting for load return
+                        else if (~ROB_array_by_entry[head_index_ptr.index].load_returned) begin
+
+                            // prevent old rename from being freed
+                            dispatch_unit_retire_valid = 1'b0;
+
+                            // keep entry valid
+                            next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b1;
+
+                            // stall head
+                            next_head_index_ptr = head_index_ptr;
+                        end
+
+                        // otherwise, all parts of SC done, deQ is safe
+                    end
+
+                    // otherwise, LW or LL, only in LQ, send retire
+                    else if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ) begin
+
+                        // // send retire
+                        // LQ_retire_valid = 1'b1;
+                            // why was this okay if blocked?
+                            // LSQ was checking of blocked
+
                         LQ_retire_ROB_index = head_index_ptr;
 
                         // if LQ blocked, don't move on
@@ -620,13 +675,23 @@ module rob (
                             // stall head
                             next_head_index_ptr = head_index_ptr;
                         end
+
+                        // otherwise, can send retire, advance head
+                        else begin
+
+                            // send retire
+                            LQ_retire_valid = 1'b1;
+                        end
                     end
 
-                    // if in SQ, send retire, only move on if not blocked
-                    if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ) begin
+                    // otherwise, SW, only in SQ, send retire, only move on if not blocked
+                    else if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ) begin
                         
-                        // send retire
-                        SQ_retire_valid = 1'b1;
+                        // // send retire
+                        // SQ_retire_valid = 1'b1;
+                            // why was this okay if blocked?
+                            // LSQ was checking of blocked
+
                         SQ_retire_ROB_index = head_index_ptr;
 
                         // if SQ blocked, don't move on
@@ -638,6 +703,13 @@ module rob (
                             // stall head
                             next_head_index_ptr = head_index_ptr;
                         end 
+
+                        // otherwise, can send retire, advance head
+                        else begin
+
+                            // send retire
+                            SQ_retire_valid = 1'b1;
+                        end
                     end
 
                     // if halt, goto ROB_HALT state
