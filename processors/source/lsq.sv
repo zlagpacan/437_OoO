@@ -2222,7 +2222,7 @@ module lsq (
         if (LQ_array[LQ_SQ_search_ptr.index].valid & ~LQ_array[LQ_SQ_search_ptr.index].SQ_searched) begin
 
             // check for LQ_LL or LQ_SC, move on
-            if (LQ_array[LQ_SQ_search_ptr.index].linnked | LQ_array[LQ_SQ_search_ptr.index].conditional) begin
+            if (LQ_array[LQ_SQ_search_ptr.index].linked | LQ_array[LQ_SQ_search_ptr.index].conditional) begin
 
                 // increment search pointer
                 next_LQ_SQ_search_ptr = LQ_SQ_search_ptr + LQ_ptr_t'(1);

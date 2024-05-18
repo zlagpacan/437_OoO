@@ -1779,7 +1779,7 @@ module snoop_dcache (
                                 [store_MSHR_Q_head_ptr.index]
                                 .block_addr
                                 ==
-                                link_reg.block_addr
+                                link_reg.linked_block_addr
                             )
                         )
                     ) begin
@@ -1944,7 +1944,7 @@ module snoop_dcache (
                 ;
                 next_store_MSHR.upgrading = store_miss_upgrading;
                 next_store_MSHR.upgrading_way = store_miss_upgrading_way;
-                next_store_MSHR.exclusive = store_MSHR_Q[store_MSHR_Q_head_ptr.index].exclusive;
+                next_store_MSHR.conditional = store_MSHR_Q[store_MSHR_Q_head_ptr.index].conditional;
             end
 
             // invalidate store MSHR Q head entry
@@ -2413,6 +2413,8 @@ module snoop_dcache (
 
             // check regular store or store conditional with link reg VTM
                 // go ahead and store word
+                // store word @ block offset
+                // read block word @ ~block offset 
             if (
                 ~store_MSHR.conditional
                 |
@@ -2423,7 +2425,7 @@ module snoop_dcache (
                         store_MSHR
                         .block_addr
                         ==
-                        link_reg.block_addr
+                        link_reg.linked_block_addr
                     )
                 )
             ) begin
@@ -2482,12 +2484,28 @@ module snoop_dcache (
                     = 
                         store_MSHR.block_addr.tag
                     ;
-                    
+
+                    // store word @ block offset
                     next_dcache_data_frame_by_way_by_set
                     [store_MSHR.upgrading_way]
                     [store_MSHR.block_addr.index]
                     .block
-                        = store_MSHR.read_block
+                    [store_MSHR.block_offset]
+                        = 
+                        store_MSHR
+                        .store_word
+                    ;
+
+                    // read block word @ ~block offset 
+                    next_dcache_data_frame_by_way_by_set
+                    [store_MSHR.upgrading_way]
+                    [store_MSHR.block_addr.index]
+                    .block
+                    [~store_MSHR.block_offset]
+                        = 
+                        store_MSHR
+                        .read_block
+                        [~store_MSHR.block_offset]
                     ;
 
                     // update LRU
@@ -2563,12 +2581,28 @@ module snoop_dcache (
                         .tag
                             = store_MSHR.block_addr.tag
                         ;
-                        
+
+                        // store word @ block offset
                         next_dcache_data_frame_by_way_by_set
                         [empty_way]
                         [store_MSHR.block_addr.index]
                         .block
-                            = store_MSHR.read_block
+                        [store_MSHR.block_offset]
+                            = 
+                            store_MSHR
+                            .store_word
+                        ;
+
+                        // read block word @ ~block offset 
+                        next_dcache_data_frame_by_way_by_set
+                        [empty_way]
+                        [store_MSHR.block_addr.index]
+                        .block
+                        [~store_MSHR.block_offset]
+                            = 
+                            store_MSHR
+                            .read_block
+                            [~store_MSHR.block_offset]
                         ;
 
                         // update LRU
@@ -2697,6 +2731,7 @@ module snoop_dcache (
                             = store_MSHR.block_addr.tag
                         ;
                         
+                        // store word @ block offset
                         next_dcache_data_frame_by_way_by_set
                         [
                             dcache_set_LRU
@@ -2704,7 +2739,25 @@ module snoop_dcache (
                         ] 
                         [store_MSHR.block_addr.index]
                         .block
-                            = store_MSHR.read_block
+                        [store_MSHR.block_offset]
+                            = 
+                            store_MSHR
+                            .store_word
+                        ;
+
+                        // read block word @ ~block offset 
+                        next_dcache_data_frame_by_way_by_set
+                        [
+                            dcache_set_LRU
+                            [store_MSHR.block_addr.index]
+                        ] 
+                        [store_MSHR.block_addr.index]
+                        .block
+                        [~store_MSHR.block_offset]
+                            = 
+                            store_MSHR
+                            .read_block
+                            [~store_MSHR.block_offset]
                         ;
 
                         // update LRU
@@ -2772,12 +2825,45 @@ module snoop_dcache (
                     // set in blocks above for upgrading vs. empty vs. LRU vs. saved piggybacking way
                 piggyback_bus_new_state = MOESI_M;
                     // guaranteed to be M
+
+                // send self inv
+                next_link_reg_self_inv_valid = 1'b1;
+                next_link_reg_self_inv_block_addr = 
+                    store_MSHR_Q
+                    [store_MSHR_Q_head_ptr.index]
+                    .block_addr
+                ;
+
+                // if store conditional, send successful conditional return
+                if (store_MSHR.conditional) begin
+
+                    // successful conditional return
+                    next_load_conditional_return.valid = 1'b1;
+                    next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
+                    next_load_conditional_return.data = 32'h1;
+                end
             end
 
             // otherwise, failed store conditional due to inv link reg
                 // don't store word
                 // still fill cache with fetched data, provide piggyback
+                    // now since read block doesn't immediately fill with store word, 
+                        // this is same as old functionality 
+                        // except piggybacking means don't write store word
             else begin
+                
+                // failed conditional return
+                next_load_conditional_return.valid = 1'b1;
+                next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
+                next_load_conditional_return.data = 32'h0;
+
+                // send self inv
+                next_link_reg_self_inv_valid = 1'b1;
+                next_link_reg_self_inv_block_addr = 
+                    store_MSHR_Q
+                    [store_MSHR_Q_head_ptr.index]
+                    .block_addr
+                ;
 
                 // accessing frames
                 snoop_access_allowed = 1'b0;
@@ -2785,6 +2871,7 @@ module snoop_dcache (
                 // UPGRADING NOT POSSIBLE, KEEP SAME AS IF SUCCESSFUL
                     // if upgrade successful, means didn't get inv
                     // clean block is lost so yeah, this is what we want
+                    // NO: could have diff link reg value for whatever programmer's reason
 
                 // check if upgrading and tag match at upgrading way
                     // upgrade successful
@@ -3080,6 +3167,8 @@ module snoop_dcache (
                     end
                 end
 
+                // CONDITIONAL FAILED, DON'T WRITE STORE WORD
+
                 // otherwise if piggybacking, write store word, mark frame dirty
                     // E->M or M->M
                     // modify dcache tag array and snoop tag array
@@ -3100,13 +3189,13 @@ module snoop_dcache (
                         = 1'b1
                     ;
 
-                    next_dcache_data_frame_by_way_by_set
-                    [store_MSHR.piggybacking_way] 
-                    [store_MSHR.block_addr.index]
-                    .block
-                    [store_MSHR.block_offset]
-                        = store_MSHR.store_word
-                    ;
+                    // next_dcache_data_frame_by_way_by_set
+                    // [store_MSHR.piggybacking_way] 
+                    // [store_MSHR.block_addr.index]
+                    // .block
+                    // [store_MSHR.block_offset]
+                    //     = store_MSHR.store_word
+                    // ;
 
                     // set piggyback way
                     piggyback_bus_way = store_MSHR.piggybacking_way;
@@ -3143,6 +3232,18 @@ module snoop_dcache (
             dcache_read_resp_valid = 1'b1;
             dcache_read_resp_LQ_index = load_hit_return.LQ_index;
             dcache_read_resp_data = load_hit_return.data;
+        end
+
+        // otherwise, check for load conditional return
+        else if (load_conditional_return.valid) begin
+
+            // valid from conditional return
+            dcache_read_resp_valid = 1'b1;
+            dcache_read_resp_LQ_index = load_conditional_return.LQ_index;
+            dcache_read_resp_data = load_conditional_return.data;
+
+            // invalidate conditional return
+            next_load_conditional_return.valid = 1'b0;
         end
 
         // otherwise, check for load miss return
@@ -3831,7 +3932,7 @@ module snoop_dcache (
             // new link
             next_link_reg.valid = 1'b1;
             next_link_reg.linked_LQ_index = dcache_read_req_LQ_index;
-            next_link_reg.block_addr = {
+            next_link_reg.linked_block_addr = {
                 dcache_read_req_addr_structed.tag,
                 dcache_read_req_addr_structed.index
             };
