@@ -4,5 +4,5 @@ do
     cat temp_ram > source/ram.sv
     rm temp_ram
 
-    testasm -d multi test.coh example.asm daxpy.asm dual.daxpy.asm dual.L dual.l dual.m palgorithm
+    testasm -d multi test.coh example.asm daxpy.asm dual.daxpy.asm dual.L dual.l dual.m palgorithm crit
 done
