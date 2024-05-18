@@ -656,10 +656,11 @@ module rob (
                     // otherwise, LW or LL, only in LQ, send retire
                     else if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ) begin
 
-                        // // send retire
-                        // LQ_retire_valid = 1'b1;
+                        // send retire
+                        LQ_retire_valid = 1'b1;
                             // why was this okay if blocked?
-                            // LSQ was checking of blocked
+                            // LSQ was checking if blocked
+                            // must do this way, else comb loop
 
                         LQ_retire_ROB_index = head_index_ptr;
 
@@ -676,12 +677,13 @@ module rob (
                             next_head_index_ptr = head_index_ptr;
                         end
 
-                        // otherwise, can send retire, advance head
-                        else begin
+                        // // otherwise, can send retire, advance head
+                        // else begin
 
-                            // send retire
-                            LQ_retire_valid = 1'b1;
-                        end
+                        //     // send retire
+                        //     LQ_retire_valid = 1'b1;
+                        // end
+                            // can't do this way comb loop
                     end
 
                     // otherwise, SW, only in SQ, send retire, only move on if not blocked
@@ -690,7 +692,7 @@ module rob (
                         // // send retire
                         // SQ_retire_valid = 1'b1;
                             // why was this okay if blocked?
-                            // LSQ was checking of blocked
+                            // LSQ was checking if blocked
 
                         SQ_retire_ROB_index = head_index_ptr;
 
