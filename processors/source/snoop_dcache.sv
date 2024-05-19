@@ -560,6 +560,10 @@ module snoop_dcache (
     dcache_load_return_t load_conditional_return;
     dcache_load_return_t next_load_conditional_return;
 
+    // busy load conditional return reg:
+    dcache_load_return_t busy_load_conditional_return;
+    dcache_load_return_t next_busy_load_conditional_return;
+
     // seq:
     always_ff @ (posedge CLK, negedge nRST) begin
         if (~nRST) begin
@@ -607,6 +611,7 @@ module snoop_dcache (
             link_reg_self_inv_valid <= 1'b0;
             link_reg_self_inv_block_addr <= 13'h0;
             load_conditional_return <= '0;
+            busy_load_conditional_return <= '0;
         end
         else begin
             dcache_tag_frame_by_way_by_set <= next_dcache_tag_frame_by_way_by_set;
@@ -653,6 +658,7 @@ module snoop_dcache (
             link_reg_self_inv_valid <= next_link_reg_self_inv_valid;
             link_reg_self_inv_block_addr <= next_link_reg_self_inv_block_addr;
             load_conditional_return <= next_load_conditional_return;
+            busy_load_conditional_return <= next_busy_load_conditional_return;
         end
     end
 
@@ -844,6 +850,10 @@ module snoop_dcache (
         // load conditional return reg:
             // hold state since can persist for multiple cycles if same-cycle hit
         next_load_conditional_return = load_conditional_return;
+
+        // busy load conditional return reg:
+            // hold state since can persist for multiple cycles if same-cycle hit or load conditional return
+        next_busy_load_conditional_return = busy_load_conditional_return;
 
         // //////////////////////////
         // // load hit path logic: //
@@ -1824,13 +1834,14 @@ module snoop_dcache (
                         next_hit_counter = next_hit_counter + 1;
                         $display("dcache: hit #%d", next_hit_counter);
 
-                        // send self inv
-                        next_link_reg_self_inv_valid = 1'b1;
-                        next_link_reg_self_inv_block_addr = 
-                            store_MSHR_Q
-                            [store_MSHR_Q_head_ptr.index]
-                            .block_addr
-                        ;
+                        // // send self inv
+                        // next_link_reg_self_inv_valid = 1'b1;
+                        // next_link_reg_self_inv_block_addr = 
+                        //     store_MSHR_Q
+                        //     [store_MSHR_Q_head_ptr.index]
+                        //     .block_addr
+                        // ;
+                            // only if regular store
 
                         // if store conditional, send successful conditional return
                         if (store_MSHR_Q[store_MSHR_Q_head_ptr.index].conditional) begin
@@ -1839,6 +1850,22 @@ module snoop_dcache (
                             next_load_conditional_return.valid = 1'b1;
                             next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
                             next_load_conditional_return.data = 32'h1;
+
+                            // invalidate and unbind link reg
+                            next_link_reg.valid = 1'b0;
+                            next_link_reg.binded = 1'b0;
+                        end
+
+                        // otherwise, regular store, send self inv
+                        else begin
+
+                            // send self inv
+                            next_link_reg_self_inv_valid = 1'b1;
+                            next_link_reg_self_inv_block_addr = 
+                                store_MSHR_Q
+                                [store_MSHR_Q_head_ptr.index]
+                                .block_addr
+                            ;
                         end
                     end
 
@@ -1853,6 +1880,10 @@ module snoop_dcache (
                         next_load_conditional_return.valid = 1'b1;
                         next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
                         next_load_conditional_return.data = 32'h0;
+
+                        // invalidate and unbind link reg
+                        next_link_reg.valid = 1'b0;
+                        next_link_reg.binded = 1'b0;
 
                         // send self inv
                         next_link_reg_self_inv_valid = 1'b1;
@@ -2826,13 +2857,13 @@ module snoop_dcache (
                 piggyback_bus_new_state = MOESI_M;
                     // guaranteed to be M
 
-                // send self inv
-                next_link_reg_self_inv_valid = 1'b1;
-                next_link_reg_self_inv_block_addr = 
-                    store_MSHR_Q
-                    [store_MSHR_Q_head_ptr.index]
-                    .block_addr
-                ;
+                // // send self inv
+                // next_link_reg_self_inv_valid = 1'b1;
+                // next_link_reg_self_inv_block_addr = 
+                //     store_MSHR
+                //     .block_addr
+                // ;
+                    // unnecessary
 
                 // if store conditional, send successful conditional return
                 if (store_MSHR.conditional) begin
@@ -2841,6 +2872,22 @@ module snoop_dcache (
                     next_load_conditional_return.valid = 1'b1;
                     next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
                     next_load_conditional_return.data = 32'h1;
+
+                    // invalidate and unbind link reg
+                    next_link_reg.valid = 1'b0;
+                    next_link_reg.binded = 1'b0;
+                end
+
+                // otherwise, regular store, send self inv
+                else begin
+
+                    // send self inv
+                    next_link_reg_self_inv_valid = 1'b1;
+                    next_link_reg_self_inv_block_addr = 
+                        store_MSHR_Q
+                        [store_MSHR_Q_head_ptr.index]
+                        .block_addr
+                    ;
                 end
             end
 
@@ -2857,13 +2904,17 @@ module snoop_dcache (
                 next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
                 next_load_conditional_return.data = 32'h0;
 
-                // send self inv
-                next_link_reg_self_inv_valid = 1'b1;
-                next_link_reg_self_inv_block_addr = 
-                    store_MSHR_Q
-                    [store_MSHR_Q_head_ptr.index]
-                    .block_addr
-                ;
+                // invalidate and unbind link reg
+                next_link_reg.valid = 1'b0;
+                next_link_reg.binded = 1'b0;
+
+                // // send self inv
+                // next_link_reg_self_inv_valid = 1'b1;
+                // next_link_reg_self_inv_block_addr = 
+                //     store_MSHR
+                //     .block_addr
+                // ;
+                    // unnecessary
 
                 // accessing frames
                 snoop_access_allowed = 1'b0;
@@ -3244,6 +3295,18 @@ module snoop_dcache (
 
             // invalidate conditional return
             next_load_conditional_return.valid = 1'b0;
+        end
+
+        // otherwise, check for busy load conditional return
+        else if (busy_load_conditional_return.valid) begin
+
+            // valid from busy conditional return
+            dcache_read_resp_valid = 1'b1;
+            dcache_read_resp_LQ_index = busy_load_conditional_return.LQ_index;
+            dcache_read_resp_data = busy_load_conditional_return.data;
+
+            // invalidate busy conditional return
+            next_busy_load_conditional_return.valid = 1'b0;
         end
 
         // otherwise, check for load miss return
@@ -3942,9 +4005,24 @@ module snoop_dcache (
         // check for new link reg bind
         if (dcache_read_req_valid & dcache_read_req_conditional) begin
 
-            // bind
-            next_link_reg.binded = 1'b1;
-            next_link_reg.binded_LQ_index = dcache_read_req_LQ_index;
+            // check link reg already binded
+            if (link_reg.binded) begin
+                
+                // immediately send unsuccessful conditional for this new bind
+                // next_load_conditional_return.valid = 1'b1;
+                // next_load_conditional_return.LQ_index = dcache_read_req_LQ_index;
+                // next_load_conditional_return.data = 32'h0;
+                    // use busy return instead
+                next_busy_load_conditional_return.valid = 1'b1;
+                next_busy_load_conditional_return.LQ_index = dcache_read_req_LQ_index;
+                next_busy_load_conditional_return.data = 32'h0;
+            end
+
+            // otherwise, bind link reg
+            else begin
+                next_link_reg.binded = 1'b1;
+                next_link_reg.binded_LQ_index = dcache_read_req_LQ_index;
+            end
         end
 
         // check for link reg snoop inv
@@ -3992,7 +4070,7 @@ module snoop_dcache (
                 (
                     link_reg.linked_LQ_index
                     ==
-                    dcache_read_kill_1_LQ_index
+                    dcache_read_kill_0_LQ_index
                 )
             )
             |
@@ -4021,7 +4099,7 @@ module snoop_dcache (
                 (
                     link_reg.binded_LQ_index
                     ==
-                    dcache_read_kill_1_LQ_index
+                    dcache_read_kill_0_LQ_index
                 )
             )
             |
@@ -4040,6 +4118,9 @@ module snoop_dcache (
             
             // inv link reg
             next_link_reg.valid = 1'b0;
+
+            // unbind link reg
+            next_link_reg.binded = 1'b0;
         end
 
     end
