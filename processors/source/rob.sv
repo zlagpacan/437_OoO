@@ -650,7 +650,38 @@ module rob (
                             next_head_index_ptr = head_index_ptr;
                         end
 
-                        // otherwise, all parts of SC done, deQ is safe
+                        // otherwise, all parts of SC done, treat as LQ retire
+                        else begin
+                            
+                            // send retire
+                            LQ_retire_valid = 1'b1;
+                                // why was this okay if blocked?
+                                // LSQ was checking if blocked
+                                // must do this way, else comb loop
+
+                            LQ_retire_ROB_index = head_index_ptr;
+
+                            // if LQ blocked, don't move on
+                            if (LQ_retire_blocked) begin
+
+                                // prevent old rename from being freed
+                                dispatch_unit_retire_valid = 1'b0;
+
+                                // keep entry valid
+                                next_ROB_array_by_entry[head_index_ptr.index].valid = 1'b1;
+
+                                // stall head
+                                next_head_index_ptr = head_index_ptr;
+                            end
+
+                            // // otherwise, can send retire, advance head
+                            // else begin
+
+                            //     // send retire
+                            //     LQ_retire_valid = 1'b1;
+                            // end
+                                // can't do this way comb loop
+                        end
                     end
 
                     // otherwise, LW or LL, only in LQ, send retire
