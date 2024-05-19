@@ -3444,7 +3444,8 @@ module snoop_dcache (
         load_hit_this_cycle = 1'b0;
 
         // check have dcache read req
-        if (dcache_read_req_valid) begin
+            // not conditional link reg bind return val
+        if (dcache_read_req_valid & ~dcache_read_req_conditional) begin
 
             // iterate over ways
             for (int i = 0; i < DCACHE_NUM_WAYS; i++) begin
