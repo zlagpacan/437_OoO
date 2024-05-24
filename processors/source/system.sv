@@ -1114,8 +1114,13 @@ module system (input logic CLK, nRST, system_if.sys syif);
 			// ~ 64k CPU cycles
 		// 64k is safe upper limit
 			// 64k = 2^6 * 2^10 = 2^16 -> 16 bit counter
-	logic [15:0] hang_detector_count;
-	logic [15:0] next_hang_detector_count;
+		// new longest program: palgorithm
+			// @ LAT=10, 409817
+			// ~ 256k CPU cycles
+		// new 256k safe upper limit
+			// 256k = 2^8 * 2^10 = 2^18 -> 18 bit counter
+	logic [17:0] hang_detector_count;
+	logic [17:0] next_hang_detector_count;
 
 	logic hang_detected;
 	logic next_hang_detected;

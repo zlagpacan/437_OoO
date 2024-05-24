@@ -235,6 +235,14 @@ Synthesized TB: testasm -s
             - maybe specific timing perf issues, conflict table
         - these are more likely to have coherence problems so favor larger
 
+- palgorithm.asm:
+    // THESE TIMINGS WERE DONE WHEN HAD SOME REMAINING LL/SC BUGS
+        // these tests were passing though 
+    - LAT=0: 237527 cycles -> old 437: 307135 cycles
+    - LAT=2: 264485 cycles -> old 437: 370193 cycles
+    - LAT=6: 343507 cycles -> old 437: 559447 cycles
+    - LAT=10: 409817 cycles -> old 437: 720085 cycles
+
 - there may be errors in design causing perf problems
 
 Design: done

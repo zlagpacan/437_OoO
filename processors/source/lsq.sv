@@ -2061,7 +2061,14 @@ module lsq (
             for (int i = 0; i < LQ_DEPTH; i++) begin
 
                 // could already be invalid, don't check valid since need to cancel still
-                if (kill_bus_ROB_index == LQ_array[i].ROB_index) begin
+                    // NO: think you need to check valid in case rolled back old
+                        // don't need to inv that one anymore
+                        // careful, if multiple ROB indexes match, then would only cancel one
+                if (
+                    LQ_array[i].valid
+                    &
+                    kill_bus_ROB_index == LQ_array[i].ROB_index
+                ) begin
 
                     // invalidate entry
                         // could already be invalid

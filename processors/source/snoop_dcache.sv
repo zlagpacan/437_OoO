@@ -3283,6 +3283,9 @@ module snoop_dcache (
             dcache_read_resp_valid = 1'b1;
             dcache_read_resp_LQ_index = load_hit_return.LQ_index;
             dcache_read_resp_data = load_hit_return.data;
+
+            $display("INFO: snoop_dcache returning load_hit_return");
+            $display("\t@: %0t",$realtime);
         end
 
         // otherwise, check for load conditional return
@@ -3295,6 +3298,9 @@ module snoop_dcache (
 
             // invalidate conditional return
             next_load_conditional_return.valid = 1'b0;
+
+            $display("INFO: snoop_dcache returning load_conditional_return");
+            $display("\t@: %0t",$realtime);
         end
 
         // otherwise, check for busy load conditional return
@@ -3307,6 +3313,9 @@ module snoop_dcache (
 
             // invalidate busy conditional return
             next_busy_load_conditional_return.valid = 1'b0;
+
+            $display("INFO: snoop_dcache returning busy_load_conditional_return");
+            $display("\t@: %0t",$realtime);
         end
 
         // otherwise, check for load miss return
@@ -3326,6 +3335,9 @@ module snoop_dcache (
 
             // increment miss return Q
             next_load_miss_return_Q_head_ptr = load_miss_return_Q_head_ptr + 1;
+
+            $display("INFO: snoop_dcache returning load_miss_return_Q[load_miss_return_Q_head_ptr.index]");
+            $display("\t@: %0t",$realtime);
         end
 
         // check load miss return Q tail surpasses head
@@ -4063,12 +4075,13 @@ module snoop_dcache (
         // check for read kill link reg:
         
         // linked LQ index match
+            // need to check against next link reg for same-cycle bind and kill
         if (
             (
                 dcache_read_kill_0_valid
                 &
                 (
-                    link_reg.linked_LQ_index
+                    next_link_reg.linked_LQ_index
                     ==
                     dcache_read_kill_0_LQ_index
                 )
@@ -4078,7 +4091,7 @@ module snoop_dcache (
                 dcache_read_kill_1_valid
                 &
                 (
-                    link_reg.linked_LQ_index
+                    next_link_reg.linked_LQ_index
                     ==
                     dcache_read_kill_1_LQ_index
                 )
@@ -4090,26 +4103,27 @@ module snoop_dcache (
         end
 
         // binded LQ index match
+            // need to check against next link reg for same-cycle bind and kill
         if (
             (
-                link_reg.binded
+                next_link_reg.binded
                 &
                 dcache_read_kill_0_valid
                 &
                 (
-                    link_reg.binded_LQ_index
+                    next_link_reg.binded_LQ_index
                     ==
                     dcache_read_kill_0_LQ_index
                 )
             )
             |
             (
-                link_reg.binded
+                next_link_reg.binded
                 &
                 dcache_read_kill_1_valid
                 &
                 (
-                    link_reg.binded_LQ_index
+                    next_link_reg.binded_LQ_index
                     ==
                     dcache_read_kill_1_LQ_index
                 )

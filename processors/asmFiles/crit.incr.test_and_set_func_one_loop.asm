@@ -3,11 +3,22 @@
 ###########
 org 0x0000
 
-ori $a0, $zero, 0x0002
+# init pointers
+ori $s0, $zero, lock
+ori $s1, $zero, value
+
+# update value
+ori $t1, $zero, 0x1F
+sw $t1, 0($s1)
+
+# loop wait unlock
+ori $a0, $zero, 0x0080
 incr_loop_core0:
-    jal incr_func
     addi $a0, $a0, -1
     bne $a0, $zero, incr_loop_core0
+
+# unlock
+sw $zero, 0($s0)
 
 halt
 
@@ -16,11 +27,7 @@ halt
 ###########
 org 0x0200
 
-ori $a0, $zero, 0x0002
-incr_loop_core1:
-    jal incr_func
-    addi $a0, $a0, -1
-    bne $a0, $zero, incr_loop_core1
+jal incr_func
 
 halt
 
