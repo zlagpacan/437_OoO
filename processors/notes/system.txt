@@ -355,4 +355,40 @@ Synthesis: done
 ; 133.05 MHz ; 133.05 MHz      ; CLK                 ;      ;
 +------------+-----------------+---------------------+------+
 
+- with more ll/sc working:
+
+    - critical path is ROB kill -> LSQ CAM -> combined dcache inv
+        - meh, good enough
+
++--------------------------------------------------------------------------------------+
+; Fitter Summary                                                                       ;
++------------------------------------+-------------------------------------------------+
+; Fitter Status                      ; Successful - Fri May 24 15:41:28 2024           ;
+; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
+; Revision Name                      ; system                                          ;
+; Top-level Entity Name              ; system                                          ;
+; Family                             ; Cyclone IV E                                    ;
+; Device                             ; EP4CE115F29C8                                   ;
+; Timing Models                      ; Final                                           ;
+; Total logic elements               ; 74,573 / 114,480 ( 65 % )                       ;
+;     Total combinational functions  ; 69,987 / 114,480 ( 61 % )                       ;
+;     Dedicated logic registers      ; 21,884 / 114,480 ( 19 % )                       ;
+; Total registers                    ; 21884                                           ;
+; Total pins                         ; 102 / 529 ( 19 % )                              ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
+; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
+; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
++------------------------------------+-------------------------------------------------+
+
++-----------------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary                        ;
++------------+-----------------+---------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
++------------+-----------------+---------------------+------+
+; 47.8 MHz   ; 47.8 MHz        ; CPUCLK              ;      ;
+; 88.63 MHz  ; 88.63 MHz       ; altera_reserved_tck ;      ;
+; 132.78 MHz ; 132.78 MHz      ; CLK                 ;      ;
++------------+-----------------+---------------------+------+
+
 Synthesized TB: testasm -s
