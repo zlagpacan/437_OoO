@@ -749,6 +749,27 @@ module rob (
                     if (ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_HALT) begin
                         next_ROB_state = ROB_HALT;
                     end
+
+                    // commit info print:
+                    if (~next_ROB_array_by_entry[head_index_ptr.index].valid) begin
+                        $display("ROB RETIRE:");
+                        $display("\tDU_ALU_0 = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_ALU_0);
+                        $display("\tDU_ALU_1 = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_ALU_1);
+                        $display("\tDU_LQ = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ);
+                        $display("\tDU_SQ = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_SQ);
+                        $display("\tDU_BRU = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_BRU);
+                        $display("\tDU_J = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_J);
+                        $display("\tDU_DEAD = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_DEAD);
+                        $display("\tDU_HALT = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_HALT);
+                        $display("\trestart_PC = 0x%h", ROB_array_by_entry[head_index_ptr.index].restart_PC);
+                        $display("\treg_write = %h", ROB_array_by_entry[head_index_ptr.index].reg_write);
+                        $display("\tdest_arch_reg_tag = 0x%h", ROB_array_by_entry[head_index_ptr.index].dest_arch_reg_tag);
+                        $display("\tsafe_dest_phys_reg_tag = 0x%h", ROB_array_by_entry[head_index_ptr.index].safe_dest_phys_reg_tag);
+                        $display("\tspeculated_dest_phys_reg_tag = 0x%h", ROB_array_by_entry[head_index_ptr.index].speculated_dest_phys_reg_tag);
+                        $display("\tstore_sent = %h", ROB_array_by_entry[head_index_ptr.index].store_sent);
+                        $display("\tload_returned = %h", ROB_array_by_entry[head_index_ptr.index].load_returned);
+                        $display("\t@: %0t",$realtime);
+                    end
                 end
 
                 // // ROB invalid move dequeue
