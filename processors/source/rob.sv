@@ -336,16 +336,20 @@ module rob (
 
             // assert no enqueue while full
             if (full) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: ROB enqueued when already full");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // assert in IDLE state
             if (ROB_state != ROB_IDLE) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: ROB enqueued when not ROB_IDLE");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // perform enqueue at tail
@@ -365,12 +369,15 @@ module rob (
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
+                `ifdef INFO_PRINTS
                 $display("rob: INFO: invalid completion on complete bus 0");
+                $display("\t@: %0t",$realtime);
                 invalid_complete = 1'b1;
 
                 // // don't mark complete in this case
                 // next_ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
                     // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+                `endif
             end
 
             // otherwise, safe to mark complete
@@ -382,16 +389,20 @@ module rob (
             if (ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].speculated_dest_phys_reg_tag != 
                 complete_bus_0_dest_phys_reg_tag
             ) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: tag mismatch on complete bus 0");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // assert bus match: ALU 0
             if (~ROB_array_by_entry[complete_bus_0_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_ALU_0) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: bus mismatch on complete bus 0 (no ALU 0)");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -402,12 +413,15 @@ module rob (
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
+                `ifdef INFO_PRINTS
                 $display("rob: INFO: invalid completion on complete bus 1");
+                $display("\t@: %0t",$realtime);
                 invalid_complete = 1'b1;
 
                 // // don't mark complete in this case
                 // next_ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
                     // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+                `endif
             end
 
             // otherwise, safe to mark complete
@@ -419,16 +433,20 @@ module rob (
             if (ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].speculated_dest_phys_reg_tag != 
                 complete_bus_1_dest_phys_reg_tag
             ) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: tag mismatch on complete bus 1");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // assert bus match: ALU 1
             if (~ROB_array_by_entry[complete_bus_1_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_ALU_1) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: bus mismatch on complete bus 1 (no ALU 1)");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -439,12 +457,15 @@ module rob (
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
+                `ifdef INFO_PRINTS
                 $display("rob: INFO: invalid completion on complete bus 2");
+                $display("\t@: %0t",$realtime);
                 invalid_complete = 1'b1;
 
                 // // don't mark complete in this case
                 // next_ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
                     // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+                `endif
             end
             
             // otherwise, safe to mark complete, load returned
@@ -457,16 +478,20 @@ module rob (
             if (ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].speculated_dest_phys_reg_tag != 
                 complete_bus_2_dest_phys_reg_tag
             ) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: tag mismatch on complete bus 2");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // assert bus match: LQ
             if (~ROB_array_by_entry[complete_bus_2_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_LQ) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: bus mismatch on complete bus 2 (no LQ)");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -477,12 +502,15 @@ module rob (
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
+                `ifdef INFO_PRINTS
                 $display("rob: INFO: invalid completion by BRU");
+                $display("\t@: %0t",$realtime);
                 invalid_complete = 1'b1;
 
                 // // don't mark complete in this case
                 // next_ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
                     // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+                `endif
             end
             
             // otherwise, safe to mark complete
@@ -500,9 +528,11 @@ module rob (
 
             // assert BRU match
             if (~ROB_array_by_entry[BRU_restart_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_BRU) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: BRU mismatch on complete");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -513,12 +543,15 @@ module rob (
                 // this is allowed (mis-speculated instr completes)
                 // track for perf analysis
             if (~ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].valid) begin
+                `ifdef INFO_PRINTS
                 $display("rob: INFO: invalid completion by SQ");
+                $display("\t@: %0t",$realtime);
                 invalid_complete = 1'b1;
 
                 // // don't mark complete in this case
                 // next_ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].complete = 1'b0;
                     // this cause issue where new immediately complete instruction becomes uncomplete, can never retire
+                `endif
             end
 
             // otherwise, safe to mark complete
@@ -528,9 +561,11 @@ module rob (
 
             // assert SQ match
             if (~ROB_array_by_entry[SQ_complete_ROB_index[LOG_ROB_DEPTH-1:0]].dispatched_unit.DU_SQ) begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: SQ mismatch on complete");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -582,9 +617,11 @@ module rob (
 
                     // assert no dequeue while empty
                     if (empty) begin
+                        `ifdef ERROR_PRINTS
                         $display("rob: ERROR: ROB dequeued when already empty");
                         $display("\t@: %0t",$realtime);
                         next_DUT_error = 1'b1;
+                        `endif
                     end
 
                     // perform dequeue at head
@@ -752,7 +789,8 @@ module rob (
 
                     // commit info print:
                     if (~next_ROB_array_by_entry[head_index_ptr.index].valid) begin
-                        $display("ROB RETIRE:");
+                        `ifdef INFO_PRINTS
+                        $display("ROB RETIRE: from %m");
                         $display("\tDU_ALU_0 = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_ALU_0);
                         $display("\tDU_ALU_1 = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_ALU_1);
                         $display("\tDU_LQ = %h", ROB_array_by_entry[head_index_ptr.index].dispatched_unit.DU_LQ);
@@ -769,6 +807,7 @@ module rob (
                         $display("\tstore_sent = %h", ROB_array_by_entry[head_index_ptr.index].store_sent);
                         $display("\tload_returned = %h", ROB_array_by_entry[head_index_ptr.index].load_returned);
                         $display("\t@: %0t",$realtime);
+                        `endif
                     end
                 end
 
@@ -1418,9 +1457,11 @@ module rob (
             
             default:
             begin
+                `ifdef ERROR_PRINTS
                 $display("rob: ERROR: ROB in default state");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
         endcase

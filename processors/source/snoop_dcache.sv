@@ -1262,9 +1262,11 @@ module snoop_dcache (
                         backlog_Q_bus_read_req_tail_ptr.index == backlog_Q_bus_read_req_head_ptr.index + 1
                     )
                 ) begin
+                    `ifdef ERROR_PRINTS
                     $display("dcache: ERROR: backlog Q tail surpasses head: 3'b111");
                     $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1;
+                    `endif
                 end
             end
 
@@ -1832,7 +1834,9 @@ module snoop_dcache (
                         // add hit for perf counter
                             // do next in case load and store both hit
                         next_hit_counter = next_hit_counter + 1;
+                        `ifdef INFO_PRINTS
                         $display("dcache: hit #%d", next_hit_counter);
+                        `endif
 
                         // // send self inv
                         // next_link_reg_self_inv_valid = 1'b1;
@@ -1993,9 +1997,11 @@ module snoop_dcache (
             &
             next_store_MSHR_Q_tail_ptr.index == next_store_MSHR_Q_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("dcache: ERROR: store MSHR Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         //////////////////////////////
@@ -3284,8 +3290,10 @@ module snoop_dcache (
             dcache_read_resp_LQ_index = load_hit_return.LQ_index;
             dcache_read_resp_data = load_hit_return.data;
 
+            `ifdef INFO_PRINTS
             $display("INFO: snoop_dcache returning load_hit_return");
             $display("\t@: %0t",$realtime);
+            `endif
         end
 
         // otherwise, check for load conditional return
@@ -3299,8 +3307,10 @@ module snoop_dcache (
             // invalidate conditional return
             next_load_conditional_return.valid = 1'b0;
 
+            `ifdef INFO_PRINTS
             $display("INFO: snoop_dcache returning load_conditional_return");
             $display("\t@: %0t",$realtime);
+            `endif
         end
 
         // otherwise, check for busy load conditional return
@@ -3314,8 +3324,10 @@ module snoop_dcache (
             // invalidate busy conditional return
             next_busy_load_conditional_return.valid = 1'b0;
 
+            `ifdef INFO_PRINTS
             $display("INFO: snoop_dcache returning busy_load_conditional_return");
             $display("\t@: %0t",$realtime);
+            `endif
         end
 
         // otherwise, check for load miss return
@@ -3336,8 +3348,10 @@ module snoop_dcache (
             // increment miss return Q
             next_load_miss_return_Q_head_ptr = load_miss_return_Q_head_ptr + 1;
 
+            `ifdef INFO_PRINTS
             $display("INFO: snoop_dcache returning load_miss_return_Q[load_miss_return_Q_head_ptr.index]");
             $display("\t@: %0t",$realtime);
+            `endif
         end
 
         // check load miss return Q tail surpasses head
@@ -3348,9 +3362,11 @@ module snoop_dcache (
             &
             next_load_miss_return_Q_tail_ptr.index == next_load_miss_return_Q_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("dcache: ERROR: load miss return Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         /////////////////////////
@@ -3569,7 +3585,9 @@ module snoop_dcache (
                     // add hit for perf counter
                         // do next in case load and store both hit
                     next_hit_counter = next_hit_counter + 1;
+                    `ifdef INFO_PRINTS
                     $display("dcache: hit #%d", next_hit_counter);
+                    `endif
                 end
             end
 
@@ -3961,18 +3979,22 @@ module snoop_dcache (
             &
             next_snoop_req_Q_tail_ptr.index == next_snoop_req_Q_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("dcache: ERROR: snoop req Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         // dcache tag array and snoop tag array check
             // only need for debug
             // definitely remove if critical path or hurts area too much
         if (dcache_tag_frame_by_way_by_set != snoop_tag_frame_by_way_by_set) begin
+            `ifdef ERROR_PRINTS
             $display("dcache: ERROR: dcache tag array != snoop tag array");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         ///////////////////////////

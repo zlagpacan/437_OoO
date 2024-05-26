@@ -748,9 +748,11 @@ module bus_controller (
             &
             next_dbus0_req_Q_tail_ptr.index == next_dbus0_req_Q_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("bus_controller: ERROR: dbus0 req Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             grant_DUT_error = 1'b1;
+            `endif
         end
 
         // check dbus1 req Q tail surpasses head
@@ -761,9 +763,11 @@ module bus_controller (
             &
             next_dbus1_req_Q_tail_ptr.index == next_dbus1_req_Q_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("bus_controller: ERROR: dbus1 req Q tail surpasses head");
             $display("\t@: %0t",$realtime);
             grant_DUT_error = 1'b1;
+            `endif
         end
     end
 
@@ -1269,9 +1273,11 @@ module bus_controller (
             &
             next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_resp_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("bus_controller: ERROR: dmem0 read resp Q tail surpasses resp head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
+            `endif
         end
 
         // check dmem1 read resp Q tail surpasses resp head
@@ -1282,9 +1288,11 @@ module bus_controller (
             &
             next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_resp_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("bus_controller: ERROR: dmem1 read resp Q tail surpasses resp head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
+            `endif
         end
 
         // check dmem0 read return Q tail surpasses return head
@@ -1295,9 +1303,11 @@ module bus_controller (
             &
             next_dmem0_read_resp_Q_tail_ptr.index == next_dmem0_read_resp_Q_return_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("bus_controller: ERROR: dmem0 read return Q tail surpasses return head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
+            `endif
         end
 
         // check dmem1 read return Q tail surpasses return head
@@ -1308,9 +1318,11 @@ module bus_controller (
             &
             next_dmem1_read_resp_Q_tail_ptr.index == next_dmem1_read_resp_Q_return_head_ptr.index + 1
         ) begin
+            `ifdef ERROR_PRINTS
             $display("bus_controller: ERROR: dmem1 read return Q tail surpasses return head");
             $display("\t@: %0t",$realtime);
             resp_DUT_error = 1'b1;
+            `endif
         end
     end
 
