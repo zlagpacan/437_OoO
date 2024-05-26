@@ -1613,7 +1613,7 @@ module core #(
 
 		// core control interface
         DU_core_control_stall_dispatch_unit = ROB_core_control_revert_stall;
-        DU_core_control_flush_dispatch_unit = ROB_core_control_restore_flush;
+        DU_core_control_flush_dispatch_unit = ROB_core_control_restore_flush | ROB_core_control_revert_stall;
         DU_core_control_halt = ROB_core_control_halt_assert;
 
 		// fetch_unit interface

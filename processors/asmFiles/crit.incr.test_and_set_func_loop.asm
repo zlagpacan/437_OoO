@@ -3,7 +3,7 @@
 ###########
 org 0x0000
 
-ori $a0, $zero, 0x0002
+ori $a0, $zero, 0x0010
 incr_loop_core0:
     jal incr_func
     addi $a0, $a0, -1
@@ -16,7 +16,7 @@ halt
 ###########
 org 0x0200
 
-ori $a0, $zero, 0x0002
+ori $a0, $zero, 0x0010
 incr_loop_core1:
     jal incr_func
     addi $a0, $a0, -1

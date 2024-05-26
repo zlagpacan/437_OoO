@@ -2772,6 +2772,10 @@ module lsq (
             for (int i = 0; i < LQ_DEPTH; i++) begin
 
                 // check for entry valid and block addr match and older than last found
+                    // LL/SC: also not linked or conditional
+                        // definitely never need to restart the SC load
+                        // if load link not consistent, fine, will be caught by SC
+                            // otherwise, programmer using in goofy way, don't promise anything
                 if (
                     LQ_array[i].valid
                     &
@@ -2785,6 +2789,12 @@ module lsq (
                         LQ_array[i].ROB_index - ROB_LQ_retire_ROB_index
                         <
                         LQ_restart_dcache_inv_ROB_index - ROB_LQ_retire_ROB_index
+                    )
+                    &
+                    (
+                        ~LQ_array[i].linked
+                        &
+                        ~LQ_array[i].conditional
                     )
                 ) begin
 
