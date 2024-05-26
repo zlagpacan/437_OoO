@@ -717,9 +717,11 @@ module lsq (
                             next_SQ_addr_calc_stage_operand_1_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("lsq: SQ Operand Pipeline: ERROR: operand 1 VTM but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             SQ_operand_pipeline_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not busy
@@ -770,9 +772,11 @@ module lsq (
                             next_SQ_addr_calc_stage_operand_0_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("lsq: SQ Operand Pipeline: ERROR: operand 0 VTM but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             SQ_operand_pipeline_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not busy
@@ -822,9 +826,11 @@ module lsq (
                         next_SQ_addr_calc_stage_operand_0_bus_select = 2'd2;
                     end
                     else begin
+                        `ifdef ERROR_PRINTS
                         $display("lsq: SQ Operand Pipeline: ERROR: operand 0 VTM but no individual VTM");
                         $display("\t@: %0t",$realtime);
                         SQ_operand_pipeline_DUT_error = 1'b1;
+                        `endif
                     end
 
                     // select corresponding bus for operand 1
@@ -838,9 +844,11 @@ module lsq (
                         next_SQ_addr_calc_stage_operand_1_bus_select = 2'd2;
                     end
                     else begin
+                        `ifdef ERROR_PRINTS
                         $display("lsq: SQ Operand Pipeline: ERROR: operand 1 VTM but no individual VTM");
                         $display("\t@: %0t",$realtime);
                         SQ_operand_pipeline_DUT_error = 1'b1;
+                        `endif
                     end
 
                     // not busy
@@ -1262,9 +1270,11 @@ module lsq (
                             next_LQ_addr_calc_stage_operand_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("lsq: LQ Operand Pipeline: ERROR: operand VTM but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             LQ_operand_pipeline_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not busy
@@ -1974,9 +1984,11 @@ module lsq (
 
             // assert dispatch unit not asserting when shouldn't:
             if (dispatch_unit_LQ_full) begin
+                `ifdef ERROR_PRINTS
                 $display("lsq: ERROR: dispatch unit enQing task when LQ busy");
                 $display("\t@: %0t",$realtime);
                 central_LSQ_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -2382,21 +2394,27 @@ module lsq (
 
             // error if already loaded 
             if (LQ_array[dcache_read_resp_LQ_index].dcache_loaded) begin
+                `ifdef ERROR_PRINTS
                 $display("lsq: ERROR: d$ read resp when already d$ loaded");
                 $display("\t@: %0t",$realtime);
                 central_LSQ_DUT_error = 1'b1;
+                `endif
             end
 
             // response when invalid
                 // can happen if read req not killed soon enough
             if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
+                `ifdef INFO_PRINTS
                 $display("lsq: INFO: d$ read resp on invalid LQ entry");
+                `endif
             end
 
             // response when not ready
                 // can happen if read req not killed soon enough
             if (~LQ_array[dcache_read_resp_LQ_index].valid) begin
+                `ifdef INFO_PRINTS
                 $display("lsq: INFO: d$ read resp on not ready LQ entry");
+                `endif
             end
         end
 

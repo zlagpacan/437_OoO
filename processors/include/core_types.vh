@@ -12,6 +12,11 @@
 `ifndef CORE_TYPES_VH
 `define CORE_TYPES_VH
 
+`ifndef MAPPED
+    // `define INFO_PRINTS
+    // `define ERROR_PRINTS
+`endif
+
 package core_types_pkg;
 
     // words

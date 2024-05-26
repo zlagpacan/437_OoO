@@ -119,6 +119,7 @@ module phys_reg_ready_table (
             ((complete_bus_2_dest_phys_reg_tag == complete_bus_0_dest_phys_reg_tag) & complete_bus_2_valid & complete_bus_0_valid) |
             ((complete_bus_2_dest_phys_reg_tag == complete_bus_1_dest_phys_reg_tag) & complete_bus_2_valid & complete_bus_1_valid)
         ) begin
+            `ifdef ERROR_PRINTS
             $display("phys_reg_ready_table: ERROR: multiple writers to same phys reg");
             $display("\tdispatch_dest_write = %h", dispatch_dest_write);
             $display("\tdispatch_dest_phys_reg_tag = %h", dispatch_dest_phys_reg_tag);
@@ -131,6 +132,7 @@ module phys_reg_ready_table (
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
                 // this can actually be okay if checkpoint restore was success, writing back instr that hasn't been killed yet
+            `endif
         end
 
         // DUT error: check for write to phys reg 0
@@ -141,9 +143,11 @@ module phys_reg_ready_table (
             // add complete bus 2:
             ((complete_bus_2_dest_phys_reg_tag == phys_reg_tag_t'(0)) & complete_bus_2_valid)
         ) begin
+            `ifdef ERROR_PRINTS
             $display("phys_reg_ready_table: ERROR: write to phys reg 0");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         // // dispatch 

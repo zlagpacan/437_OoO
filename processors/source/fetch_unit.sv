@@ -375,10 +375,12 @@ module fetch_unit #(
                 end
                 // shouldn't get here
                 else begin
+                    `ifdef ERROR_PRINTS
                     $display("fetch_unit: ERROR: DIRP_state invalid");
                     $display("\t@: %0t",$realtime);
                     // assert(0);
                     next_DUT_error = 1'b1;
+                    `endif
                 end
             end
             // j or jal

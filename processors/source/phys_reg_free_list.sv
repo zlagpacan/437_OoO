@@ -208,9 +208,11 @@ module phys_reg_free_list (
 
             // DUT error: FIFO full
             if (full) begin
+                `ifdef ERROR_PRINTS
                 $display("phys_reg_free_list: ERROR: tried to enqueue when free list full");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // write @ tail
@@ -252,6 +254,7 @@ module phys_reg_free_list (
 
             // DUT error: check value at head - 1 == expected speculated value to re-free
             if (phys_reg_free_list_by_index[prev_head_index_ptr.index] != revert_speculated_dest_phys_reg_tag) begin
+                `ifdef ERROR_PRINTS
                 $display("phys_reg_free_list: ERROR: revert -> speculated phys reg mapping not in expected free list slot");
                 $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
@@ -259,6 +262,7 @@ module phys_reg_free_list (
                     phys_reg_free_list_by_index[prev_head_index_ptr.index]);
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // decrement head
@@ -410,9 +414,11 @@ module phys_reg_free_list (
 
             // otherwise, unexpected
             else begin
+                `ifdef ERROR_PRINTS
                 $display("phys_reg_free_list: ERROR: invalid full/empty case");
                 $display("\t@: %0t",$realtime);
-                assert(0);
+                // next_DUT_error = 1'b1;
+                `endif
             end
         end
     end

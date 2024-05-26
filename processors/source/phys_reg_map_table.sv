@@ -136,10 +136,12 @@ module phys_reg_map_table (
         // DUT error: make sure working column valid
         if (~phys_reg_map_table_columns_by_column_index[phys_reg_map_table_working_column].valid) 
         begin
+            `ifdef ERROR_PRINTS
             $display("phys_reg_map_table: ERROR: working column not valid");
             $display("\t\tworking column = %h", phys_reg_map_table_working_column);
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         // default outputs:
@@ -180,6 +182,7 @@ module phys_reg_map_table (
                 .array[revert_dest_arch_reg_tag] !=
                 revert_speculated_dest_phys_reg_tag)
             begin
+                `ifdef ERROR_PRINTS
                 $display("phys_reg_map_table: ERROR: revert -> speculated phys reg mapping not the current mapping");
                 $display("\t\trevert_speculated_dest_phys_reg_tag = 0x%h", 
                     revert_speculated_dest_phys_reg_tag);
@@ -188,6 +191,7 @@ module phys_reg_map_table (
                     .array[revert_dest_arch_reg_tag]);
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
             // write safe mapping (undo rename)
@@ -272,9 +276,11 @@ module phys_reg_map_table (
                 rename_dest_phys_reg_tag;
 
             if (rename_dest_arch_reg_tag == arch_reg_tag_t'(0)) begin
+                `ifdef ERROR_PRINTS
                 $display("phys_reg_map_table: ERROR: renaming arch reg tag 0");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 

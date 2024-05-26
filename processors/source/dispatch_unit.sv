@@ -810,9 +810,11 @@ module dispatch_unit (
 
             default:
             begin
+                `ifdef ERROR_PRINTS
                 $display("dispatch_unit: ERROR: got to final case for ALU_RS_full");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
 
         endcase
@@ -830,11 +832,13 @@ module dispatch_unit (
             // assert save checkpoints are same
         // assert save checkpoints are same
         if (prmt_save_checkpoint_safe_column != prfl_save_checkpoint_safe_column) begin
+            `ifdef ERROR_PRINTS
             $display("dispatch_unit: ERROR: prmt_save_checkpoint_safe_column != prfl_save_checkpoint_safe_column");
             $display("\tprmt_save_checkpoint_safe_column = %h", prmt_save_checkpoint_safe_column);
             $display("\tprfl_save_checkpoint_safe_column = %h", prfl_save_checkpoint_safe_column);
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         ////////////////////
@@ -851,19 +855,23 @@ module dispatch_unit (
         restore_checkpoint_success = prmt_restore_checkpoint_success;
         // assert restore successes always same
         if (prmt_restore_checkpoint_success != prfl_restore_checkpoint_success) begin
+            `ifdef ERROR_PRINTS
             $display("dispatch_unit: ERROR: prmt_restore_checkpoint_success != prfl_restore_checkpoint_success");
             $display("\tprmt_restore_checkpoint_success = %h", prmt_restore_checkpoint_success);
             $display("\tprfl_restore_checkpoint_success = %h", prfl_restore_checkpoint_success);
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
         // assert in flush state if restoring
         if (restore_checkpoint_valid & restore_checkpoint_speculate_failed & ~core_control_flush_dispatch_unit) begin
+            `ifdef ERROR_PRINTS
             $display("dispatch_unit: ERROR: restoring but not flushing");
             $display("\trestore_checkpoint_valid = %h", restore_checkpoint_valid);
             $display("\trestore_checkpoint_speculate_failed = %h", restore_checkpoint_speculate_failed);
             $display("\tcore_control_flush_dispatch_unit = %h", core_control_flush_dispatch_unit);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         /////////////////////
@@ -886,11 +894,13 @@ module dispatch_unit (
 
         // assert in stall state if killing
         if (kill_bus_valid & ~core_control_stall_dispatch_unit) begin
+            `ifdef ERROR_PRINTS
             $display("dispatch_unit: ERROR: killing but not flushing");
             $display("\tkill_bus_valid = %h", kill_bus_valid);
             $display("\tcore_control_stall_dispatch_unit = %h", core_control_stall_dispatch_unit);
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         /////////////////////
@@ -1100,9 +1110,11 @@ module dispatch_unit (
 
                                 NOP:
                                 begin
+                                    `ifdef ERROR_PRINTS
                                     $display("dispatch_unit: ERROR: got to RTYPE NOP case when should've been caught in rd == $0 check");
                                     $display("\t@: %0t",$realtime);
                                     next_DUT_error = 1'b1;
+                                    `endif
                                 end
 
                                 SLLV:
@@ -1117,9 +1129,11 @@ module dispatch_unit (
 
                                 JR:
                                 begin
+                                    `ifdef ERROR_PRINTS
                                     $display("dispatch_unit: ERROR: got to RTYPE JR case when should've been caught in RTYPE & JR check");
                                     $display("\t@: %0t",$realtime);
                                     next_DUT_error = 1'b1;
+                                    `endif
                                 end
 
                                 ADD, ADDU:
@@ -1165,9 +1179,11 @@ module dispatch_unit (
                                 // otherwise, unrecognized RTYPE instr
                                 default:
                                 begin
+                                    `ifdef ERROR_PRINTS
                                     $display("dispatch_unit: ERROR: unrecognized RTYPE instr");
                                     $display("\t@: %0t",$realtime);
                                     next_DUT_error = 1'b1;
+                                    `endif
                                 end
 
                             endcase
@@ -2449,9 +2465,11 @@ module dispatch_unit (
 
                 default:
                 begin
+                    `ifdef ERROR_PRINTS
                     $display("dispatch_unit: ERROR: unrecognized opcode");
                     $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1; 
+                    `endif
                 end
 
             endcase

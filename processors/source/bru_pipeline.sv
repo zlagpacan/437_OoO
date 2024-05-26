@@ -406,9 +406,11 @@ module bru_pipeline (
 
                     // assert BEQ or BNE
                     if (!(RS_stage_task_struct.op == BRU_BEQ | RS_stage_task_struct.op == BRU_BNE)) begin
+                        `ifdef ERROR_PRINTS
                         $display("bru_pipeline: ERROR: need operand 0 and operand 1 but not BEQ or BNE");
                         $display("\t@: %0t",$realtime);
                         next_DUT_error = 1'b1;
+                        `endif
                     end
 
                     // operand 0 ready, operand 1 ready
@@ -466,9 +468,11 @@ module bru_pipeline (
                                 next_EX_stage_operand_1_bus_select = 2'd2;
                             end
                             else begin
+                                `ifdef ERROR_PRINTS
                                 $display("bru_pipeline: ERROR: operand 1 VTM OR but no individual VTM");
                                 $display("\t@: %0t",$realtime);
                                 next_DUT_error = 1'b1;
+                                `endif
                             end
 
                             // not full
@@ -515,9 +519,11 @@ module bru_pipeline (
                                 next_EX_stage_operand_0_bus_select = 2'd2;
                             end
                             else begin
+                                `ifdef ERROR_PRINTS
                                 $display("bru_pipeline: ERROR: operand 0 VTM OR but no individual VTM");
                                 $display("\t@: %0t",$realtime);
                                 next_DUT_error = 1'b1;
+                                `endif
                             end
 
                             // not full
@@ -565,9 +571,11 @@ module bru_pipeline (
                             next_EX_stage_operand_0_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("bru_pipeline: ERROR: operand 0 VTM OR but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             next_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // select corresponding bus for operand 1
@@ -581,9 +589,11 @@ module bru_pipeline (
                             next_EX_stage_operand_1_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("bru_pipeline: ERROR: operand 1 VTM OR but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             next_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not full
@@ -624,9 +634,11 @@ module bru_pipeline (
 
                     // assert JR
                     if (!(RS_stage_task_struct.op == BRU_JR)) begin
+                        `ifdef ERROR_PRINTS
                         $display("bru_pipeline: ERROR: need only operand 0 but not JR");
                         $display("\t@: %0t",$realtime);
                         next_DUT_error = 1'b1;
+                        `endif
                     end
                     
                     // operand 0 ready
@@ -680,9 +692,11 @@ module bru_pipeline (
                             next_EX_stage_operand_0_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("bru_pipeline: ERROR: operand 0 VTM OR but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             next_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not full
@@ -702,16 +716,20 @@ module bru_pipeline (
 
                 // check don't need either operand (bad case)
                 else if (~RS_stage_task_struct.source_0.needed & ~RS_stage_task_struct.source_0.needed) begin
+                    `ifdef ERROR_PRINTS
                     $display("bru_pipeline: ERROR: don't need either operand");
                     $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1;
+                    `endif
                 end
 
                 // otherwise, bad case where only need operand 1
                 else begin
+                    `ifdef ERROR_PRINTS
                     $display("bru_pipeline: ERROR: only need operand 1");
                     $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1;
+                    `endif
                 end
             end
         end
@@ -725,9 +743,11 @@ module bru_pipeline (
             
             // assert not full
             if (BRU_RS_full) begin
+                `ifdef ERROR_PRINTS
                 $display("bru_pipeline: ERROR: dispatch_unit_task_valid while BRU_RS_full");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -873,8 +893,11 @@ module bru_pipeline (
 
             default:    
             begin
+                `ifdef ERROR_PRINTS
                 $display("bru_pipeline: ERROR: invalid op in EX stage");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end 
 
         endcase

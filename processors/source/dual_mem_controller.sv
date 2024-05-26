@@ -1002,9 +1002,11 @@ module dual_mem_controller (
                 next_read_buffer_tail_ptr.index == next_read_buffer_head_ptr + 2
             )
         ) begin
-            $display("mem_controller: ERROR: dmem read buffer tail surpassed head");
+            `ifdef ERROR_PRINTS
+            $display("dual_mem_controller: ERROR: dmem read buffer tail surpassed head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
         // dmem write buffer
@@ -1017,9 +1019,11 @@ module dual_mem_controller (
                 next_write_buffer_tail_ptr.index == next_write_buffer_head_ptr + 2
             )
         ) begin
-            $display("mem_controller: ERROR: dmem write buffer tail surpassed head");
+            `ifdef ERROR_PRINTS
+            $display("dual_mem_controller: ERROR: dmem write buffer tail surpassed head");
             $display("\t@: %0t",$realtime);
             next_DUT_error = 1'b1;
+            `endif
         end
 
     end

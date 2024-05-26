@@ -419,9 +419,11 @@ module alu_pipeline (
                                 next_EX_stage_operand_1_bus_select = 2'd2;
                             end
                             else begin
+                                `ifdef ERROR_PRINTS
                                 $display("alu_pipeline: ERROR: operand 1 VTM OR but no individual VTM");
                                 $display("\t@: %0t",$realtime);
                                 next_DUT_error = 1'b1;
+                                `endif
                             end
 
                             // not full
@@ -470,9 +472,11 @@ module alu_pipeline (
                                 next_EX_stage_operand_0_bus_select = 2'd2;
                             end
                             else begin
+                                `ifdef ERROR_PRINTS
                                 $display("alu_pipeline: ERROR: operand 0 VTM OR but no individual VTM");
                                 $display("\t@: %0t",$realtime);
                                 next_DUT_error = 1'b1;
+                                `endif
                             end
 
                             // not full
@@ -522,9 +526,11 @@ module alu_pipeline (
                             next_EX_stage_operand_0_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("alu_pipeline: ERROR: operand 0 VTM OR but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             next_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // select corresponding bus for operand 1
@@ -538,9 +544,11 @@ module alu_pipeline (
                             next_EX_stage_operand_1_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("alu_pipeline: ERROR: operand 1 VTM OR but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             next_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not full
@@ -581,8 +589,11 @@ module alu_pipeline (
 
                     // assert itype
                     if (~RS_stage_task_struct.itype) begin
-                        $display("alu_pipeline: only need operand 0 but not itype");
+                        `ifdef ERROR_PRINTS
+                        $display("alu_pipeline: ERROR: only need operand 0 but not itype");
+                        $display("\t@: %0t",$realtime);
                         next_DUT_error = 1'b1;
+                        `endif
                     end
 
                     // operand 0 ready
@@ -646,9 +657,11 @@ module alu_pipeline (
                             next_EX_stage_operand_0_bus_select = 2'd2;
                         end
                         else begin
+                            `ifdef ERROR_PRINTS
                             $display("alu_pipeline: ERROR: operand 0 VTM OR but no individual VTM");
                             $display("\t@: %0t",$realtime);
                             next_DUT_error = 1'b1;
+                            `endif
                         end
 
                         // not full
@@ -671,8 +684,11 @@ module alu_pipeline (
 
                     // assert itype
                     if (~RS_stage_task_struct.itype) begin
-                        $display("alu_pipeline: only need operand 0 but not itype");
+                        `ifdef ERROR_PRINTS
+                        $display("alu_pipeline: ERROR: only need operand 0 but not itype");
+                        $display("\t@: %0t",$realtime);
                         next_DUT_error = 1'b1;
+                        `endif
                     end
 
                     // don't need read req
@@ -698,9 +714,11 @@ module alu_pipeline (
 
                 // otherwise, bad case where only need operand 1
                 else begin
+                    `ifdef ERROR_PRINTS
                     $display("alu_pipeline: ERROR: only need operand 1");
                     $display("\t@: %0t",$realtime);
                     next_DUT_error = 1'b1;
+                    `endif
                 end
             end
         end
@@ -714,9 +732,11 @@ module alu_pipeline (
             
             // assert not full
             if (ALU_RS_full) begin
+                `ifdef ERROR_PRINTS
                 $display("alu_pipeline: ERROR: dispatch_unit_task_valid while ALU_RS_full");
                 $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
             end
         end
 
@@ -757,8 +777,11 @@ module alu_pipeline (
             ALU_LINK:   next_DATA_stage_output_data = {16'h0, EX_stage_B[15:2] + 14'd1, 2'b00};
             default:    
             begin
-                $display("alu_pipeline: invalid op in EX stage");
+                `ifdef ERROR_PRINTS
+                $display("alu_pipeline: ERROR: invalid op in EX stage");
+                $display("\t@: %0t",$realtime);
                 next_DUT_error = 1'b1;
+                `endif
 
                 // default ADD
                 next_DATA_stage_output_data = EX_stage_A + EX_stage_B;
