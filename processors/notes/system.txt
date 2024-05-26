@@ -271,26 +271,56 @@ RTL TB: bash testasm_multicore_no_LLSC.sh
                     don't need to be in-order?
                     - naw, store MSHR Q solution have now is fine since stores not on critical path
         
-    - TODO:
 
-        - LL/SC
+RTL TB: bash testasm_multicore.sh
 
-        - perf counters to verif behaviors not caught by functional errors 
-            - print counters at end of sim
-                - hate to always print
-                - print on ~nRST?
-                    - values will reset
-                - print with dual_mem_controller_flushed?
-                    - will need to give all counters as outputs to top level
-            - values to track:
-                - hits
-                - hit rate
-                - MOESI state transitions
-                - RAM utilization rate
-                - load mis-speculation rate
-                - conflict table conflict rate
-                - dcache busy vs. available to snoop rate
-                - piggyback rate
+    - some dual.MSI... tests are racey, rely on more atomic bus timing
+    - multi.MOESI and multi.seqc tests replace these
+
+    - dual.llsc.asm is racey, ignore
+
+    - multi.seqc.TSO_5.asm @ LAT={0,2}
+            - print(B) piggybacks on a recent load of B before A = 1
+            - don't get inv in time before sw for A = 1 commits before store miss finishes
+            - this proves that it is TSO, as the store can be reordered
+            - RESOLUTION:
+                - prevent ROB from moving on until store completes
+                    - then, load can receive inv before it is committed
+                - this is rare case, big change, and will slow things down since store can become bottleneck
+                    - meh, won't do
+                - since already TSO, can treat stores like loads and have multiple MSHR's,
+                    don't need to be in-order?
+                    - naw, store MSHR Q solution have now is fine since stores not on critical path
+
+    - LAT=0: example.asm failing
+    - LAT=2: example.asm failing
+    - LAT=6: example.asm, crit.incr.test_and_set_func_loop.asm failing
+    - LAT=10: example.asm, crit.incr.test_and_set_func_loop.asm failing
+
+    - ERRORS:
+
+        - crit.incr.test_and_set_func_loop.asm @ LAT={6,10}
+
+        - example.asm @ LAT={0,2,6,10}
+
+TODO:
+
+    - perf counters to verif behaviors not caught by functional errors 
+        - print counters at end of sim
+            - hate to always print
+            - print on ~nRST?
+                - values will reset
+            - print with dual_mem_controller_flushed?
+                - will need to give all counters as outputs to top level
+        - values to track:
+            - hits
+            - hit rate
+            - MOESI state transitions
+            - RAM utilization rate
+            - load mis-speculation rate
+            - conflict table conflict rate
+            - dcache busy vs. available to snoop rate
+            - piggyback rate
 
 potential perf improvements:
     
