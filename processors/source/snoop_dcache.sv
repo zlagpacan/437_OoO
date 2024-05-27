@@ -1850,10 +1850,12 @@ module snoop_dcache (
                         // if store conditional, send successful conditional return
                         if (store_MSHR_Q[store_MSHR_Q_head_ptr.index].conditional) begin
 
-                            // successful conditional return
-                            next_load_conditional_return.valid = 1'b1;
-                            next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
-                            next_load_conditional_return.data = 32'h1;
+                            // send successful conditional return if still binded
+                            if (link_reg.binded) begin
+                                next_load_conditional_return.valid = 1'b1;
+                                next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
+                                next_load_conditional_return.data = 32'h1;
+                            end
 
                             // invalidate and unbind link reg
                             next_link_reg.valid = 1'b0;
@@ -1880,10 +1882,12 @@ module snoop_dcache (
                         // have hit
                         store_hit_this_cycle = 1'b1;
 
-                        // failed conditional return
-                        next_load_conditional_return.valid = 1'b1;
-                        next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
-                        next_load_conditional_return.data = 32'h0;
+                        // send failed conditional return if still binded
+                        if (link_reg.binded) begin
+                            next_load_conditional_return.valid = 1'b1;
+                            next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
+                            next_load_conditional_return.data = 32'h0;
+                        end
 
                         // invalidate and unbind link reg
                         next_link_reg.valid = 1'b0;
@@ -2874,10 +2878,12 @@ module snoop_dcache (
                 // if store conditional, send successful conditional return
                 if (store_MSHR.conditional) begin
 
-                    // successful conditional return
-                    next_load_conditional_return.valid = 1'b1;
-                    next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
-                    next_load_conditional_return.data = 32'h1;
+                    // send successful conditional return if still binded
+                    if (link_reg.binded) begin
+                        next_load_conditional_return.valid = 1'b1;
+                        next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
+                        next_load_conditional_return.data = 32'h1;
+                    end
 
                     // invalidate and unbind link reg
                     next_link_reg.valid = 1'b0;
@@ -2905,10 +2911,12 @@ module snoop_dcache (
                         // except piggybacking means don't write store word
             else begin
                 
-                // failed conditional return
-                next_load_conditional_return.valid = 1'b1;
-                next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
-                next_load_conditional_return.data = 32'h0;
+                // send failed conditional return if still binded
+                if (link_reg.binded) begin
+                    next_load_conditional_return.valid = 1'b1;
+                    next_load_conditional_return.LQ_index = link_reg.binded_LQ_index;
+                    next_load_conditional_return.data = 32'h0;
+                end
 
                 // invalidate and unbind link reg
                 next_link_reg.valid = 1'b0;
@@ -4060,8 +4068,23 @@ module snoop_dcache (
         // check for new link reg bind
         if (dcache_read_req_valid & dcache_read_req_conditional) begin
 
+            // if link reg already inv, can immediately send unsuccessful conditional
+                // do this to fix timing bug livelock where repeatedly nack each other's atomic 
+                // even if doesn't do this, acts as optimization
+            if (~link_reg.valid) begin
+
+                // immediately send unsuccessful conditional for this new bind
+                // next_load_conditional_return.valid = 1'b1;
+                // next_load_conditional_return.LQ_index = dcache_read_req_LQ_index;
+                // next_load_conditional_return.data = 32'h0;
+                    // use busy return instead
+                next_busy_load_conditional_return.valid = 1'b1;
+                next_busy_load_conditional_return.LQ_index = dcache_read_req_LQ_index;
+                next_busy_load_conditional_return.data = 32'h0;
+            end
+
             // check link reg already binded
-            if (link_reg.binded) begin
+            else if (link_reg.binded) begin
                 
                 // immediately send unsuccessful conditional for this new bind
                 // next_load_conditional_return.valid = 1'b1;
