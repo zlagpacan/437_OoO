@@ -2200,7 +2200,13 @@ module lsq (
 
             for (int i = 0; i < SQ_DEPTH; i++) begin
 
-                if (kill_bus_ROB_index == SQ_array[i].ROB_index) begin
+                // only kill if already valid
+                    // old entry with old ROB entry can prevent new enQ
+                if (
+                    SQ_array[i].valid
+                    &
+                    kill_bus_ROB_index == SQ_array[i].ROB_index
+                ) begin
 
                     // invalidate entry
                         // prevent bad forwarding from written or unwritten

@@ -395,7 +395,12 @@ module bus_controller (
             for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
 
                 // check block addr match
-                if (dbus0_req_Q[i].block_addr == snoop0_resp_block_addr) begin
+                    // also check entry valid, else can get enQ problems
+                if (
+                    dbus0_req_Q[i].valid
+                    &
+                    dbus0_req_Q[i].block_addr == snoop0_resp_block_addr
+                ) begin
 
                     // if new snooper state M, invalidate curr_state
                     if (snoop0_resp_new_state == MOESI_M) begin
@@ -408,7 +413,12 @@ module bus_controller (
             for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
 
                 // check block addr match
-                if (dbus1_req_Q[i].block_addr == snoop0_resp_block_addr) begin
+                    // also check entry valid, else can get enQ problems
+                if (
+                    dbus1_req_Q[i].valid
+                    &
+                    dbus1_req_Q[i].block_addr == snoop0_resp_block_addr
+                ) begin
 
                     // store/exclusive: new_state E or M piggybackable
                     if (dbus1_req_Q[i].exclusive) begin
@@ -445,7 +455,12 @@ module bus_controller (
             for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
 
                 // check block addr match
-                if (dbus1_req_Q[i].block_addr == snoop1_resp_block_addr) begin
+                    // also check entry valid, else can get enQ problems
+                if (
+                    dbus1_req_Q[i].valid
+                    &
+                    dbus1_req_Q[i].block_addr == snoop1_resp_block_addr
+                ) begin
 
                     // if new snooper state M, invalidate curr_state
                     if (snoop1_resp_new_state == MOESI_M) begin
@@ -458,7 +473,12 @@ module bus_controller (
             for (int i = 0; i < BUS_CONTROLLER_DBUS_REQ_Q_DEPTH; i++) begin
 
                 // check block addr match
-                if (dbus0_req_Q[i].block_addr == snoop1_resp_block_addr) begin
+                    // also check entry valid, else can get enQ problems
+                if (
+                    dbus0_req_Q[i].valid
+                    &
+                    dbus0_req_Q[i].block_addr == snoop1_resp_block_addr
+                ) begin
 
                     // store/exclusive: new_state E or M piggybackable
                     if (dbus0_req_Q[i].exclusive) begin
