@@ -51,6 +51,9 @@
                     - latch evict isntr
                     - search isntr
                 - age logic head: ROB_LQ_retire_ROB_index
+            - get consistency issues if forward from SQ instead of taking new value
+            - SQ also needs to be invalidated on dcache inv and dcache evict to prevent forwarding from
+                stores that are already committed
 
         TODO: LL and SC
             - LL
@@ -2824,6 +2827,27 @@ module lsq (
                     end
                 end
             end
+
+            // also check to inv written stores:
+            for (int i = 0; i < SQ_DEPTH; i++) begin
+
+                // check entry valid and written with addr match
+                if (
+                    SQ_array[i].valid
+                    &
+                    SQ_array[i].written
+                    &
+                    (
+                        SQ_array[i].write_addr[13:1]
+                        ==
+                        dcache_inv_block_addr
+                    )
+                ) begin
+
+                    // invalidate entry
+                    next_SQ_array[i].valid = 1'b0;
+                end
+            end
         end
 
         // check for invalidation due to dcache evict
@@ -2873,6 +2897,27 @@ module lsq (
                         // invalidate entry
                         next_LQ_array[i].valid = 1'b0;
                     end
+                end
+            end
+
+            // also check to inv written stores:
+            for (int i = 0; i < SQ_DEPTH; i++) begin
+
+                // check entry valid and written with addr match
+                if (
+                    SQ_array[i].valid
+                    &
+                    SQ_array[i].written
+                    &
+                    (
+                        SQ_array[i].write_addr[13:1]
+                        ==
+                        dcache_evict_block_addr
+                    )
+                ) begin
+
+                    // invalidate entry
+                    next_SQ_array[i].valid = 1'b0;
                 end
             end
         end
