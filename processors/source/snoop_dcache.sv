@@ -500,7 +500,7 @@ module snoop_dcache (
     // snoop tag search results
     logic snoop_search_VTM_success;
     logic [DCACHE_LOG_NUM_WAYS-1:0] snoop_search_VTM_way;
-    logic snoop_search_VTM_state;
+    MOESI_state_t snoop_search_VTM_state;
 
     // snoop req Q:
     typedef struct packed {
@@ -4025,7 +4025,28 @@ module snoop_dcache (
 
         // check for new link reg set
             // d$ read req valid and linked, link reg not binded
-        if (dcache_read_req_valid & dcache_read_req_linked & ~link_reg.binded) begin
+            // for test and test and set, with ll loop, also check 
+                // not already valid and same linked block addr
+        if (
+            dcache_read_req_valid
+            &
+            dcache_read_req_linked
+            &
+            ~link_reg.binded
+            &
+            ~(
+                link_reg.valid
+                &
+                (
+                    {
+                        dcache_read_req_addr_structed.tag,
+                        dcache_read_req_addr_structed.index
+                    }
+                    ==
+                    link_reg.linked_block_addr
+                )
+            )
+        ) begin
             
             // new link
             next_link_reg.valid = 1'b1;
