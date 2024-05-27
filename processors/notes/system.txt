@@ -292,10 +292,10 @@ RTL TB: bash testasm_multicore.sh
                     don't need to be in-order?
                     - naw, store MSHR Q solution have now is fine since stores not on critical path
 
-    - LAT=0: example.asm failing
-    - LAT=2: example.asm failing
-    - LAT=6: example.asm, crit.incr.test_and_set_func_loop.asm failing
-    - LAT=10: example.asm, crit.incr.test_and_set_func_loop.asm failing
+    - LAT=0: all passing
+    - LAT=2: crit.incr.test_and_test_and_set_func_loop.asm failing
+    - LAT=6: all passing
+    - LAT=10: all passing
 
     - ERRORS:
 
