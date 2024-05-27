@@ -393,17 +393,17 @@ Synthesis: done
 +--------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                       ;
 +------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Fri May 24 15:41:28 2024           ;
+; Fitter Status                      ; Successful - Mon May 27 12:58:36 2024           ;
 ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
 ; Revision Name                      ; system                                          ;
 ; Top-level Entity Name              ; system                                          ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29C8                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 74,573 / 114,480 ( 65 % )                       ;
-;     Total combinational functions  ; 69,987 / 114,480 ( 61 % )                       ;
-;     Dedicated logic registers      ; 21,884 / 114,480 ( 19 % )                       ;
-; Total registers                    ; 21884                                           ;
+; Total logic elements               ; 74,669 / 114,480 ( 65 % )                       ;
+;     Total combinational functions  ; 70,166 / 114,480 ( 61 % )                       ;
+;     Dedicated logic registers      ; 21,888 / 114,480 ( 19 % )                       ;
+; Total registers                    ; 21888                                           ;
 ; Total pins                         ; 102 / 529 ( 19 % )                              ;
 ; Total virtual pins                 ; 0                                               ;
 ; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
@@ -416,9 +416,9 @@ Synthesis: done
 +------------+-----------------+---------------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
 +------------+-----------------+---------------------+------+
-; 47.8 MHz   ; 47.8 MHz        ; CPUCLK              ;      ;
-; 88.63 MHz  ; 88.63 MHz       ; altera_reserved_tck ;      ;
-; 132.78 MHz ; 132.78 MHz      ; CLK                 ;      ;
+; 47.06 MHz  ; 47.06 MHz       ; CPUCLK              ;      ;
+; 84.86 MHz  ; 84.86 MHz       ; altera_reserved_tck ;      ;
+; 143.84 MHz ; 143.84 MHz      ; CLK                 ;      ;
 +------------+-----------------+---------------------+------+
 
 Synthesized TB: testasm -s
