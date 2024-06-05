@@ -12,6 +12,7 @@
 - implement split transaction bus
 - use MOESI protocol
 - use MSHRs
+- system should act as memory bandwidth maximizing machine, not individual operation latency minimizer
  
 ## Architecture
 
@@ -25,14 +26,64 @@
 - out-of-order cores
 - blocking icache
 - non-blocking dcache
+  - 1KB capacity
+  - asynchronous interface
+  - 5x MSHRs
+  - participates in coherence
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
 
 ### core
-
+- based on R10K out-of-order design
+  - true register rename with physical register file, map table, free list
+  - different from R10K: decided to use reservation stations in execution pipelines instead of proper issue queue
+    - more easily support back-to-back forwarding of values on write data buses
+  - target vector add program
+- Fetch
+  - 
+- Dispatch
+  - 
+- Physical Register File
+  - 64 physical registers
+- 2x ALU Pipelines
+  - perform instructions which require an ALU operation
+    - and also some instructions that simply need to write registers
+      - LUI, JAL
+  - pipelines fully independent
+  - 1x ALU each
+  - 1x write data bus each
+  - primary reasoning behind having 2 pipelines targets vector add program
+    - vector element add can be in one pipeline's RS, waiting for load misses and the independent index add operation is free to proceed in the other pipeline
+- Branch Pipeline
+  - ensure conditional branch instructions branched to the correct PC
+    - namely BEQ, BNE, JR
+  - can send precise interrupt request to ROB
+- Load-Store Queue
+  - 4-entry Load Queue
+  - 4-entry Store Queue
+- ROB
+  - contains precise interrupt checkpoint restart and serial rollback logic
+  - 16-entries
 
 ### icache
+- 1KB capacity
+- way0 is hit cache, way1 is stream buffer
+  - stream buffer prefetching on miss
+- blocking, synchronous interface
+- doesn't participate in coherence
+  - don't support self-modifying code
 
 ### dcache
+- 1KB capacity
+- 2-way set associative
+  - simple lower index bit hashing into both ways
+- non-blocking, asynchronous interface
+- 5x MSHRs
+- 2x tag arrays
+  - one for core requests, one for snoop requests
+  - snoop can only modify tag if core not using
+    - snoop responses are asynchronous, can be delayed
+- participates in coherence
+  - must make required bus requests if dcache req's don't have required permissions following MOESI protocol
 
 ### bus controller
 
@@ -46,7 +97,7 @@
 - FMAX: 47.77 MHz
 
 ## Perf Results
-All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2
+All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really an integer vector add. 
 
 - multi.simple.loop.asm
     - LAT=0: 3175 cycles -> old 437: 3211 cycles
