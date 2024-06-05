@@ -17,6 +17,8 @@
   - only acts as TSO in very specific circumstances
   - in vast majority of cases, behavior follows Sequential Consistency
 - out-of-order cores
+- blocking icache
+- non-blocking dcache
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
 
 ### core
