@@ -1,11 +1,4 @@
 # 437_OoO
-
-## Constraints
-- based in Purdue ECE 437 system
-  - 1x blocking 32-bit ram interface with (LAT-1)/2 cycles of latency
-  - lower 16-bit address space
-- MIPS integer subset
-  - see 437_OoO/asm_i.txt
  
 ## Goals
 - implement R10K-based out-of-order core
@@ -13,7 +6,14 @@
 - use MOESI protocol
 - use MSHRs
 - system should act as memory bandwidth maximizing machine, not individual operation latency minimizer
- 
+
+## Constraints
+- based in Purdue ECE 437 system
+  - 1x blocking 32-bit ram interface with (LAT-1)/2 cycles of latency
+  - lower 16-bit address space
+- MIPS integer subset
+  - see 437_OoO/asm_i.txt
+
 ## Architecture
 
 ### system
