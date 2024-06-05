@@ -211,10 +211,10 @@ Synthesized TB: testasm -s
     - LAT=10: 23857 cycles -> old 437: 23911 cycles
 
 - dual.mergesort.asm:
-    - LAT=0: 10055 cycles -> old 437: 10863 cycles
-    - LAT=2: 11319 cycles -> old 437: 11859 cycles
-    - LAT=6: 14335 cycles -> old 437: 14623 cycles
-    - LAT=10: 17673 cycles -> old 437: 16841 cycles
+    - LAT=0: 10093 cycles -> old 437: 10863 cycles
+    - LAT=2: 11353 cycles -> old 437: 11859 cycles
+    - LAT=6: 14383 cycles -> old 437: 14623 cycles
+    - LAT=10: 17731 cycles -> old 437: 16841 cycles
 
 - daxpy.asm (single-threaded):
     - LAT=0: 84637 cycles -> old 437: 180353 cycles
@@ -236,8 +236,6 @@ Synthesized TB: testasm -s
         - these are more likely to have coherence problems so favor larger
 
 - palgorithm.asm:
-    // THESE TIMINGS WERE DONE WHEN HAD SOME REMAINING LL/SC BUGS
-        // these tests were passing though 
     - LAT=0: 237527 cycles -> old 437: 307135 cycles
     - LAT=2: 264485 cycles -> old 437: 370193 cycles
     - LAT=6: 343507 cycles -> old 437: 559447 cycles
@@ -293,15 +291,9 @@ RTL TB: bash testasm_multicore.sh
                     - naw, store MSHR Q solution have now is fine since stores not on critical path
 
     - LAT=0: all passing
-    - LAT=2: crit.incr.test_and_test_and_set_func_loop.asm failing
+    - LAT=2: all passing
     - LAT=6: all passing
     - LAT=10: all passing
-
-    - ERRORS:
-
-        - crit.incr.test_and_set_func_loop.asm @ LAT={6,10}
-
-        - example.asm @ LAT={0,2,6,10}
 
 TODO:
 
@@ -351,57 +343,21 @@ Synthesis: done
         - can cut in half if latch dcache inv
         - worked
 
-    - new critical path is dcache inv -> LSQ CAM -> combined dcache inv
+    - new critical path is dcache inv/evict -> LSQ CAM -> combined dcache inv/evict
         - meh, good enough
 
 +--------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                       ;
 +------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Tue May 14 22:22:40 2024           ;
+; Fitter Status                      ; Successful - Tue Jun  4 22:51:06 2024           ;
 ; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
 ; Revision Name                      ; system                                          ;
 ; Top-level Entity Name              ; system                                          ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29C8                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 55,808 / 114,480 ( 49 % )                       ;
-;     Total combinational functions  ; 51,417 / 114,480 ( 45 % )                       ;
-;     Dedicated logic registers      ; 21,726 / 114,480 ( 19 % )                       ;
-; Total registers                    ; 21726                                           ;
-; Total pins                         ; 102 / 529 ( 19 % )                              ;
-; Total virtual pins                 ; 0                                               ;
-; Total memory bits                  ; 524,288 / 3,981,312 ( 13 % )                    ;
-; Embedded Multiplier 9-bit elements ; 0 / 532 ( 0 % )                                 ;
-; Total PLLs                         ; 0 / 4 ( 0 % )                                   ;
-+------------------------------------+-------------------------------------------------+
-
-+-----------------------------------------------------------+
-; Slow 1200mV 85C Model Fmax Summary                        ;
-+------------+-----------------+---------------------+------+
-; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
-+------------+-----------------+---------------------+------+
-; 47.45 MHz  ; 47.45 MHz       ; CPUCLK              ;      ;
-; 82.12 MHz  ; 82.12 MHz       ; altera_reserved_tck ;      ;
-; 133.05 MHz ; 133.05 MHz      ; CLK                 ;      ;
-+------------+-----------------+---------------------+------+
-
-- with more ll/sc working:
-
-    - critical path is ROB kill -> LSQ CAM -> combined dcache inv
-        - meh, good enough
-
-+--------------------------------------------------------------------------------------+
-; Fitter Summary                                                                       ;
-+------------------------------------+-------------------------------------------------+
-; Fitter Status                      ; Successful - Mon May 27 12:58:36 2024           ;
-; Quartus Prime Version              ; 21.1.1 Build 850 06/23/2022 SJ Standard Edition ;
-; Revision Name                      ; system                                          ;
-; Top-level Entity Name              ; system                                          ;
-; Family                             ; Cyclone IV E                                    ;
-; Device                             ; EP4CE115F29C8                                   ;
-; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 74,669 / 114,480 ( 65 % )                       ;
-;     Total combinational functions  ; 70,166 / 114,480 ( 61 % )                       ;
+; Total logic elements               ; 74,853 / 114,480 ( 65 % )                       ;
+;     Total combinational functions  ; 70,240 / 114,480 ( 61 % )                       ;
 ;     Dedicated logic registers      ; 21,888 / 114,480 ( 19 % )                       ;
 ; Total registers                    ; 21888                                           ;
 ; Total pins                         ; 102 / 529 ( 19 % )                              ;
@@ -416,9 +372,9 @@ Synthesis: done
 +------------+-----------------+---------------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name          ; Note ;
 +------------+-----------------+---------------------+------+
-; 47.06 MHz  ; 47.06 MHz       ; CPUCLK              ;      ;
-; 84.86 MHz  ; 84.86 MHz       ; altera_reserved_tck ;      ;
-; 143.84 MHz ; 143.84 MHz      ; CLK                 ;      ;
+; 47.77 MHz  ; 47.77 MHz       ; CPUCLK              ;      ;
+; 73.65 MHz  ; 73.65 MHz       ; altera_reserved_tck ;      ;
+; 134.44 MHz ; 134.44 MHz      ; CLK                 ;      ;
 +------------+-----------------+---------------------+------+
 
 Synthesized TB: testasm -s
