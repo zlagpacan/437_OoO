@@ -8,8 +8,19 @@
   - see 437_OoO/asm_i.txt
  
 ## Architecture
+
+### system
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/0b220e9f-3a36-41f5-bf3f-fc6691823756)
 
+### core
+
+### icache
+
+### dcache
+
+### bus controller
+
+### mem controller
 
 ## Synthesis Results
 
