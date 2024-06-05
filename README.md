@@ -7,14 +7,20 @@
 - MIPS integer subset
   - see 437_OoO/asm_i.txt
  
+## Goals
+- implement R10K-based out-of-order core
+- implement split transaction bus
+- use MOESI protocol
+- use MSHRs
+ 
 ## Architecture
 
 ### system
 - dual-core
-- MOESI cache coherence
+- MOESI snoopy cache coherence
 - pipelined, split-transaction bus
 - TSO memory consistency
-  - only acts as TSO in very specific circumstances
+  - only acts as TSO in single very specific case
   - in vast majority of cases, behavior follows Sequential Consistency
 - out-of-order cores
 - blocking icache
@@ -22,6 +28,7 @@
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
 
 ### core
+
 
 ### icache
 
