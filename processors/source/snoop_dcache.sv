@@ -2462,6 +2462,8 @@ module snoop_dcache (
                 (
                     link_reg.valid
                     &
+                    link_reg.binded
+                    &
                     (
                         store_MSHR
                         .block_addr
