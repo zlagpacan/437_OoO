@@ -10,7 +10,9 @@
 ## Architecture
 
 ### system
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/0b220e9f-3a36-41f5-bf3f-fc6691823756)
+Dual-core 
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
+
 
 ### core
 
