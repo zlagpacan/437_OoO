@@ -1,5 +1,5 @@
 # 437_OoO
-MIPS out-of-order CPU implementation
+MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
  
 ## Goals
 - implement R10K-based out-of-order core
@@ -9,7 +9,7 @@ MIPS out-of-order CPU implementation
 - system should act as memory bandwidth maximizing machine, not individual operation latency minimizer
 
 ## Constraints
-- based in Purdue ECE 437 system
+- based in Purdue ECE 437 infrastructure
   - 1x blocking 32-bit ram interface with (LAT-1)/2 cycles of latency
   - lower 16-bit address space
 - MIPS integer subset
