@@ -1,4 +1,5 @@
 # 437_OoO
+MIPS out-of-order CPU implementation
  
 ## Goals
 - implement R10K-based out-of-order core
@@ -17,6 +18,7 @@
 ## Architecture
 
 ### system
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
 - dual-core
 - MOESI snoopy cache coherence
 - pipelined, split-transaction bus
@@ -30,7 +32,6 @@
   - asynchronous interface
   - 5x MSHRs
   - participates in coherence
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
 
 ### core
 - based on R10K out-of-order design
@@ -51,7 +52,7 @@
   - Back End
     - Physical Register File
     - 2x ALU Pipelines
-    - Branch Pipeline
+    - Branch Resolution Pipeline
     - Load-Store Queue
 - Fetch
   - fetch instructions from icache
@@ -88,7 +89,7 @@
   - 1x write data bus each
   - primary reasoning behind having 2 pipelines targets vector add program
     - vector element add can be in one pipeline's RS, waiting for load misses and the independent index add operation is free to proceed in the other pipeline
-- Branch Pipeline
+- Branch Resolution Pipeline
   - ensure conditional branch instructions branched to the correct PC
     - namely BEQ, BNE, JR
   - can send precise interrupt request to ROB
