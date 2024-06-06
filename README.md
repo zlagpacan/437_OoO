@@ -28,10 +28,6 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 - out-of-order cores
 - blocking icache
 - non-blocking dcache
-  - 1KB capacity
-  - asynchronous interface
-  - 5x MSHRs
-  - participates in coherence
 
 ### core
 - based on R10K out-of-order design
