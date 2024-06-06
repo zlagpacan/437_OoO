@@ -118,8 +118,8 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
       - especially relevant for loads and stores which can have long latencies and take up precious memory access slots
 
 ### icache
- 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/b39fb3a9-b58a-4dc6-b9e6-0d91249b4b6b)
+
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/5241d782-3711-4ced-8d5d-e3c704ef99c3)
 
 - 1KB capacity
 - way0 is hit cache, way1 is stream buffer
