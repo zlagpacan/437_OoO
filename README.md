@@ -119,7 +119,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 
 ### icache
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/5241d782-3711-4ced-8d5d-e3c704ef99c3)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/fd9ef280-097e-4299-8587-7860918c847d)
 
 - 1KB capacity
 - way0 is hit cache, way1 is stream buffer
@@ -129,6 +129,8 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
   - don't support self-modifying code
 
 ### dcache
+
+
 - 1KB capacity
 - 2-way set associative
   - simple lower index bit hashing into both ways
