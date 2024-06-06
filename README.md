@@ -1,4 +1,4 @@
-# 437_OoO
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/1e9b4df1-4e99-4eb7-bb12-f7a7a8b01c80)# 437_OoO
 MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
  
 ## Goals
@@ -18,7 +18,9 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 ## Architecture
 
 ### system
+
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
+
 - dual-core
 - MOESI snoopy cache coherence
 - pipelined, split-transaction bus
@@ -29,7 +31,10 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 - blocking icache
 - non-blocking dcache
 
-### core
+### core4
+
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/22eb37d3-fbf1-4994-81db-17178094eb84)
+
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
   - different from R10K: decided to use reservation stations in execution pipelines instead of proper issue queue
