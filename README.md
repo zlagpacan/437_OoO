@@ -1,4 +1,4 @@
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/1e9b4df1-4e99-4eb7-bb12-f7a7a8b01c80)# 437_OoO
+# 437_OoO
 MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
  
 ## Goals
