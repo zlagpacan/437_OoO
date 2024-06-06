@@ -122,8 +122,10 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/fd9ef280-097e-4299-8587-7860918c847d)
 
 - 1KB capacity
-- way0 is hit cache, way1 is stream buffer
-  - stream buffer prefetching on miss
+- way0 is loop way, way1 is stream buffer
+  - misses and prefetched blocks after miss are loaded into stream buffer way
+  - on hit in stream buffer way, loop way is loaded with block
+  - not quite true 2-way set associativy as can have entry in both loop way and stream buffer way
 - blocking, synchronous interface
 - doesn't participate in coherence
   - don't support self-modifying code
