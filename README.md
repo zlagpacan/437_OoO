@@ -31,7 +31,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 - blocking icache
 - non-blocking dcache
 
-### core4
+### core
 
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/22eb37d3-fbf1-4994-81db-17178094eb84)
 
