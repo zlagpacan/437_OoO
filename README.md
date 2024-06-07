@@ -105,7 +105,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
   - support LL with link register in dcache
   - support SC by sending conditional write request and conditional read request to dcache
     - conditional read request effectively returns to core like a load
-- ROB
+- Reorder Buffer (ROB)
   - 16-entries 
   - responsible for precise interrupt checkpoint restart and serial rollback logic
     - checkpoints can be used for BEQ, BNE, JR instructions
