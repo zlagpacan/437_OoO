@@ -129,7 +129,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - conditional read request effectively returns to core like a load
 - Reorder Buffer (ROB)
   - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/rob.sv
-  - 16-entries 
+  - 16 entries 
   - responsible for precise interrupt checkpoint restart and serial rollback logic
     - checkpoints can be used for BEQ, BNE, JR instructions
       - serial rollback if lost checkpoint
