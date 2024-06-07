@@ -166,7 +166,10 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
   - simple lower index bit hashing into both ways
 - non-blocking, asynchronous interfaces
   - core side and bus/mem side
+- 4-entry write buffer
 - 5x MSHRs
+  - 4x load MSHRs
+  - 1x store MSHR at end of write buffer
 - 2x tag arrays
   - one for core requests, one for snoop requests
   - snoop can only modify tag if core not using
