@@ -33,7 +33,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 
 ### core
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/22eb37d3-fbf1-4994-81db-17178094eb84)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/f1bbf2ac-45fe-4f37-a295-cc085d0dba25)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
