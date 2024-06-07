@@ -119,7 +119,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 
 ### icache
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/fd9ef280-097e-4299-8587-7860918c847d)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/94363922-ca5c-4129-947f-1c47adeb5802)
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
