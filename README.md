@@ -152,7 +152,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
   - on hit in stream buffer way, loop way is loaded with block
   - not quite true 2-way set associativy as can have entry in both loop way and stream buffer way
 - blocking, synchronous interfaces
-  - core side and bus/mem side
+  - core side and mem side
 - doesn't participate in coherence
   - don't support self-modifying code
 
