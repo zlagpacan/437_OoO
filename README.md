@@ -94,12 +94,14 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - 1: reg writing instructions, BEQ, BNE, JR, LW, LL, SW
     - 2: SC, which goes to LQ and SQ
 - Physical Register File
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_file.sv
   - 64 physical registers
   - register file is read by reservation stations in execution pipeline
   - 2x read ports, corresponding to the reservation station that wins access for the cycle
   - 3x write ports, 1x for each write data bus
   - to better support forwarding, must support same-cycle write and read
 - 2x ALU Pipelines
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/alu_pipeline.sv
   - perform instructions which require an ALU operation
     - and also some instructions that simply need to write registers
       - LUI, JAL, etc.
@@ -109,10 +111,12 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
   - primary reasoning behind having 2 pipelines targets vector add program
     - vector element add can be in one pipeline's RS, waiting for load misses and the independent index add operation is free to proceed in the other pipeline
 - Branch Resolution Pipeline
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bru_pipeline.sv
   - ensure conditional branch instructions branched to the correct PC
     - namely BEQ, BNE, JR
   - can send precise interrupt request to ROB
 - Load-Store Queue
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/lsq.sv
   - 4-entry Load Queue
   - 4-entry Store Queue
   - 2x operand collection pipelines
@@ -124,6 +128,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
   - support SC by sending conditional write request and conditional read request to dcache
     - conditional read request effectively returns to core like a load
 - Reorder Buffer (ROB)
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/rob.sv
   - 16-entries 
   - responsible for precise interrupt checkpoint restart and serial rollback logic
     - checkpoints can be used for BEQ, BNE, JR instructions
@@ -137,6 +142,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 ### icache
 
+https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
+
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/94363922-ca5c-4129-947f-1c47adeb5802)
 
 - 1KB capacity
@@ -149,6 +156,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
   - don't support self-modifying code
 
 ### dcache
+
+https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
 
 - 1KB capacity
@@ -165,7 +174,13 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 ### bus controller
 
+https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
+
+
 ### mem controller
+
+https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
+
 
 ## Synthesis Results
 
