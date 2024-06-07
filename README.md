@@ -1,10 +1,10 @@
 # 437_OoO
-MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
+MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastructure
  
 ## Goals
 - implement R10K-based out-of-order core
 - implement split transaction bus
-- use MOESI protocol
+- use MOESI snoopy cache coherence protocol
 - use MSHRs
 - system should act as memory bandwidth maximizing machine, not individual operation latency minimizer
 
