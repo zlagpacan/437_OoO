@@ -151,7 +151,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
   - misses and prefetched blocks after miss are loaded into stream buffer way
   - on hit in stream buffer way, loop way is loaded with block
   - not quite true 2-way set associativy as can have entry in both loop way and stream buffer way
-- blocking, synchronous interface
+- blocking, synchronous interfaces
+  - core side and bus/mem side
 - doesn't participate in coherence
   - don't support self-modifying code
 
@@ -163,7 +164,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 - 1KB capacity
 - 2-way set associative
   - simple lower index bit hashing into both ways
-- non-blocking, asynchronous interface
+- non-blocking, asynchronous interfaces
+  - core side and bus/mem side
 - 5x MSHRs
 - 2x tag arrays
   - one for core requests, one for snoop requests
