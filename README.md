@@ -18,6 +18,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 ## Architecture
 
 ### system
+https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
 ![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
 
@@ -32,8 +33,9 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
 - non-blocking dcache
 
 ### core
+https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/f1bbf2ac-45fe-4f37-a295-cc085d0dba25)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/78c44893-29b7-4bb8-bb7e-e76840067b36)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -56,6 +58,7 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
     - Branch Resolution Pipeline
     - Load-Store Queue
 - Fetch
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/fetch_unit.sv
   - fetch instructions from icache
   - on hit, determine next PC
     - PC+4 or speculated branch prediction
@@ -70,7 +73,22 @@ MIPS out-of-order CPU implementation based in Purdue ECE 437 infrastructure
         - if any instruction that satisfies hash can use BTB+DIRP or RAS, then every instruction must be checked for the correct next PC
       - ended up not being critical path so perfectly fine
 - Dispatch
-  - decode, read register map table, dequeue physical register free list, try to dispatch to associated pipeline(s)
+  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dispatch_unit.sv
+  - decode, read register map table and ready table, dequeue physical register free list, try to dispatch to associated pipeline(s)
+    - Physical Register Map Table
+      - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_map_table.sv
+      - map architectural register to physical register
+      - gives current in-order dispatch register rename
+      - source operands read the table
+      - destination operands reads the table to get the old mapping and writes the table with the new rename mapping
+    - Physical Register Ready Table
+      - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_ready_table.sv
+      - tells if physical register value is ready or yet to be written at time of dispatch
+    - Physical Register Free List
+      - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_free_list.sv
+      - gives list of free physical registers which can be used for a rename
+      - dequeue on dispatch of register-writing instruction
+      - enqueue on commit of register-writing instruction with physical register used before new rename of architecture register for this instruction
   - on successful dispatch, instruction goes to 0, 1, or 2 pipelines
     - 0: J, dead instructions (write to reg 0)
     - 1: reg writing instructions, BEQ, BNE, JR, LW, LL, SW
