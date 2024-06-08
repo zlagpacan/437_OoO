@@ -20,7 +20,7 @@ MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastru
 ### system
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/67b8f4ba-192c-41d8-b72d-5de421fb83ae)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/c86c3658-4a99-42da-8050-af1f9fff106b)
 
 - dual-core
 - MOESI snoopy cache coherence
@@ -35,7 +35,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 ### core
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/78c44893-29b7-4bb8-bb7e-e76840067b36)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/e8a64e2e-2f06-462c-ab65-d858383e1425)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -144,7 +144,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/bdc07834-e1d4-47fb-9fc7-5f6ea4f629f3)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a1f1c92d-faa2-4899-8a1d-34dc4f415612)
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
@@ -182,7 +182,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
 
-### mem controller
+### memory controller
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
