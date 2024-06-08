@@ -140,7 +140,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
   - responsible for misspeculated instruction kill logic
     - sends instruction kill information to dispatch unit to restore effective architectural register state
     - sends instruction kill information to execution pipelines to get rid of any lingering misspeculated work which can block useful work or mess up new post-speculation architectural state
-      - especially relevant for loads and stores which can have long latencies and take up precious memory access slots
+      - especially relevant for loads and stores which can have long latencies and take up precious memory access slots in the LSQ
 
 ### icache
 
