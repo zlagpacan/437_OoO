@@ -144,7 +144,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/94363922-ca5c-4129-947f-1c47adeb5802)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/bdc07834-e1d4-47fb-9fc7-5f6ea4f629f3)
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
