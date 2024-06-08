@@ -37,7 +37,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/b19a9d34-256f-435d-a4e2-b0da6323b1e2)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/f7272eb2-fd22-49ad-9e32-68ed19406845)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
