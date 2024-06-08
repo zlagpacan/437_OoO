@@ -179,7 +179,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
   - snoop can only modify tag if core not using
     - snoop responses are asynchronous, can be delayed
 - participates in coherence
-  - must make required bus requests if dcache req's don't have required permissions following MOESI protocol
+  - must make required bus requests if core requests don't have required permissions following MOESI protocol
 - bus responses can be piggybacked, so a single block fetch can lead to a single cache frame fill but potentially multiple load data responses or store data writes
 - MOESI block state 
   - I: no permissions
@@ -192,23 +192,31 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
-- pipelined bus
-  - stages:
+- split transaction, pipelined bus
+  - pipeline stages:
     - bus request (not entered pipeline yet)
-    - grant
+    - grant (entered pipeline)
     - snoop request
     - snoop response
     - memory request (if needed)
     - memory response (if needed)
     - bus response
+  - the pipeline is superscalar, one lane for dbus0 requests and one lane for dbus1 requests
+    - this is trivial in the dual-core case since dbus requests only need to snoop into the single other dcache
 - asynchronous request/response interfaces
   - bus request/response
   - snoop request/response
   - memory request/response
-- out-of-order responses
+- out-of-order responses are possible if an older request needs memory and a younger request does not
 - block state is tracked and maintained in the dbus request queues by receiving snoop requests to the same cache
 - redundant, piggybackable dbus requests are killed in the dbus request queues by receiving snoop responses from the opposite cache
-- coherence is maintained through a conflict table allowing a block  
+  - this is only a performance optimization to improve bus bandwidth. if specific timing has a piggybackable request unneedingly enter the pipeline, the bus will simply refetch the data, and the dcache can ignore the response
+- single-block coherence is maintained through a conflict table, which prevents a request from being granted if its block address is already in the bus pipeline
+- memory writes
+  - memory writes fully bypass the bus and can come directly from the dcaches
+  - due to the use of the MOESI protocol, the bus controller does not need to generate any memory writes
+    - no BusWB in MOESI protocol
+    - a memory write should only happen on dirty block eviction or dirty block flush
 
 ### memory controller
 
