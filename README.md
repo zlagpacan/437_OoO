@@ -18,9 +18,10 @@ MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastru
 ## Architecture
 
 ### system
+
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/c86c3658-4a99-42da-8050-af1f9fff106b)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a76afebe-9e2c-478f-b303-09f19b8eb902)
 
 - dual-core
 - MOESI snoopy cache coherence
@@ -33,9 +34,10 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 - non-blocking dcache
 
 ### core
+
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/e8a64e2e-2f06-462c-ab65-d858383e1425)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/b19a9d34-256f-435d-a4e2-b0da6323b1e2)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -144,7 +146,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a1f1c92d-faa2-4899-8a1d-34dc4f415612)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/52dcf1ee-f705-490b-8722-4ad00c91f831)
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
@@ -160,13 +162,15 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/c51f1278-45d7-4165-9c28-9fc87ac4407b)
 
 - 1KB capacity
 - 2-way set associative
   - simple lower index bit hashing into both ways
 - non-blocking, asynchronous interfaces
   - core side and bus/mem side
-- 4-entry write buffer
+  - can have slow down signals preventing further requests (flow control)
+- 4-entry write buffer (store MSHR queue)
 - 5x MSHRs
   - 4x load MSHRs
   - 1x store MSHR at end of write buffer
@@ -176,11 +180,35 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
     - snoop responses are asynchronous, can be delayed
 - participates in coherence
   - must make required bus requests if dcache req's don't have required permissions following MOESI protocol
+- bus responses can be piggybacked, so a single block fetch can lead to a single cache frame fill but potentially multiple load data responses or store data writes
+- MOESI block state 
+  - I: no permissions
+  - S: read permissions
+  - E: read and write permissions
+  - O: read permissions; write on eviction
+  - M: read and write permissions; write on eviction
 
 ### bus controller
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
+- pipelined bus
+  - stages:
+    - bus request (not entered pipeline yet)
+    - grant
+    - snoop request
+    - snoop response
+    - memory request (if needed)
+    - memory response (if needed)
+    - bus response
+- asynchronous request/response interfaces
+  - bus request/response
+  - snoop request/response
+  - memory request/response
+- out-of-order responses
+- block state is tracked and maintained in the dbus request queues by receiving snoop requests to the same cache
+- redundant, piggybackable dbus requests are killed in the dbus request queues by receiving snoop responses from the opposite cache
+- coherence is maintained through a conflict table allowing a block  
 
 ### memory controller
 
