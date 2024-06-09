@@ -21,7 +21,7 @@ MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastru
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/ffdf1e08-57be-4ece-be29-e7935d9faa1f)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/18d56331-8d6b-47d4-b2c4-d5292917a439)
 
 - everything within the dotted lines is part of the 437_OoO design
 - dual-core
@@ -38,7 +38,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/f7272eb2-fd22-49ad-9e32-68ed19406845)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/876ae225-a30b-4465-a9e2-5de553132384)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -149,7 +149,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/52dcf1ee-f705-490b-8722-4ad00c91f831)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/06cfe39d-8d42-4f0f-af6e-2e968bf233f4)
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
@@ -165,7 +165,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/c51f1278-45d7-4165-9c28-9fc87ac4407b)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/54b18670-1c5b-426d-b0b8-7e936c06be80)
 
 - 1KB capacity
 - 2-way set associative
@@ -196,7 +196,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/ebec8dc3-d384-4d0a-b75f-372abecc9f3a)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/1a145235-f29a-4019-8d4c-9be2c0178e5d)
 
 - split transaction, pipelined bus
   - pipeline stages:
@@ -243,7 +243,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/11dd8192-e2d1-41ad-96cc-272e0077b168)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/414dd751-4058-4a58-865a-bc6833652004)
 
 - arbitrate structural hazard of single exclusive access to 32-bit blocking RAM port
   - competing requests for memory access
