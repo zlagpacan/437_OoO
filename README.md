@@ -17,12 +17,13 @@ MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastru
 
 ## Architecture
 
-### system
+### System
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a76afebe-9e2c-478f-b303-09f19b8eb902)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/ffdf1e08-57be-4ece-be29-e7935d9faa1f)
 
+- everything within the dotted lines is part of the 437_OoO design
 - dual-core
 - MOESI snoopy cache coherence
 - pipelined, split-transaction bus
@@ -33,7 +34,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 - blocking icache
 - non-blocking dcache
 
-### core
+### Core
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
@@ -144,7 +145,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - kills happen in tandem with serial rollback
     - kills can happen as a fully separate sequential process if checkpoint restart is successful
 
-### icache
+### Icache
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
@@ -160,7 +161,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 - doesn't participate in coherence
   - don't support self-modifying code
 
-### dcache
+### Dcache
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
@@ -191,7 +192,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
   - O: read permissions; write on eviction
   - M: read and write permissions; write on eviction
 
-### bus controller
+### Bus Controller
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
@@ -216,7 +217,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
     - 8-entry read response queue each for dmem0 and dmem1
     - 8-entry read buffer in memory controller
 - out-of-order responses are possible if an older request needs memory and a younger request does not
-- dbus request queues as opposed to bus request retry if don't get bus pipeline grant
+- implement dbus request queues as opposed to dbus request retry if don't get bus pipeline grant
   - easier on dcache, simply send dbus request and be done
   - need to potentially update requests, but they are already in the dbus request queues in the bus controller
     - block state is tracked and maintained in the dbus request queues by receiving snoop requests to the same cache
@@ -234,10 +235,10 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
 - potential optimization: upgrading requests
 - MOESI state transition diagram
   - mostly standard MOESI, but can make some more assumptions since know only have 2 cores
-    - highlighted behaviors are unique to dual-core implementation
+    - <ins>underlined</ins> behaviors are unique to dual-core implementation
     - these cases allow a snoop of a block in S state to guarantee the ability to provide a BusCache, since the block in S does not have to compete with any other block potentially wanting to also provide a BusCache, which would be possible if >1 other core were being snooped
 
-### memory controller
+### Memory Controller
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
