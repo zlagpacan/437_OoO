@@ -182,6 +182,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
     - snoop responses are asynchronous, can be delayed
 - participates in coherence
   - must make required bus requests if core requests don't have required permissions following MOESI protocol
+  - 4-entry snoop request queue to backlog snoop requests if need to make modification but core is busy modifying
 - bus responses can be piggybacked, so a single block fetch can lead to a single cache frame fill but potentially multiple load data responses or store data writes
 - MOESI block state 
   - I: no permissions
@@ -193,6 +194,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 ### bus controller
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
+
 
 - split transaction, pipelined bus
   - pipeline stages:
@@ -207,23 +209,53 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
     - this is trivial in the dual-core case since dbus requests only need to snoop into the single other dcache
 - asynchronous request/response interfaces
   - bus request/response
+    - 8-entry dbus request queue each for dbus0 and dbus1
   - snoop request/response
+    - 4-entry snoop request queue each in dcache0 and dcache1
   - memory request/response
+    - 8-entry read response queue each for dmem0 and dmem1
+    - 8-entry read buffer in memory controller
 - out-of-order responses are possible if an older request needs memory and a younger request does not
-- block state is tracked and maintained in the dbus request queues by receiving snoop requests to the same cache
-- redundant, piggybackable dbus requests are killed in the dbus request queues by receiving snoop responses from the opposite cache
-  - this is only a performance optimization to improve bus bandwidth. if specific timing has a piggybackable request unneedingly enter the pipeline, the bus will simply refetch the data, and the dcache can ignore the response
-- single-block coherence is maintained through a conflict table, which prevents a request from being granted if its block address is already in the bus pipeline
-- memory writes
-  - memory writes fully bypass the bus and can come directly from the dcaches
+- dbus request queues as opposed to bus request retry if don't get bus pipeline grant
+  - easier on dcache, simply send dbus request and be done
+  - need to potentially update requests, but they are already in the dbus request queues in the bus controller
+    - block state is tracked and maintained in the dbus request queues by receiving snoop requests to the same cache
+    - redundant, piggybackable dbus requests are killed in the dbus request queues by receiving snoop responses from the opposite cache
+      - this is only a performance optimization to improve bus bandwidth. if specific timing has a piggybackable request unneedingly enter the pipeline, the bus will simply refetch the data, and the dcache ignores the response
+- the conflict table prevents a request from being granted if its block address is already in the bus pipeline
+  - maintains single-block coherence
+- memory writes fully bypass the bus and can come directly from the dcaches
   - due to the use of the MOESI protocol, the bus controller does not need to generate any memory writes
-    - no BusWB in MOESI protocol
-    - a memory write should only happen on dirty block eviction or dirty block flush
+    - no BusWB response to snoop request
+    - a memory write should only happen on dirty block eviction or flush
+- instruction memory reads fully bypass the bus and can come directly from the icaches
+  - instruction memory is not coherent
+  - no support for self-modifying code
+- potential optimization: upgrading requests
+- MOESI state transition diagram
+  - mostly standard MOESI, but can make some more assumptions since know only have 2 cores
+    - highlighted behaviors are unique to dual-core implementation
+    - these cases allow a snoop of a block in S state to guarantee the ability to provide a BusCache, since the block in S does not have to compete with any other block potentially wanting to also provide a BusCache, which would be possible if >1 other core were being snooped
 
 ### memory controller
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
+
+- arbitrate structural hazard of single exclusive access to 32-bit blocking RAM port
+  - competing requests for memory access
+    - imem0 read
+    - imem1 read
+    - dmem0 read
+    - dmem1 read
+    - dmem0 write
+    - dmem1 write
+  - single active request each for imem0 read, imem1 read
+  - read buffer backlogs up to 8 dmem0 or dmem1 read requests
+  - write buffer backlogs up to 8 dmem0 or dmem1 write requests
+- provide forwarding of pending data memory writes to data memory reads to the same block
+  - dmem read requests perform CAM search on write buffer while simultaneously starting RAM access
+  - if block present in write buffer, forward value from write buffer to use as the dmem read response
 
 ## Synthesis Results
 
