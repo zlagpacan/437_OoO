@@ -145,7 +145,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - kills happen in tandem with serial rollback
     - kills can happen as a fully separate sequential process if checkpoint restart is successful
 
-### Icache
+### Instruction Cache
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
@@ -161,7 +161,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 - doesn't participate in coherence
   - don't support self-modifying code
 
-### Dcache
+### Data Cache
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
@@ -243,6 +243,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/11dd8192-e2d1-41ad-96cc-272e0077b168)
 
 - arbitrate structural hazard of single exclusive access to 32-bit blocking RAM port
   - competing requests for memory access
