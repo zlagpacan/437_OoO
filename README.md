@@ -196,6 +196,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/ebec8dc3-d384-4d0a-b75f-372abecc9f3a)
 
 - split transaction, pipelined bus
   - pipeline stages:
