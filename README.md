@@ -322,7 +322,7 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
   - I would be only a little surprised if there are correctness issues in the design.
   - I was too lazy to implement any sort of memory dependence prediction. This is the primary culprit making certain non-trivial test cases worse on the 437_OoO design versus my old 437 design I used for the class labs (in-order pipeline, blocking dcaches, blocking atomic bus, no speculated memory accesses).
     - multi.simple.loop_hit.asm purposely targets this weakness. The massive performance loss can be easily seen.
-- I treated this project as a learning experience, a design challenge, and a place to experiment
+- I treated this project as a learning experience, a design challenge, and a place to experiment.
   - I wasn't strictly aiming for performance maximization. I more wanted to implement certain architecture features, whether they made sense for performance or not. 
   - I made all my microarchitecture desicions based on the higher-level architecture overviews from ECE 565 and ECE 666. I challenged myself by figuring out all the unspecified and nitty-gritty details myself, not referring to other existing microarchitecture implementations. 
   - I was pleasantly surprised that some of my decisions matched real used methods.
@@ -330,6 +330,11 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
   - I was not surprised that other decisions of mine were quite silly.
     - notably my ugly reservation stations in what should have been a proper R10K design with an isolated register file directly interacting with the functional units
       - the back-to-back forwarding I so preciously valued was not prioritized in real designs, or at least was not implemented in the way I did
+- I was not nearly as careful as I should have been with memory consistency.
+  - I intended for the system to follow sequential consistency, and I purposely tried to make microarchitecture decisions which enabled this
+  - However, I decided to be thorough in my assembly testing and I found a scenario where the system fails sequential consistency and acts like TSO
+    - multi.seqc.TSO_5.asm
+    - failure is detailed in system.txt
 
 ## Potential Future Development
 - Conversion from the MIPS subset to RISC-V RV32IA
