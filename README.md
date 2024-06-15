@@ -1,12 +1,20 @@
 # 437_OoO
-MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastructure
+MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastructure. Based on architecture lectures in Purdue ECE 437, ECE 565, and ECE 666.
+
+- if you are a student in ECE 437 trying to copy from this design for your labs, you will find your effort completely wasted for the following reasons:
+  - this design is unbelievably far outside of the expected microarchitecture specification for the labs
+    - there is not a single module or testbench for a module that will get you a checkoff in the labs
+    - the design will fail all cache lab test cases due to the dcache hit counter
+    - the design will fail some racey multicore lab test cases since these expect your core requests and bus to behave a certain way
+  - this design does not use the required interfaces
+  - Purdue ECE 437 will be using RISC-V instead of MIPS starting Fall 2024!
  
 ## Goals
 - implement R10K-based out-of-order core
 - implement split transaction bus
 - use MOESI snoopy cache coherence protocol
-- use MSHRs
-- system should act as memory bandwidth maximizing machine, not individual operation latency minimizer
+- use MSHRs, non-blocking caches
+- system should act as memory bandwidth maximizing machine, not individual operation latency minimizer since have out-of-order to cover latencies
 
 ## Constraints
 - based in Purdue ECE 437 infrastructure
@@ -267,8 +275,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_contro
   - Dedicated Logic Registers: 21,888 / 114,480 ( 19 % )
 - FMAX: 47.77 MHz
 
-## Perf Results
-All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really an integer vector add. 
+## Performance Results
+All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really an integer vector add loop. The daxpy program most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while independent memory accesses from previous iterations are waiting on completion. 
 
 - multi.simple.loop.asm
   - LAT=0: 3175 cycles -> old 437: 3211 cycles
@@ -305,3 +313,25 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
   - LAT=2: 264485 cycles -> old 437: 370193 cycles
   - LAT=6: 343507 cycles -> old 437: 559447 cycles
   - LAT=10: 409817 cycles -> old 437: 720085 cycles
+
+## Notes
+- I am one person and I did not want to go completely insane in designing and verifying this system. This led to the following results:
+  - Testbenches for each module (if they exist) were designed with initial versions of modules before various stages of integration and debug. Most testbenches will not pass all test cases for the current versions of the module. Some testbenches may be missing some inputs or outputs or for reasons other than this may fail to simulate.
+  - I would not be surprised at all if there are bugs in the design that hurt performance but not correctness (e.g. something like a load restarting when it did not need to).
+  - I would be only a little surprised if there are correctness issues in the design.
+  - I was too lazy to implement any sort of memory dependence prediction. This is the primary culprit making certain non-trivial test cases worse on the 437_OoO design versus my old 437 design I used for the class labs (in-order pipeline, blocking dcaches, blocking atomic bus, no speculated memory accesses).
+    - multi.simple.loop_hit.asm purposely targets this weakness. The massive performance loss can be easily seen.
+- I treated this project as a learning experience, a design challenge, and a place to experiment
+  - I wasn't strictly aiming for performance maximization. I more wanted to implement certain architecture features, whether they made sense for performance or not. 
+  - I made all my microarchitecture desicions based on the higher-level architecture overviews from ECE 565 and ECE 666.
+  - I was pleasantly surprised that some of my decisions matched real used methods.
+    - notably mis-speculated instruction killing methods, which was not discussed in detail in ECE 565
+  - I was not surprised that other decisions of mine were quite silly.
+    - notably my ugly reservation stations in what should have been a proper R10K design with an isolated register file directly interacting with the functional units
+      - the back-to-back forwarding I so preciously valued was not prioritized in real designs, or at least was not implemented in the way I did
+
+## Potential Future Development
+- Conversion from the MIPS subset to RISC-V RV32IA
+  - or at least the RV32IA subset that ECE 437 implements
+- Performance counters (e.g. dcache hit counts) for performance verification and insight for future design iterations
+- Turning a basis of this design into a future iteration of Purdue ECE 437 where students can implement out-of-order cores, non-blocking caches, and pipelined buses!
