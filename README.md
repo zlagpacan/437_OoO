@@ -1,13 +1,13 @@
 # 437_OoO
-MIPS dual-core out-of-order CPU implementation based in Purdue ECE 437 infrastructure. Based on architecture lectures in Purdue ECE 437, ECE 565, and ECE 666.
+437_OoO is a MIPS dual-core out-of-order CPU implementation based in the Purdue ECE 437 infrastructure. This design was encouraged by architecture lectures in Purdue ECE 437, ECE 565, and ECE 666.
 
-- if you are a student in ECE 437 trying to copy from this design for your labs, you will find your effort completely wasted for the following reasons:
-  - this design is unbelievably far outside of the expected microarchitecture specification for the labs
-    - there is not a single module or testbench for a module that will get you a checkoff in the labs
-    - the design will fail all cache lab test cases due to the dcache hit counter
-    - the design will fail some racey multicore lab test cases since these expect your core requests and bus to behave a certain way
-  - this design does not use the required interfaces
-  - Purdue ECE 437 will be using RISC-V instead of MIPS starting Fall 2024!
+> **_WARNING_** if you are a student in ECE 437 trying to copy from this design for your labs, you will find your effort completely wasted for the following reasons:
+>  - this design is unbelievably far outside of the expected microarchitecture specification for the labs
+>    - there is not a single module or testbench for a module that will get you a checkoff in the labs
+>    - the design will fail all cache lab test cases due to the dcache hit counter
+>    - the design will fail some racey multicore lab test cases since these expect your core requests and bus to behave a certain way
+>  - this design does not use the required interfaces
+>  - Purdue ECE 437 will be using RISC-V instead of MIPS starting Fall 2024!
  
 ## Goals
 - implement R10K-based out-of-order core
