@@ -251,7 +251,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/ad3e2deb-46a8-4f78-82f5-223596677bfe)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a2e98e49-3763-4cb6-9b91-ce8fae0aa584)
 
 - arbitrate structural hazard of single exclusive access to 32-bit blocking RAM port
   - competing requests for memory access
