@@ -324,7 +324,7 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
     - multi.simple.loop_hit.asm purposely targets this weakness. The massive performance loss can be easily seen.
 - I treated this project as a learning experience, a design challenge, and a place to experiment
   - I wasn't strictly aiming for performance maximization. I more wanted to implement certain architecture features, whether they made sense for performance or not. 
-  - I made all my microarchitecture desicions based on the higher-level architecture overviews from ECE 565 and ECE 666.
+  - I made all my microarchitecture desicions based on the higher-level architecture overviews from ECE 565 and ECE 666. I challenged myself by figuring out all the unspecified and nitty-gritty details myself, not referring to other existing microarchitecture implementations. 
   - I was pleasantly surprised that some of my decisions matched real used methods.
     - notably mis-speculated instruction killing methods, which was not discussed in detail in ECE 565
   - I was not surprised that other decisions of mine were quite silly.
