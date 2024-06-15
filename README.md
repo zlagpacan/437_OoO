@@ -173,7 +173,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/54b18670-1c5b-426d-b0b8-7e936c06be80)
+![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a55d0fc0-3f74-4102-9fc3-cd8d1b2de30a)
 
 - 1KB capacity
 - 2-way set associative
