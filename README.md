@@ -12,7 +12,7 @@
 ## Goals
 - implement R10K-based out-of-order core
 - implement split-transaction, pipelined bus
-- use MOESI snoopy cache coherence protocol
+- use MOESI snoopy cache coherence protocol with bus controller for sequential consistency
 - use MSHRs, non-blocking caches
 - system should act as memory bandwidth maximizing machine, not individual operation latency minimizer since have out-of-order to cover latencies
 - target daxpy/vector add behavior
