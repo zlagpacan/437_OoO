@@ -30,7 +30,7 @@
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-[<img src="437_OoO Diagrams-system.drawio.png">](https://github.com/zlagpacan/437_OoO)
+[<img src="system.png">](https://github.com/zlagpacan/437_OoO)
 
 - everything within the dotted lines is part of the 437_OoO design
 - dual-core
@@ -47,7 +47,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-[<img src="437_OoO Diagrams-core.drawio.png">](https://github.com/zlagpacan/437_OoO)
+[<img src="core.png">](https://github.com/zlagpacan/437_OoO)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -172,7 +172,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
-
+[<img src="icache.png">](https://github.com/zlagpacan/437_OoO)
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
@@ -188,7 +188,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
-
+[<img src="dcache.png">](https://github.com/zlagpacan/437_OoO)
 
 - 1KB capacity
 - 2-way set associative
@@ -219,7 +219,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
-
+[<img src="bus controller.png">](https://github.com/zlagpacan/437_OoO)
 
 - split transaction, pipelined bus
   - pipeline stages:
@@ -268,7 +268,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
-
+[<img src="memory controller.png">](https://github.com/zlagpacan/437_OoO)
 
 - arbitrate structural hazard of single exclusive access to 32-bit blocking RAM port
   - competing requests for memory access
