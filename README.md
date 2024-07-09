@@ -30,7 +30,7 @@
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/18d56331-8d6b-47d4-b2c4-d5292917a439)
+
 
 - everything within the dotted lines is part of the 437_OoO design
 - dual-core
@@ -47,7 +47,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/876ae225-a30b-4465-a9e2-5de553132384)
+
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -158,7 +158,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/06cfe39d-8d42-4f0f-af6e-2e968bf233f4)
+
 
 - 1KB capacity
 - way0 is loop way, way1 is stream buffer
@@ -174,7 +174,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/icache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a55d0fc0-3f74-4102-9fc3-cd8d1b2de30a)
+
 
 - 1KB capacity
 - 2-way set associative
@@ -205,17 +205,19 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dcache.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/1a145235-f29a-4019-8d4c-9be2c0178e5d)
+
 
 - split transaction, pipelined bus
   - pipeline stages:
-    - bus request (not entered pipeline yet)
-    - grant (entered pipeline)
-    - snoop request
-    - snoop response
-    - memory request (if needed)
-    - memory response (if needed)
-    - bus response
+    - Request Stage
+      - enqueue pending bus requests
+    - Grant Stage
+      - grant the next per-core in-order bus request if it does not conflict with an active bus request
+    - Snoop Stage
+      - includes per-core in-order request and response phases
+    - Memory Stage
+      - includes per-core in-order request and response phases
+    - Response Stage
   - the pipeline is superscalar, one lane for dbus0 requests and one lane for dbus1 requests
     - this is trivial in the dual-core case since dbus requests only need to snoop into the single other dcache
 - asynchronous request/response interfaces
@@ -252,7 +254,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bus_controller.
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_controller.sv
 
-![image](https://github.com/zlagpacan/437_OoO/assets/89352193/a2e98e49-3763-4cb6-9b91-ce8fae0aa584)
+
 
 - arbitrate structural hazard of single exclusive access to 32-bit blocking RAM port
   - competing requests for memory access
