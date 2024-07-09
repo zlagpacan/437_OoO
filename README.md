@@ -30,7 +30,7 @@
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
-
+[<img src="437_OoO Diagrams-system.drawio.png">](https://github.com/zlagpacan/437_OoO)
 
 - everything within the dotted lines is part of the 437_OoO design
 - dual-core
@@ -47,7 +47,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
 
 https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
-
+[<img src="437_OoO Diagrams-core.drawio.png">](https://github.com/zlagpacan/437_OoO)
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
@@ -69,7 +69,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - 2x ALU Pipelines
     - Branch Resolution Pipeline
     - Load-Store Queue
-- Fetch
+- Fetch Stage
   - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/fetch_unit.sv
   - fetch instructions from icache
   - on hit, determine next PC
@@ -84,7 +84,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
       - simplifies work branch pipeline must do
         - if any instruction that satisfies hash can use BTB+DIRP or RAS, then every instruction must be checked for the correct next PC
       - ended up not being critical path so perfectly fine
-- Dispatch
+- Decode + Issue Stage
   - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dispatch_unit.sv
   - decode, read register map table and ready table, dequeue physical register free list, try to dispatch to associated pipeline(s)
     - Physical Register Map Table
@@ -105,54 +105,68 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - 0: J, dead instructions (write to reg 0)
     - 1: reg writing instructions, BEQ, BNE, JR, LW, LL, SW
     - 2: SC, which goes to LQ and SQ
-- Physical Register File
-  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_file.sv
-  - 64 physical registers
-  - register file is read by reservation stations in execution pipeline
-  - 2x read ports, corresponding to the reservation station that wins access for the cycle
-  - 3x write ports, 1x for each write data bus
-  - to better support forwarding, must support same-cycle write and read
-- 2x ALU Pipelines
-  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/alu_pipeline.sv
-  - perform instructions which require an ALU operation
-    - and also some instructions that simply need to write registers
-      - LUI, JAL, etc.
-  - pipelines fully independent
-  - 1x ALU each
-  - 1x write data bus each
-  - primary reasoning behind having 2 pipelines targets vector add program
-    - vector element add can be in one pipeline's RS, waiting for load misses and the independent index add operation is free to proceed in the other pipeline
-- Branch Resolution Pipeline
-  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bru_pipeline.sv
-  - ensure conditional branch instructions branched to the correct PC
-    - namely BEQ, BNE, JR
-  - can send precise interrupt request to ROB
-- Load-Store Queue
-  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/lsq.sv
-  - 4-entry Load Queue
-  - 4-entry Store Queue
-  - 2x operand collection pipelines
-    - one for loads, one for stores
-  - CAM to check for memory dependence, SQ forward for load value
-  - can send precise interrupt request to ROB
-    - missed SQ forward value or dcache invalidated or evicted block
-  - support LL with link register in dcache
-  - support SC by sending conditional write request and conditional read request to dcache
-    - conditional read request effectively returns to core like a load
-- Reorder Buffer (ROB)
-  - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/rob.sv
-  - 16 entries 
-  - responsible for precise interrupt checkpoint restart and serial rollback logic
-    - checkpoints can be used for BEQ, BNE, JR instructions
-      - serial rollback if lost checkpoint
-    - restarted loads must use serial rollback
-    - sends checkpoint and rollback information to dispatch unit to restore effective architectural register state
-  - responsible for misspeculated instruction kill logic
-    - sends instruction kill information to dispatch unit to restore effective architectural register state
-    - sends instruction kill information to execution pipelines to get rid of any lingering misspeculated work which can block useful work or mess up new post-speculation architectural state
-      - especially relevant for loads and stores which can have long latencies and take up precious memory access slots in the LSQ
-    - kills happen in tandem with serial rollback
-    - kills can happen as a fully separate sequential process if checkpoint restart is successful
+- Execute Stage
+  - Physical Register File
+    - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_file.sv
+    - 64 physical registers
+    - register file is read by reservation stations in execution pipeline
+    - 2x read ports, corresponding to the reservation station that wins access for the cycle
+    - 3x write ports, 1x for each write data bus
+    - to better support forwarding, must support same-cycle write and read
+  - 2x ALU Pipelines
+    - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/alu_pipeline.sv
+    - perform instructions which require an ALU operation
+      - and also some instructions that simply need to write registers
+        - LUI, JAL, etc.
+    - pipelines fully independent
+    - 1x ALU each
+    - 1x write data bus each
+    - primary reasoning behind having 2 pipelines targets vector add program
+      - vector element add can be in one pipeline's RS, waiting for load misses and the independent index add operation is free to proceed in the other pipeline
+  - Branch Resolution Pipeline
+    - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/bru_pipeline.sv
+    - ensure conditional branch instructions branched to the correct PC
+      - namely BEQ, BNE, JR
+    - can send precise interrupt request to ROB
+  - Load-Store Queue
+    - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/lsq.sv
+    - 4-entry Load Queue
+    - 4-entry Store Queue
+    - 2x operand collection pipelines
+      - one for loads, one for stores
+    - CAM to check for memory dependence, SQ forward for load value
+    - can send precise interrupt request to ROB
+      - missed SQ forward value or dcache invalidated or evicted block
+    - support LL with link register in dcache
+    - support SC by sending conditional write request and conditional read request to dcache
+      - conditional read request effectively returns to core like a load
+  - Physical Register Read Bus
+    - blue bus in architecture diagram
+    - multiple reservation stations can attempt physical register file reads, only single reservation station's read is serviced per cycle
+      - read priority: LQ > ALU0 > ALU1 > BRU > SQ
+  - Writeback Buses
+    - yellow buses in architecture diagram
+    - write back value to physical register file
+    - provide physical register tag and value to forward into reservation stations
+  - Instruction Restart and Kill Buses
+    - pink buses in architecture diagram
+    - restart bus: execution units communicate an instruction restart to ROB
+    - kill bus: ROB communicates executing instructions to be killed in the execution units
+- Commit Stage
+  - Reorder Buffer (ROB)
+    - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/rob.sv
+    - 16 entries 
+    - responsible for precise interrupt checkpoint restart and serial rollback logic
+      - checkpoints can be used for BEQ, BNE, JR instructions
+        - serial rollback if lost checkpoint
+      - restarted loads must use serial rollback
+      - sends checkpoint and rollback information to dispatch unit to restore effective architectural register state
+    - responsible for misspeculated instruction kill logic
+      - sends instruction kill information to dispatch unit to restore effective architectural register state
+      - sends instruction kill information to execution pipelines to get rid of any lingering misspeculated work which can block useful work or mess up new post-speculation architectural state
+        - especially relevant for loads and stores which can have long latencies and take up precious memory access slots in the LSQ
+      - kills happen in tandem with serial rollback
+      - kills can happen as a fully separate sequential process if checkpoint restart is successful
 
 ### Instruction Cache
 
