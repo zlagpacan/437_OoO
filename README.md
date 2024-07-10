@@ -19,7 +19,7 @@
 
 ## Constraints
 - based in Purdue ECE 437 infrastructure
-  - 1x blocking 32-bit ram interface with (1 + LAT/2) CPUCLK cycles of latency
+  - 1x blocking 32-bit ram interface with ((LAT + 1)/2) CPUCLK cycles of latency
   - lower 16-bit address space
 - MIPS integer subset
   - see 437_OoO/asm_i.txt
