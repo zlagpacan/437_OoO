@@ -135,6 +135,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - 2x operand collection pipelines
       - one for loads, one for stores
     - CAM to check for memory dependence, SQ forward for load value
+    - CAM to check for load queue entries matching invalidates or evicted dcache blocks, which can trigger instruction restart to allow sequential consistency for speculated loads
     - can send precise interrupt request to ROB
       - missed SQ forward value or dcache invalidated or evicted block
     - support LL with link register in dcache
@@ -297,10 +298,13 @@ The infrastructure to generate the input memory state from an assembly file, run
 
 Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes a wrapper around Quartus targetting the Altera DE2-115 FPGA. 
 
+### Quartus Log Output
 - Total Logic Elements: 74,853 / 114,480 ( 65 % )
   - Total Combinational Functions: 70,240 / 114,480 ( 61 % )
   - Dedicated Logic Registers: 21,888 / 114,480 ( 19 % )
 - FMAX: 47.77 MHz
+
+The critical path in the design is the CAM lookup for dcache invalidations or evictions in the load queue. This is part of the functionality which should allow sequential consistency for speculated loads. This path is very close to many other epsilon-critical paths in the design, which are capable of 48-50 MHz. 
 
 ## Performance Results
 All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really an integer vector add loop. The daxpy program most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while independent memory accesses from previous iterations are waiting on completion. 
@@ -352,15 +356,15 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
   - I wasn't strictly aiming for performance maximization. I more wanted to implement certain architecture features, whether they made sense for performance or not. 
   - I made all my microarchitecture desicions based on the higher-level architecture overviews from ECE 565 and ECE 666. I challenged myself by figuring out all the unspecified and nitty-gritty details myself, not referring to other existing microarchitecture implementations. 
   - I was pleasantly surprised that some of my decisions matched real used methods.
-    - notably mis-speculated instruction killing methods, which was not discussed in detail in ECE 565
+    - notably mis-speculated instruction killing methods, which was not discussed in ECE 565
   - I was not surprised that other decisions of mine were quite silly.
     - notably my ugly reservation stations in what should have been a proper R10K design with an isolated register file directly interacting with the functional units
       - the back-to-back forwarding I so preciously valued was not prioritized in real designs, or at least was not implemented in the way I did
-- I was not nearly as careful as I should have been with memory consistency.
+- I was not quite as careful as I should have been with memory consistency.
   - I intended for the system to follow sequential consistency, and I purposely tried to make microarchitecture decisions which enabled this
-  - However, I decided to be thorough in my assembly testing and I found a scenario where the system fails sequential consistency and acts like TSO
+  - However, I was intentionally thorough in my assembly testing and I found a scenario where the system fails sequential consistency and acts like TSO
     - multi.seqc.TSO_5.asm
-    - failure is detailed in system.txt
+    - this failure is detailed in system.txt: https://github.com/zlagpacan/437_OoO/blob/main/processors/notes/system.txt
 
 ## Potential Future Development
 - Conversion from the MIPS subset to RISC-V RV32IA
