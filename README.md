@@ -8,6 +8,7 @@
 >    - the design will fail some racey multicore lab test cases since these expect your core requests and bus to behave a certain way
 >  - this design does not use the required interfaces
 >  - Purdue ECE 437 will be using RISC-V instead of MIPS starting Fall 2024!
+> ECE 437 is an excellent class for learning computer architecture and RTL design and verification. You will learn much more by developing designs on your own, with your partner, or with TA help. 
  
 ## Goals
 - implement R10K-based out-of-order core
