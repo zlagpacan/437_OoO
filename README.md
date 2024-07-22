@@ -285,6 +285,14 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_contro
   - dmem read requests perform CAM search on write buffer while simultaneously starting RAM access
   - if block present in write buffer, forward value from write buffer to use as the dmem read response
 
+## Assembly Unit Tests
+
+https://github.com/zlagpacan/437_OoO/tree/main/processors/asmFiles
+
+Top level system verification is achieved through assembly unit tests. An input memory state is defined by the assembly file and loaded into the ram module at the start of simulation. After simulation is finished, an output memory state is retrieved from the ram module. This output memory state can be compared against a gold model MIPS instruction set simulator's output memory state for the same given input memory state. 
+
+The infrastructure to generate the input memory state from an assembly file, run the input memory state on the SystemVerilog RTL design, and run the input memory state through the gold model MIPS instruction set simulator is private to the Purdue ECE 437 infrastructure. 
+
 ## Synthesis Results
 
 - Total Logic Elements: 74,853 / 114,480 ( 65 % )
