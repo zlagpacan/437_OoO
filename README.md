@@ -295,6 +295,8 @@ The infrastructure to generate the input memory state from an assembly file, run
 
 ## Synthesis Results
 
+Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes a wrapper around Quartus targetting the Altera DE2-115 FPGA. 
+
 - Total Logic Elements: 74,853 / 114,480 ( 65 % )
   - Total Combinational Functions: 70,240 / 114,480 ( 61 % )
   - Dedicated Logic Registers: 21,888 / 114,480 ( 19 % )
