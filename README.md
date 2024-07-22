@@ -1,7 +1,9 @@
 # 437_OoO
 437_OoO is a MIPS dual-core out-of-order CPU implementation based in the Purdue ECE 437 infrastructure. This design was encouraged by architecture lectures in Purdue ECE 437, ECE 565, and ECE 666.
 
-> **_WARNING TO STUDENTS_:** if you are a student in ECE 437 trying to copy from this design for your labs, you will find your effort completely wasted for the following reasons:
+> **_WARNING TO STUDENTS_**
+> 
+> If you are a student in ECE 437 trying to copy from this design for your labs, you will find your effort completely wasted for the following reasons:
 >  - this design is unbelievably far outside of the expected microarchitecture specification for the labs
 >    - there is not a single module or testbench for a module that will get you a checkoff in the labs
 >    - the design will fail all cache lab test cases due to the dcache hit counter
