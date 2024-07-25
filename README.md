@@ -45,8 +45,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/system.sv
   - only acts as TSO in single very specific case
   - in vast majority of cases, behavior follows Sequential Consistency
 - out-of-order cores
-- blocking icache
-- non-blocking dcache
+- blocking icaches
+- non-blocking dcaches
 
 ### Core
 
