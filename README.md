@@ -11,8 +11,24 @@
 >  - this design does not use the required interfaces
 >  - Purdue ECE 437 will be using RISC-V instead of MIPS starting Fall 2024!
 >
-> ECE 437 is an excellent class for learning computer architecture and RTL design and verification. You will learn much more by developing designs on your own, with your partner, or with TA help. 
- 
+> ECE 437 is an excellent class for learning computer architecture and RTL design and verification. You will learn much more by developing designs on your own, with your partner, or with TA help.
+
+## Contents
+- [Goals](#goals)
+- [Constraints](#constraints)
+- [Architecture](#architecture)
+  - [System](#system)
+  - [Core](#core)
+  - [Instruction Cache](#instruction-cache)
+  - [Data Cache](#data-cache)
+  - [Bus Controller](#bus-controller)
+  - [Memory Controller](#memory-controller)
+- [Assembly Unit Tests](#assembly-unit-tests)
+- [Synthesis Results](#synthesis-results)
+- [Performance Results](#performance-results)
+- [Notes](#notes)
+- [Potential Future Development](#potential-future-development)
+
 ## Goals
 - implement R10K-based out-of-order core
 - implement split-transaction, pipelined bus
@@ -30,6 +46,7 @@
   - see 437_OoO/asm_i.txt
 
 ## Architecture
+This section details the architecture and microarchitecture of the design. 
 
 ### System
 
