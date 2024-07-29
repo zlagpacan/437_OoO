@@ -299,6 +299,8 @@ Top level system verification is achieved through assembly unit tests. An input 
 
 The infrastructure to generate the input memory state from an assembly file, run the input memory state on the SystemVerilog RTL design, and run the input memory state through the gold model MIPS instruction set simulator is private to the Purdue ECE 437 infrastructure. 
 
+This infrastructure can be mimicked with an assembler which generates Intel hex files, and an ISA simulator which can interpret an Intel hex file to initialize memory state, and simulate with core 0 PC resetting at address 0x000 and core 1 resetting at address 0x200.
+
 ## Synthesis Results
 
 Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes a wrapper around Quartus targetting the Altera DE2-115 FPGA. 
