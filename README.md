@@ -317,6 +317,8 @@ Most modules in the design have a corresponding testbench: "\<module name\>_tb.s
 
 The verification strategy for these block level testbenches (excluding system_tb.sv) was to ensure functional verification with cycle-by-cycle fully-controlled input module signal stimulus and output module signal checking covering at least one instance of each of the expected functionalities.
 
+Some of these testbenches may no longer pass all test cases due to module changes during top level integration with assembly unit testing. 
+
 ## Assembly Unit Tests
 
 https://github.com/zlagpacan/437_OoO/tree/main/processors/asmFiles
