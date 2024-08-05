@@ -23,6 +23,7 @@
   - [Data Cache](#data-cache)
   - [Bus Controller](#bus-controller)
   - [Memory Controller](#memory-controller)
+- [Testbenches](#testbenches)
 - [Assembly Unit Tests](#assembly-unit-tests)
 - [Synthesis Results](#synthesis-results)
 - [Performance Results](#performance-results)
@@ -308,15 +309,23 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dual_mem_contro
   - dmem read requests perform CAM search on write buffer while simultaneously starting RAM access
   - if block present in write buffer, forward value from write buffer to use as the dmem read response
 
+## Testbenches
+
+https://github.com/zlagpacan/437_OoO/tree/main/processors/testbench
+
+Most modules in the design have a corresponding testbench: "\<module name\>_tb.sv". These were simulated through the Purdue ECE 437 infrastructure through calls to Questasim. 
+
+The verification strategy for these block level testbenches (excluding system_tb.sv) was to ensure functional verification with cycle-by-cycle fully-controlled input module signal stimulus and output module signal checking covering at least one instance of each of the expected functionalities.
+
 ## Assembly Unit Tests
 
 https://github.com/zlagpacan/437_OoO/tree/main/processors/asmFiles
 
 Top level system verification is achieved through assembly unit tests. An input memory state is defined by the assembly file and loaded into the ram module at the start of simulation. After simulation is finished, an output memory state is retrieved from the ram module. This output memory state can be compared against a gold model MIPS instruction set simulator's output memory state for the same given input memory state, effectively checking if the design performed the expected memory writes. 
 
-The infrastructure to generate the input memory state from an assembly file, run the input memory state on the SystemVerilog RTL design, and run the input memory state through the gold model MIPS instruction set simulator is private to the Purdue ECE 437 infrastructure. 
+The infrastructure to generate the input memory state from an assembly file, run the input memory state on the SystemVerilog RTL design, and run the input memory state through the gold model MIPS instruction set simulator is private to the Purdue ECE 437 infrastructure. This infrastructure is essentially a set of wrapper scripts around Questasim which compile and simulate the modules from system hierarchically downward for the system_tb testbench.
 
-This infrastructure can be mimicked with an assembler which generates Intel hex files, and an ISA simulator which can interpret an Intel hex file to initialize memory state, and simulate with core 0 PC resetting at address 0x000 and core 1 resetting at address 0x200.
+This infrastructure can be mimicked with an assembler which generates Intel hex files, and an ISA simulator which can interpret an Intel hex file to initialize memory state, and simulate with core 0 PC resetting at address 0x00000000 and core 1 resetting at address 0x00000200.
 
 ## Synthesis Results
 
