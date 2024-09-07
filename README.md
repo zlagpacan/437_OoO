@@ -395,6 +395,7 @@ Results are compared against "In-Order", which is my dual-core in-order 5-stage 
   - or at least the RV32IA subset that ECE 437 implements
 - Add performance counters (e.g. dcache hit counts) for performance verification and to provide insight for future design iterations
 - Adapt front end of core to support multiple-issue
+- Adapt front end of core to support SMT 
 - Target ASIC technology and make the appropriate choices to adapt to the SRAM memory capacities, latencies, and port counts
 - Target DRAM main memory technology and make the appropriate choices to adapt to the DRAM memory capacities, latencies, and port counts
 - Turn a basis of this design into a future iteration of Purdue ECE 437 where students can implement out-of-order cores, non-blocking caches, and pipelined buses!
