@@ -344,9 +344,9 @@ The critical path in the design is the CAM lookup for dcache invalidations or ev
 ## Performance Results
 Performance results are provided below for a subset of notable assembly programs. 
 
-Results are compared against "In-Order", which is my dual-core in-order 5-stage pipeline design from when I took ECE 437. I unfortunately can't share the source code for the design, but the basic architecture parameters are as follows: 5-stage inorder pipelined core with 2-bit saturating branch predictor, 512B direct-mapped 16-set 4B-block blocking instruction cache, 1KB direct-mapped 8-set 8B-block blocking data cache with blocking snooping,  
+Results are compared against "In-Order", which is my dual-core in-order 5-stage pipeline design from when I took ECE 437. I unfortunately can't share the source code for the design, but the basic architecture parameters are as follows: 5-stage inorder pipelined cores with 2-bit saturating branch predictor, 512B direct-mapped 16-set 4B-block blocking instruction caches, 1KB direct-mapped 8-set 8B-block blocking data caches with blocking snooping, blocking atomic bus with single active data memory transaction, and memory controller selecting between core 0 instruction memory read, core 1 instruction memory read, or bus data memory read/write.  
 
-"daxpy" is really an integer vector add loop, with vector elements potentially split between 2 cores. 
+"daxpy" is really an integer vector add loop. dual.daxpy.asm splits the vector elements between the 2 cores. 
 
 ### Cycle Counts
 - multi.simple.loop.asm
@@ -385,12 +385,14 @@ Results are compared against "In-Order", which is my dual-core in-order 5-stage 
   - LAT=6: 343507 cycles -> old 437: 559447 cycles
   - LAT=10: 409817 cycles -> old 437: 720085 cycles
 
+
+
 ### In-Order vs. Out-of-Order Execution Time for dual.daxpy.asm and palgorithm.asm Programs
 ![image](https://github.com/user-attachments/assets/69ce9223-f711-45c1-bfa8-38359b1b9767)
 ![image](https://github.com/user-attachments/assets/537d40ac-9bf2-484d-a9af-015c2081a829)
 
 ## Performance Analysis
-The daxpy program most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while multiple independent memory accesses from previous iterations are waiting on completion from a higher-bandwidth-capable bus. 
+The daxpy.asm and dual.daxpy.asm programs most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while multiple independent memory accesses from previous iterations are waiting on completion from a higher-bandwidth-capable bus. 
 
 ## Notes
 - I am one person and I did not want to go completely insane in designing and verifying this system. This led to the following results:
