@@ -43,7 +43,7 @@
   - 1x blocking 32-bit ram interface with ((LAT + 1)/2) CPUCLK cycles of latency
     - benchmark for LAT={0,2,6,10}
   - lower 16-bit address space
-- MIPS integer subset
+- MIPS 32-bit integer subset
   - see 437_OoO/asm_i.txt
 
 ## Architecture
@@ -337,13 +337,16 @@ Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes 
 - Total Logic Elements: 74,853 / 114,480 ( 65 % )
   - Total Combinational Functions: 70,240 / 114,480 ( 61 % )
   - Dedicated Logic Registers: 21,888 / 114,480 ( 19 % )
-- FMAX: 47.77 MHz
+- FMAX: 47.77 MHz (CPUCLK, half of RAM CLK)
 
 The critical path in the design is the CAM lookup for dcache invalidations or evictions in the load queue. This is part of the functionality which should allow sequential consistency for speculated loads. This path is very close to many other epsilon-critical paths in the design, which are capable of 48-50 MHz. 
 
 ## Performance Results
 All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really an integer vector add loop. The daxpy program most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while independent memory accesses from previous iterations are waiting on completion. 
 
+"old 437" is my dual-core in-order 5-stage pipeline design from when I took ECE 437 (I can't share this design!). The clock frequency for this design was 56.95 MHz
+
+### Cycle Counts
 - multi.simple.loop.asm
   - LAT=0: 3175 cycles -> old 437: 3211 cycles
   - LAT=2: 3215 cycles -> old 437: 3245 cycles
@@ -379,6 +382,12 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
   - LAT=2: 264485 cycles -> old 437: 370193 cycles
   - LAT=6: 343507 cycles -> old 437: 559447 cycles
   - LAT=10: 409817 cycles -> old 437: 720085 cycles
+
+### In-Order vs. Out-of-Order Execution Time for dual.daxpy.asm and palgorithm.asm Programs
+![image](https://github.com/user-attachments/assets/69ce9223-f711-45c1-bfa8-38359b1b9767)
+![image](https://github.com/user-attachments/assets/537d40ac-9bf2-484d-a9af-015c2081a829)
+
+## Performance Analysis
 
 ## Notes
 - I am one person and I did not want to go completely insane in designing and verifying this system. This led to the following results:
