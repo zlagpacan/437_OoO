@@ -396,4 +396,5 @@ The multi.simple.loop_hit.asm specifically intends to penalize memory dependence
 - Add performance counters (e.g. dcache hit counts) for performance verification and to provide insight for future design iterations
 - Adapt front end of core to support multiple-issue
 - Target ASIC technology and make the appropriate choices to adapt to the SRAM memory capacities, latencies, and port counts
+- Target DRAM main memory technology and make the appropriate choices to adapt to the DRAM memory capacities, latencies, and port counts
 - Turn a basis of this design into a future iteration of Purdue ECE 437 where students can implement out-of-order cores, non-blocking caches, and pipelined buses!
