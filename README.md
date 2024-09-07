@@ -342,9 +342,11 @@ Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes 
 The critical path in the design is the CAM lookup for dcache invalidations or evictions in the load queue. This is part of the functionality which should allow sequential consistency for speculated loads. This path is very close to many other epsilon-critical paths in the design, which are capable of 48-50 MHz. 
 
 ## Performance Results
-All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really an integer vector add loop. The daxpy program most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while independent memory accesses from previous iterations are waiting on completion. 
+Performance results are provided below for a subset of notable assembly programs. 
 
-"old 437" is my dual-core in-order 5-stage pipeline design from when I took ECE 437 (I can't share this design!). The clock frequency for this design was 56.95 MHz
+Results are compared against "In-Order", which is my dual-core in-order 5-stage pipeline design from when I took ECE 437. I unfortunately can't share the source code for the design, but the basic architecture parameters are as follows: 5-stage inorder pipelined core with 2-bit saturating branch predictor, 512B direct-mapped 16-set 4B-block blocking instruction cache, 1KB direct-mapped 8-set 8B-block blocking data cache with blocking snooping,  
+
+"daxpy" is really an integer vector add loop, with vector elements potentially split between 2 cores. 
 
 ### Cycle Counts
 - multi.simple.loop.asm
@@ -388,6 +390,7 @@ All cycles reported are RAM CLK. CPUCLK = (RAM CLK - 1) / 2. "daxpy" is really a
 ![image](https://github.com/user-attachments/assets/537d40ac-9bf2-484d-a9af-015c2081a829)
 
 ## Performance Analysis
+The daxpy program most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while multiple independent memory accesses from previous iterations are waiting on completion from a higher-bandwidth-capable bus. 
 
 ## Notes
 - I am one person and I did not want to go completely insane in designing and verifying this system. This led to the following results:
