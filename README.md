@@ -347,52 +347,27 @@ Performance results are provided below for a subset of notable assembly programs
 Results are compared against "In-Order", which is my dual-core in-order 5-stage pipeline design from when I took ECE 437. I unfortunately can't share the source code for the design, but the basic architecture parameters are as follows: 5-stage inorder pipelined cores with 2-bit saturating branch predictor, 512B direct-mapped 16-set 4B-block blocking instruction caches, 1KB direct-mapped 8-set 8B-block blocking data caches with blocking snooping, blocking atomic bus with single active data memory transaction, and memory controller selecting between core 0 instruction memory read, core 1 instruction memory read, or bus data memory read/write.  
 
 "daxpy" is really an integer vector add loop. dual.daxpy.asm splits the vector elements between the 2 cores. 
+palgorithm.asm is a producer-consumer parallel program with thread synchronization (so instruction count cannot be extracted from the program itself, varying by implementation and memory latency, and can be misleading). 
+dual.mergesort.asm is a parallel program implementation of mergesort without thread synchronization. dual.mergesort_singlethreaded.asm is a single-threaded implementation of mergesort, where core 1 is immediately halted and core 0 performs the single thread. 
+multi.simple.loop.asm has loops for both cores, repeatedly adding a register value in a loop. This program is designed to be CPI = 1 per-core for an in-order core or a single-issue out-of-order core.
+multi.simple.loop_hit.asm has loops for both cores, repeatedly loading a value, adding to it, and then storing it in a loop. This program is designed to be CPI = 1 per-core for an in-order core, but can massively expose poor memory dependence prediction and recovery behaviors for an out-of-order core. 
 
-### Cycle Counts
-- multi.simple.loop.asm
-  - LAT=0: 3175 cycles -> old 437: 3211 cycles
-  - LAT=2: 3215 cycles -> old 437: 3245 cycles
-  - LAT=6: 3271 cycles -> old 437: 3285 cycles
-  - LAT=10: 3335 cycles -> old 437: 3337 cycles
-- multi.simple.loop_hit.asm
-  - LAT=0: 18533 cycles -> old 437: 6291 cycles
-  - LAT=2: 18607 cycles -> old 437: 6331 cycles
-  - LAT=6: 18649 cycles -> old 437: 6373 cycles
-  - LAT=10: 18711 cycles -> old 437: 6433 cycles
-- dual.mergesort_singlethreaded.asm:
-  - LAT=0: 16095 cycles -> old 437: 17419 cycles
-  - LAT=2: 17511 cycles -> old 437: 18541 cycles
-  - LAT=6: 20295 cycles -> old 437: 21371 cycles
-  - LAT=10: 23857 cycles -> old 437: 23911 cycles
-- dual.mergesort.asm:
-  - LAT=0: 10093 cycles -> old 437: 10863 cycles
-  - LAT=2: 11353 cycles -> old 437: 11859 cycles
-  - LAT=6: 14383 cycles -> old 437: 14623 cycles
-  - LAT=10: 17731 cycles -> old 437: 16841 cycles
-- daxpy.asm (single-threaded):
-  - LAT=0: 84637 cycles -> old 437: 180353 cycles
-  - LAT=2: 89415 cycles -> old 437: 214181 cycles
-  - LAT=6: 98939 cycles -> old 437: 298249 cycles
-  - LAT=10: 125001 cycles -> old 437: 374113 cycles
-- dual.daxpy.asm:
-  - LAT=0: 42553 cycles -> old 437: 111757 cycles
-  - LAT=2: 45123 cycles -> old 437: 141783 cycles
-  - LAT=6: 77887 cycles -> old 437: 208057 cycles
-  - LAT=10: 117501 cycles -> old 437: 307675 cycles
-- palgorithm.asm:
-  - LAT=0: 237527 cycles -> old 437: 307135 cycles
-  - LAT=2: 264485 cycles -> old 437: 370193 cycles
-  - LAT=6: 343507 cycles -> old 437: 559447 cycles
-  - LAT=10: 409817 cycles -> old 437: 720085 cycles
-
-
+![image](https://github.com/user-attachments/assets/0470bfc1-c471-4189-9d9a-3678e59caa12)
 
 ### In-Order vs. Out-of-Order Execution Time for dual.daxpy.asm and palgorithm.asm Programs
 ![image](https://github.com/user-attachments/assets/69ce9223-f711-45c1-bfa8-38359b1b9767)
 ![image](https://github.com/user-attachments/assets/537d40ac-9bf2-484d-a9af-015c2081a829)
 
 ## Performance Analysis
-The daxpy.asm and dual.daxpy.asm programs most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while multiple independent memory accesses from previous iterations are waiting on completion from a higher-bandwidth-capable bus. 
+The daxpy.asm and dual.daxpy.asm programs most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while multiple independent memory accesses from previous iterations are waiting on completion from a higher-bandwidth-capable bus. This is essentially the ideal situation where out-of-order functionalities can shine. The performance increase remains close to 120% across all latencies and for single vs. dual-core. 
+
+The palgorithm.asm program similarly shows the effectiveness of out-of-order and pipelined bus capabilities, but performance benefits are much more limited due to the unideal nature of the program. The performance increase is more significant for higher memory latencies, ranging from an 8% increase to a 47% increase with increasing memory latencies. 
+
+The dual.mergesort_singlethreaded.asm and dual.mergesort.asm programs begin to expose the penalty of memory dependence misprediction, as will be common as the list values are rapidly moved around. The biggest weakness of this out-of-order design is the requirement for serial rollback whenever a dependence is found after a dcache hit occurs. As such, the out-of-order latency overlapping will not acheive enough benefit to overcome these serial rollbacks and the and lower clock frequency of the out-of-order design vs. the in-order design. Performance decreases range from 10% to 20% with increasing memory latencies for both single and dual-core. 
+
+The multi.simple.loop.asm program expectedly achieves nearly identical CPI between the in-order and out-of-order designs since this program is pure ALU operations with CPI = 1 per-core. However, the lower frequency of the out-of-order design means worse performance, with a consistent 15% performance decrease across memory latencies.  
+
+The multi.simple.loop_hit.asm specifically intends to penalize memory dependence misprediction, and it does so significantly. CPI for the out-of-order design remains close to 2.4 across all latencies, showing that no matter how fast memory may be, the guaranteed memory dependence misprediction limits the progress the core can make on instructions. This implies a 71% decrease in performance. Memory dependence was seriously underestimated, and is a place with massive potential for improvement on future iterations.
 
 ## Notes
 - I am one person and I did not want to go completely insane in designing and verifying this system. This led to the following results:
@@ -416,7 +391,9 @@ The daxpy.asm and dual.daxpy.asm programs most clearly shows the out-of-order an
     - this failure is detailed in system.txt: https://github.com/zlagpacan/437_OoO/blob/main/processors/notes/system.txt
 
 ## Potential Future Development
-- Conversion from the MIPS subset to RISC-V RV32IA
+- Convert from the MIPS subset to RISC-V RV32IA
   - or at least the RV32IA subset that ECE 437 implements
-- Performance counters (e.g. dcache hit counts) for performance verification and insight for future design iterations
-- Turning a basis of this design into a future iteration of Purdue ECE 437 where students can implement out-of-order cores, non-blocking caches, and pipelined buses!
+- Add performance counters (e.g. dcache hit counts) for performance verification and to provide insight for future design iterations
+- Adapt front end of core to support multiple-issue
+- Target ASIC technology and make the appropriate choices to adapt to the SRAM memory capacities, latencies, and port counts
+- Turn a basis of this design into a future iteration of Purdue ECE 437 where students can implement out-of-order cores, non-blocking caches, and pipelined buses!
