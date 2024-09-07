@@ -358,7 +358,7 @@ Results are compared against "In-Order", which is my dual-core in-order 5-stage 
 ![image](https://github.com/user-attachments/assets/69ce9223-f711-45c1-bfa8-38359b1b9767)
 ![image](https://github.com/user-attachments/assets/537d40ac-9bf2-484d-a9af-015c2081a829)
 
-## Performance Analysis
+### Performance Analysis
 - The daxpy.asm and dual.daxpy.asm programs most clearly shows the out-of-order and pipelined bus benefits since future daxpy loop iterations can be started while multiple independent memory accesses from previous iterations are waiting on completion from a higher-bandwidth-capable bus. This is essentially the ideal situation where out-of-order functionalities can shine. The performance increase remains close to 120% across all latencies and for single vs. dual-core. 
 
 - The palgorithm.asm program similarly shows the effectiveness of out-of-order and pipelined bus capabilities, but performance benefits are much more limited due to the unideal nature of the program. The performance increase is more significant for higher memory latencies, ranging from an 8% increase to a 47% increase with increasing memory latencies. 
