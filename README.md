@@ -43,7 +43,7 @@
   - 1x blocking 32-bit ram interface with ((LAT + 1)/2) CPUCLK cycles of latency
     - benchmark for LAT={0,2,6,10}
   - lower 16-bit address space
-- MIPS 32-bit integer subset
+- MIPS 32-bit machine-mode integer subset
   - see 437_OoO/asm_i.txt
 
 ## Architecture
@@ -348,7 +348,7 @@ Results are compared against "In-Order", which is my dual-core in-order 5-stage 
 
 - "daxpy" is really an integer vector add loop. dual.daxpy.asm splits the vector elements between the 2 cores. 
 - palgorithm.asm is a producer-consumer parallel program with thread synchronization (so instruction count cannot be extracted from the program itself, varying by implementation and memory latency, and can be misleading). 
-- dual.mergesort.asm is a parallel program implementation of mergesort without thread synchronization. dual.mergesort_singlethreaded.asm is a single-threaded implementation of mergesort, where core 1 is immediately halted and core 0 performs the single thread. 
+- dual.mergesort.asm is a parallel program implementation of mergesort without thread synchronization. dual.mergesort_singlethreaded.asm is a single-threaded implementation of mergesort, where core 1 is immediately halted and core 0 performs the single-threaded version of mergesort. 
 - multi.simple.loop.asm has loops for both cores, repeatedly adding a register value in a loop. This program is designed to be CPI = 1 per-core for an in-order core or a single-issue out-of-order core.
 - multi.simple.loop_hit.asm has loops for both cores, repeatedly loading a value, adding to it, and then storing it in a loop. This program is designed to be CPI = 1 per-core for an in-order core, but can massively expose poor memory dependence prediction and recovery behaviors for an out-of-order core. 
 
