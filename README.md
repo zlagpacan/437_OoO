@@ -74,8 +74,8 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
 
 - based on R10K out-of-order design
   - true register rename with physical register file, map table, free list
-  - different from R10K: decided to use reservation stations in execution pipelines instead of proper issue queue
-    - reservations stations can much more easily support back-to-back forwarding of values on write data buses
+  - decided to use simple single-entry reservation stations in execution pipelines instead of proper multiple-entry issue queues
+    - the simple reservations stations can much more easily support back-to-back forwarding of values on write data buses
   - target vector add program
   - bare minimum memory dependence handling for the sake of sanity
     - no dependence prediction
@@ -107,7 +107,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
       - simplifies work branch pipeline must do
         - if any instruction that satisfies hash can use BTB+DIRP or RAS, then every instruction must be checked for the correct next PC
       - ended up not being critical path so perfectly fine
-- Decode + Issue Stage
+- Decode + Dispatch Stage
   - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/dispatch_unit.sv
   - decode, read register map table and ready table, dequeue physical register free list, try to dispatch to associated pipeline(s)
     - Physical Register Map Table
@@ -128,14 +128,17 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - 0: J, dead instructions (write to reg 0)
     - 1: reg writing instructions, BEQ, BNE, JR, LW, LL, SW
     - 2: SC, which goes to LQ and SQ
-- Execute Stage
+- Issue Stage and Execute Stage
   - Physical Register File
     - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/phys_reg_file.sv
     - 64 physical registers
     - register file is read by reservation stations in execution pipeline
     - 2x read ports, corresponding to the reservation station that wins access for the cycle
     - 3x write ports, 1x for each write data bus
-    - to better support forwarding, must support same-cycle write and read
+    - to better support forwarding, must support same-cycle write and read (writes occur on negedge)
+  - Reservation Stations
+    - in order to easily support back-to-back RAW hazard data forwarding, simple, single-entry reservation stations are used
+    - issue an instruction into the Execute Stage of its pipeline if all the register reads have occurred and/or any required writeback tags guarantee writeback data can be forwarded during the next cycle
   - 2x ALU Pipelines
     - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/alu_pipeline.sv
     - perform instructions which require an ALU operation
@@ -157,13 +160,30 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
     - 4-entry Store Queue
     - 2x operand collection pipelines
       - one for loads, one for stores
-    - CAM to check for memory dependence, SQ forward for load value
+    - CAM to check for memory dependence, where load value can be forwarded from the store queue
+      - there is a memory dependence on the youngest store older than the load with a matching address
     - CAM to check for load queue entries matching invalidates or evicted dcache blocks, which can trigger instruction restart to allow sequential consistency for speculated loads
     - can send precise interrupt request to ROB
       - missed SQ forward value or dcache invalidated or evicted block
     - support LL with link register in dcache
     - support SC by sending conditional write request and conditional read request to dcache
       - conditional read request effectively returns to core like a load
+    - lifetime of a load:
+      - enter load queue and load operand pipeline
+      - collect operands in load operand reservation station
+      - calculate load address
+      - send dcache read request and set load queue entry as ready for store queue CAM search
+      - perform store queue CAM search when get turn (load queue entries are searched in-order once all older store queue addresses have been disambiguated):
+        - if there is no memory dependence, use value from dcache return (already happened or will happen)
+        - if there is a memory dependence, use value from store queue, and send a restart request to the ROB if the dcache return value was already used
+      - when get dcache return:
+        - use dcache return value immediately unless the store queue CAM search already forwarded a value
+    - lifetime of a store:
+      - enter store queue and store operand pipeline
+      - collect operands in store operand reservation station
+      - calculate store address
+      - mark store queue entry as complete and ready for CAM search
+      - when get store commit from ROB, send dcache write request
   - Physical Register Read Bus
     - blue bus in architecture diagram
     - multiple reservation stations can attempt physical register file reads, only single reservation station's read is serviced per cycle
@@ -171,7 +191,7 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
   - Writeback Buses
     - yellow buses in architecture diagram
     - write back value to physical register file
-    - provide physical register tag and value to forward into reservation stations
+    - provide physical register tag to be checked by reservation stations and value to forward into Execute Stages
   - Instruction Restart and Kill Buses
     - pink buses in architecture diagram
     - restart bus: execution units communicate an instruction restart to ROB
@@ -331,12 +351,13 @@ This infrastructure can be mimicked with an assembler which generates Intel hex 
 
 ## Synthesis Results
 
-Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes a wrapper around Quartus targetting the Altera DE2-115 FPGA. 
+Synthesis was performed using the Purdue ECE 437 infrastructure, which utilizes a wrapper around Quartus targetting the Altera DE2-115 FPGA. The primary consequence of this is the lack of memory macros--all memory arrays in the design were synthesized as flip-flop arrays.
 
 ### Quartus Log Output
 - Total Logic Elements: 74,853 / 114,480 ( 65 % )
   - Total Combinational Functions: 70,240 / 114,480 ( 61 % )
   - Dedicated Logic Registers: 21,888 / 114,480 ( 19 % )
+- Total registers: 21,888
 - FMAX: 47.77 MHz (CPUCLK, half of RAM CLK)
 
 The critical path in the design is the CAM lookup for dcache invalidations or evictions in the load queue. This is part of the functionality which should allow sequential consistency for speculated loads. This path is very close to many other epsilon-critical paths in the design, which are capable of 48-50 MHz. 
