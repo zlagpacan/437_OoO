@@ -195,7 +195,10 @@ https://github.com/zlagpacan/437_OoO/blob/main/processors/source/core.sv
   - Instruction Restart and Kill Buses
     - pink buses in architecture diagram
     - restart bus: execution units communicate an instruction restart to ROB
+      - a branch can request a restart if the control flow was mispredicted
+      - a load can request a restart if a dcache return value was used instead of a store queue forwarded value
     - kill bus: ROB communicates executing instructions to be killed in the execution units
+      - necessary for any instruction which could take an arbitrary amount of time for its state to be cleared (i.e. in load queue, store queue, or a reservation station)
 - Commit Stage
   - Reorder Buffer (ROB)
     - https://github.com/zlagpacan/437_OoO/blob/main/processors/source/rob.sv
