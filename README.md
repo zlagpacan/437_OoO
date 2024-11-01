@@ -413,6 +413,9 @@ Results are compared against "In-Order", which is my dual-core in-order 5-stage 
   - However, I was intentionally thorough in my assembly testing and I found a scenario where the system fails sequential consistency and acts like TSO
     - multi.seqc.TSO_5.asm
     - this failure is detailed in system.txt: https://github.com/zlagpacan/437_OoO/blob/main/processors/notes/system.txt
+    - The solution to this is to not allow stores to complete their commits and exit the ROB until after they have finished writing to the d$ (got through the store MSHR queue (write buffer to the d$) and got a hit or finished its miss return from the store MSHR). This way, the load is still an active speculated instruction in the ROB and load queue while a store before it is finishing its missing write to the d$. The load can then get the invalidation from the other core's store ordered before this core's missing store, therefore reading the most recently written value following a sequential consistency order.
+    - This is a very significant change which will also destroy performance. If there is a store miss, even though the instruction is already guaranteed to change the architectural state and is safe to be committed, it must stay in the ROB, which can significantly limit the instruction window space available in the ROB while waiting for the miss. This issue is precipitated if there are multiple store misses in the d$ store MSHR queue in a row. This essentially defeats the purpose of the store MSHR queue, which was to punt the stores aside as they are not on the critical path of the program.
+  - A much better policy would have been to either be aware of this issue and aim for sequential consistency the whole time, or know that TSO makes much better sense for performance, and aim for TSO the whole time. 
 
 ## Potential Future Development
 - Convert from the MIPS subset to RISC-V RV32IA
