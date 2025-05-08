@@ -420,6 +420,12 @@ Results are compared against "In-Order", which is my dual-core in-order 5-stage 
 ## Potential Future Development
 - Convert from the MIPS subset to RISC-V RV32IA
   - or at least the RV32IA subset that ECE 437 implements
+  - this is non-trivial as MIPS performs absolute jumps, which allows same-cycle fetch->next fetch non-predicted jumps which don't have to be executed or checked at all in the backend of the core pipeline. RISC-V has PC-relative jumps, which cannot be computed in a single cycle, and thus require a redesign of the fetch unit in order to support
+    - could be with a 2-cycle jump
+      - bad for performance
+    - could be with jump prediction
+      - need lots of backend changes
+      - performance will only be hurt on initial misprediction and slight increase in backend traffic due to jumps not immediately completing
 - Add performance counters (e.g. dcache hit counts) for performance verification and to provide insight for future design iterations
 - Adapt front end of core to support multiple-issue
 - Adapt front end of core to support SMT 
